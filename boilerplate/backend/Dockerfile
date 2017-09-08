@@ -6,6 +6,7 @@ MAINTAINER Twitch Interactive, Inc.
 WORKDIR /boilerplate/backend
 COPY ./package.json ./
 RUN npm install supervisor -g
+RUN npm install --save @google-cloud/datastore
 RUN npm install
 
 EXPOSE 8080

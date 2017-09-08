@@ -32,3 +32,45 @@ const PORT = 8080;
 http.createServer(app).listen(PORT, function () {
   console.log('Extension Boilerplate service running on https', PORT);
 });
+
+console.log("test");
+// Imports the Google Cloud client library
+const Datastore = require('@google-cloud/datastore');
+
+// Your Google Cloud Platform project ID
+const projectId = 'YOUR_PROJECT_ID';
+
+// Instantiates a client
+const datastore = Datastore({
+  projectId: projectId
+});
+
+// The kind for the new entity
+const kind = 'channel';
+// The name/ID for the new entity
+const id = 'abc123';
+// The Cloud Datastore key for the new entity
+const taskKey = datastore.key([kind, name]);
+
+// Prepares the new entity
+const task = {
+  key: taskKey,
+  data: {
+    css-theme: 0,
+	game-ids: {
+		values: [
+			"stringValue": 'test'
+		]
+	}
+  }
+};
+
+// Saves the entity
+datastore.save(task)
+  .then(() => {
+    console.log(`Saved ${task.key.name}: ${task.data.description}`);
+  })
+  .catch((err) => {
+    console.error('ERROR:', err);
+  });
+
