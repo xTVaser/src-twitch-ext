@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+    boilerplatebackend:
+        volumes:
+            - .:/boilerplate
+
+            # necessary to prevent OS X node_modules being loaded in:
+            - /boilerplate/backend/node_modules
+
+        build:
+            context: ./backend
+            dockerfile: ./Dockerfile
+
+        ports:
+          - "8080:8080"

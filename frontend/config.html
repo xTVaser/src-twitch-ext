@@ -1,0 +1,88 @@
+<!doctype html>
+<!--
+Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
+
+    http://aws.amazon.com/apache2.0/
+
+or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+-->
+<!--
+
+   Use this file as a starting point for your configuration extension view.
+
+-->
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
+        <link rel="stylesheet" href="css/themes/darkly.min.css">
+        <link rel="stylesheet" href="css/common.css">
+        <link rel="stylesheet" href="css/config.css">
+    </head>
+    <body>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-2 col-md-offset-2">
+                    <p>Speedruns (Customizable)</p>
+                </div>
+            </div>
+            <!--
+            // change title - textbox
+            // css theme dropdown - dropdown
+            // search for their name - textbox and search
+            // will output the games - ul with checkboxes
+            // can toggle on or off certain games - the checkboxes
+            // can chaange position of those games in the list - https://lukasoppermann.github.io/html5sortable/index.html (final feature)
+            -->
+            <div class="row">
+                <label for="theme">Panel Theme</label><br>
+                <select name="theme">
+                  <option value="cyborg">Cyborg</option>
+                  <option value="darkly" selected>Darkly</option>
+                  <option value="flatly">Flatly</option>
+                  <option value="paper">Paper</option>
+                  <option value="solarized">Solarized</option>
+                  <option value="superhero">Superhero</option>
+                </select>
+            </div>
+            <div class="row">
+                <label for="title">Panel Title</label><br>
+                <input type="text" name="title" value="" placeholder="title placeholder">
+            </div>
+            <div class="row">
+                <label for="search">Speedrun.com Name</label>
+                <input type="text" name="search" value="" placeholder="Speedrun.com Name">
+            </div>
+            <div class="row">
+                <div class="col-md-2 col-md-offset-2">
+                    <button type="button" name="button" class="btn-success">Search</button>
+                </div>
+            </div>
+            Game List
+            <div class="row">
+                <div class="col-md-2">
+                    <input type="checkbox" name="vehicle" value="Bike"><br>
+                </div>
+                <div class="col-md-10">
+                    Game Name
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2 col-md-offset-2">
+                    <button type="button" name="button" class="btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Scripts at Bottom of Page -->
+        <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+        <script src="js/common.js"></script>
+        <script src="js/config.js"></script>
+    </body>
+</html>
