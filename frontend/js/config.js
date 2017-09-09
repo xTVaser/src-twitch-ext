@@ -13,3 +13,30 @@ or in the "license" file accompanying this file. This file is distributed on an 
   Set Javascript specific to the extension configuration view in this file.
 
 */
+
+var objectData =
+         {
+             string1: "test123",
+             string2: "yes"
+         };
+
+var objectDataString = JSON.stringify(objectData);
+
+$("#saveBtn").click(function(){
+    console.log("clicked")
+    $.ajax({
+        type: "POST",
+        url: "http://69ded638.ngrok.io/save",
+        dataType: "json",
+        data: {
+            o: objectDataString
+        },
+        success: function (res) {
+           alert('Success\nResponse Code:' + res.status + '\nMessage: ' + res.success);
+
+        },
+        error: function () {
+            alert('Error');
+        }
+    });
+});

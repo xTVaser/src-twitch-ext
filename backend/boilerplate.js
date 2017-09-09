@@ -10,8 +10,24 @@ or in the "license" file accompanying this file. This file is distributed on an 
 const express = require('express');
 const fs = require('fs');
 const http = require('http');
+const bodyParser = require('body-parser');
 
 const app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.post('/save', function (req, res) {
+    var object = JSON.parse(req.body.o);
+    console.log(object);
+    console.log(object.string1);
+    console.log(object.string2);
+    var response = {
+        status  : 200,
+        success : 'Updated Successfully'
+    }
+    res.send(JSON.stringify(response));
+});
 
 app.use((req, res, next) => {
   console.log('Got request', req.path, req.method);
