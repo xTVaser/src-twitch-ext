@@ -4,8 +4,6 @@ services:
     boilerplatebackend:
         volumes:
             - .:/boilerplate
-
-            # necessary to prevent OS X node_modules being loaded in:
             - /backend/node_modules
 
         build:
