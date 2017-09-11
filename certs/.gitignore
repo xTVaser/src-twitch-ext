@@ -1,3 +1,3 @@
-testing.key
-testing.crt
-
+*.key
+*.crt
+*.csr
