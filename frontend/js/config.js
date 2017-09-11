@@ -22,30 +22,22 @@ var objectData =
 
 var objectDataString = JSON.stringify(objectData);
 
-window.Twitch.ext.onAuthorized(function(auth) {
-  console.log('The JWT that will be passed to the EBS is', auth.token);
-  console.log('The channel ID is', auth.channelId);
-});
-
-/*
-Usually, the JWT obtained from this call is passed as a header during AJAX calls to the EBS. For example:
+var authObject;
 
 window.Twitch.ext.onAuthorized(function(auth) {
-  $.ajax({
-    url: '/<some backend path>',
-    type: 'GET',
-    headers: {
-      'x-extension-jwt': auth.token,
-    }
-  });
+    authObject = auth;
+    console.log('The JWT that will be passed to the EBS is', authObject.token);
+    console.log('The channel ID is', authObject.channelId);
 });
-*/
 
 $("#saveBtn").click(function(){
     console.log("clicked")
     $.ajax({
         type: "POST",
-        url: "http://69ded638.ngrok.io/save",
+        url: "https://98f89ea3.ngrok.io/save",
+        headers: {
+          'x-extension-jwt': authObject.token,
+        },
         dataType: "json",
         data: {
             o: objectDataString
