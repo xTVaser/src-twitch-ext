@@ -1,32 +1,18 @@
-/*
-Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+//Function handler to get a JSON data with no external libraries.
+var fetchJSON = function(url, func) {
 
-Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
-
-    http://aws.amazon.com/apache2.0/
-
-or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-*/
-
-/*
-
-  Set Javascript common to all extension views in this file.
-
-*/
-
-if(window.Twitch.ext) {
-
-  window.Twitch.ext.onAuthorized(function(auth) {
-    console.log(auth);
-  });
-
-  window.Twitch.ext.onContext(function(context, contextFields) {
-    console.log(context);
-    console.log(contextFields);
-  });
-  
-  window.Twitch.ext.onError(function(err) {
-    console.error(err);
-  });
-  
+    //Setup the request, its a GET request, and we are expecting json
+    var request = new XMLHttpRequest();
+    request.open("GET", url, true);
+    request.responseType = "json";
+    //Once the request returns, check if its valid, if it is return the function with no arrays.
+    request.onload = function() {
+        var flag = request.status;
+        if (flag == 200) // HTTP200 = OK
+            func(null, request.response);
+        else
+            func(flag);
+    };
+    //Send the request, it is asychronous so it the fact that this is at the end, doesnt matter.
+    request.send();
 }

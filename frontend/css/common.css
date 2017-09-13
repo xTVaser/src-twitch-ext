@@ -14,25 +14,63 @@ or in the "license" file accompanying this file. This file is distributed on an 
 
 */
 
-html {
-	width: 320px;
-	height: 500px;
-}
-body {
-	width: 320px; /* Panels are limited to 320x500 */
-	height: 500px;
-	padding: 10px;
-}
-div {
-	margin: 0px;
+* {
+	margin: 0;
+	padding: 0;
 }
 
-/* Override bootstrap functions */
+body {
+	background-color: #222;
+	font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size: 15px;
+	line-height: 1.42857143; /* lol what? */
+	color: #fff;
+	height: 100%;
+	width: 100%; /* having these set to a fixed number can hurt relative positioning */
+}
+
 .container {
+	display: block;
 	width: 320px;
-	max-height: 500px;
+	height: 500px;
+	padding: 10px;
+	box-sizing: border-box;
 }
 
 .row {
+	width: 100%;
 	margin-bottom: 10px;
+}
+
+.row p {
+	text-align: center;
+}
+
+.row label {
+	display: block;
+	margin-bottom: 5px;
+	font-weight: bold;
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.row select {
+	width: 100%;
+	background: #fff;
+	border: 1px solid #ccc;
+	height: 30px;
+}
+
+.row input[type="text"] {
+	width: 100%;
+}
+
+[type="button"] {
+	display: block;
+	margin: 0 auto;
+}
+
+.center {
+	display: block;
+	text-align: center;
 }

@@ -18,17 +18,14 @@ or in the "license" file accompanying this file. This file is distributed on an 
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
-        <link rel="stylesheet" href="css/themes/darkly.min.css">
         <link rel="stylesheet" href="css/common.css">
         <link rel="stylesheet" href="css/config.css">
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     </head>
     <body>
         <div class="container">
             <div class="row">
-                <div class="col-md-2 col-md-offset-2">
-                    <p>Speedruns (Customizable)</p>
-                </div>
+                <p>Speedruns (Customizable)</p>
             </div>
             <!--
             // change title - textbox
@@ -40,48 +37,38 @@ or in the "license" file accompanying this file. This file is distributed on an 
             -->
             <div class="row">
                 <label for="theme">Panel Theme</label><br>
-                <select name="theme">
-                  <option value="cyborg">Cyborg</option>
-                  <option value="darkly" selected>Darkly</option>
-                  <option value="flatly">Flatly</option>
-                  <option value="paper">Paper</option>
-                  <option value="solarized">Solarized</option>
-                  <option value="superhero">Superhero</option>
+                <select name="theme" id="panelTheme">
+                  <option value="light" selected>Light</option>
+                  <option value="dark">Dark</option>
                 </select>
             </div>
             <div class="row">
                 <label for="title">Panel Title</label><br>
-                <input type="text" name="title" value="" placeholder="title placeholder">
+                <input id="panelTitle" type="text" name="title" value="" placeholder="title placeholder">
             </div>
             <div class="row">
                 <label for="search">Speedrun.com Name</label>
-                <input type="text" name="search" value="" placeholder="Speedrun.com Name">
+                <input id="srcName" type="text" name="search" value="" placeholder="Speedrun.com Name">
             </div>
             <div class="row">
-                <div class="col-md-2 col-md-offset-2">
-                    <button type="button" name="button" class="btn-success">Search</button>
-                </div>
-            </div>
-            Game List
-            <div class="row">
-                <div class="col-md-2">
-                    <input type="checkbox" name="vehicle" value="Bike"><br>
-                </div>
-                <div class="col-md-10">
-                    Game Name
-                </div>
+                <button id = "searchBtn" type="button" name="button" class="btn-success">Search</button>
             </div>
             <div class="row">
-                <div class="col-md-2 col-md-offset-2">
-                    <button type="button" name="button" class="btn-primary" id="saveBtn">Save</button>
+                <div class="center">
+                    Game List (Reorderable)<br>
                 </div>
+                <ul id="sortableGames">
+                </ul>
+            </div>
+            <div class="row">
+                <button type="button" name="button" class="btn-primary" id="saveBtn" disabled>Save</button>
             </div>
         </div>
-
 
         <!-- Scripts at Bottom of Page -->
         <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <script src="js/common.js"></script>
         <script src="js/config.js"></script>
     </body>

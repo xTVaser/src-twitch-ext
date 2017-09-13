@@ -1,28 +1,10 @@
-/*
-Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+/// Config Page for Frontend
 
-Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
-
-    http://aws.amazon.com/apache2.0/
-
-or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-*/
-
-/*
-
-  Set Javascript specific to the extension configuration view in this file.
-
-*/
-
-var objectData =
-         {
-             string1: "test123",
-             string2: "yes"
-         };
-
-var objectDataString = JSON.stringify(objectData);
+$( "#sortableGames" ).sortable();
+$( "#sortableGames" ).disableSelection();
 
 var authObject;
+var srcID;
 
 window.Twitch.ext.onAuthorized(function(auth) {
     authObject = auth;
@@ -30,20 +12,95 @@ window.Twitch.ext.onAuthorized(function(auth) {
     console.log('The channel ID is', authObject.channelId);
 });
 
+function enableSaveButton() {
+    console.log("soon")
+}
+
+function printResults(json) {
+    var data = json.data
+
+    // No name found
+    if (data.length <= 0) {
+        console.log("Nothing found with that name")
+        return;
+    }
+    // More than 1 result, not going to handle this, so be more specific please
+    else if (data.length > 1) {
+        console.log("Found too many results, be more specific")
+        return;
+    }
+
+    // K we are fine then, get the ID
+    srcID = data[0].id;
+    // Populate the game list
+    getGameList();
+    // Check to see if we should update the save button
+    enableSaveButton();
+}
+
+var gameList = []
+
+function populateGameList(json) {
+
+    personalBests = json.data
+    for (let pb of personalBests) {
+        // Not added yet
+        if (gameList.findIndex(x => x.id === pb.run.game) <= -1) {
+            gameList.push({
+                id: pb.run.game,
+                name: null
+            })
+        }
+    }
+
+    // Get the names for all the games we added
+    for (let game of gameList) {
+        $.getJSON("https://www.speedrun.com/api/v1/games/" + game.id + "?callback=?", function(json) {
+            game = json.data
+            index = gameList.findIndex(x => x.id === game.id)
+            gameList[index].name = game.names.international
+            $( "#sortableGames" ).append(
+                '<li class=ui-state-default><input type=checkbox value=' + game.id + ' checked>' + gameList[index].name + '</input></li>'
+            )
+        })
+    }
+}
+
+function getGameList() {
+
+    $.ajax({
+        url: "https://www.speedrun.com/api/v1/users/" + srcID + "/personal-bests",
+        dataType: "jsonp",
+        jsonpCallback: "populateGameList"
+    });
+}
+
+$("#searchBtn").click(function(){
+    // Spinner? http://jsfiddle.net/q1d06npq/4/
+    $.ajax({
+        url: "https://www.speedrun.com/api/v1/users?lookup=" + $("#srcName").val(),
+        dataType: "jsonp",
+        jsonpCallback: "printResults"
+    });
+})
+
+
 $("#saveBtn").click(function(){
-    console.log("clicked")
     $.ajax({
         type: "POST",
-        url: "https://98f89ea3.ngrok.io/save",
+        url: "https://e2fd96a3.ngrok.io/save", // TODO i hate this
         headers: {
           'x-extension-jwt': authObject.token,
         },
         dataType: "json",
         data: {
-            o: objectDataString
+            theme: $('#panelTheme').val(),
+            title: $('#panelTitle').val(),
+            srcID: $('#srcName').val()
+            // TODO not passing in game ids yet!
         },
         success: function (res) {
-           alert('Success\nResponse Code:' + res.status + '\nMessage: ' + res.success);
+           console.log('Success\nResponse Code:' + res.status + '\nMessage: ' + res.message);
 
         },
         error: function () {

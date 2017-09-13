@@ -1,0 +1,4 @@
+CLOUD_ID=<if using google cloud datastore, project id here>
+TWITCH_CLIENT_ID=<on extension page>
+TWITCH_EXT_ID=<referred to in the docs as user id>
+TWITCH_SECRET=<on extension's versions setting page>
