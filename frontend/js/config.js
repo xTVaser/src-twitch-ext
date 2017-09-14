@@ -13,7 +13,7 @@ window.Twitch.ext.onAuthorized(function(auth) {
 });
 
 function enableSaveButton() {
-    console.log("soon")
+    $('#saveBtn').prop( "disabled", false );
 }
 
 function printResults(json) {
@@ -86,9 +86,31 @@ $("#searchBtn").click(function(){
 
 
 $("#saveBtn").click(function(){
+
+    gamesToSend = []
+    $('#sortableGames', function(){
+        $(this).find('li').each(function(){
+            game = {}
+            var currentListItem = $(this)
+            var checkbox = currentListItem.find('input')
+            if (checkbox.is(':checked')) {
+                // Then we will add the game
+                gamesToSend.push({
+                    name: currentListItem.text(),
+                    id: checkbox.val()
+                })
+            }
+        })
+        // Re have all results
+        sendResult(gamesToSend)
+    });
+
+});
+
+function sendResult(gamesToSend) {
     $.ajax({
         type: "POST",
-        url: "https://e2fd96a3.ngrok.io/save", // TODO i hate this
+        url: "https://3b2821fc.ngrok.io/save",
         headers: {
           'x-extension-jwt': authObject.token,
         },
@@ -96,8 +118,8 @@ $("#saveBtn").click(function(){
         data: {
             theme: $('#panelTheme').val(),
             title: $('#panelTitle').val(),
-            srcID: $('#srcName').val()
-            // TODO not passing in game ids yet!
+            srcID: srcID,
+            games: JSON.stringify(gamesToSend)
         },
         success: function (res) {
            console.log('Success\nResponse Code:' + res.status + '\nMessage: ' + res.message);
@@ -107,4 +129,4 @@ $("#saveBtn").click(function(){
             alert('Error');
         }
     });
-});
+}

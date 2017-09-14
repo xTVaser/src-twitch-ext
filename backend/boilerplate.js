@@ -59,10 +59,9 @@ app.post('/save', function (req, res) {
       token.channel_id
     ]);
     // Actual data
-    const chan = new Channel(taskKey, data.theme, data.title, data.srcID, [
-        "abc12345",
-        "dfg456"
-    ])
+    console.log(data)
+    console.log(data.games)
+    const chan = new Channel(taskKey, data.theme, data.title, data.srcID, data.games)
     datastore.upsert(chan)
         .then(() => {})
         .catch((err) => {
@@ -70,6 +69,37 @@ app.post('/save', function (req, res) {
           response.message = "Database Saving Unsuccessful"
         });
     res.send(JSON.stringify(response));
+});
+
+app.post('/fetch', function (req, res) {
+    var response = {
+        status  : 200,
+        message : 'Retrieved Data Successfully',
+        data : null
+    }
+
+    var token = twitch.verifyToken(req.header('x-extension-jwt'))
+    // if any errors happened during verifying token
+    if (token == null) {
+        response.status = 500
+        response.message = "Not a valid Twitch User"
+        res.send(JSON.stringify(response))
+        return;
+    }
+    // Else fetch the value from the datastore and return it
+    // Channel kind, combined with channelid, every channel is isolated
+    const taskKey = datastore.key([
+      'Channel',
+      token.channel_id
+    ]);
+    datastore.get(taskKey)
+      .then((results) => {
+        // Task found.
+        const entity = results[0];
+        console.log(entity);
+        response.data = entity;
+        res.send(JSON.stringify(response))
+      });
 });
 
 app.use((req, res, next) => {

@@ -1,15 +1,57 @@
-/*
-Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+/// Javascript to render the personal bests on the channel page
 
-Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
 
-    http://aws.amazon.com/apache2.0/
+window.Twitch.ext.onAuthorized(function(auth) {
 
-or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-*/
+    console.log('The JWT that will be passed to the EBS is', auth.token);
+    console.log('The channel ID is', auth.channelId);
 
-/*
+    $.ajax({
+        type: "POST",
+        url: "https://3b2821fc.ngrok.io/fetch",
+        headers: {
+          'x-extension-jwt': auth.token,
+        },
+        dataType: "json",
+        data: {},
+        success: function (res) {
+           console.log('Success\nResponse Code:' + res.status + '\nMessage: ' + res.message);
+           renderPersonalBests(res.data)
+        },
+        error: function () {
+            alert('Error');
+        }
+    });
+});
 
-  Set Javascript specific to the extension viewer view in this file.
+$('#game1').click(function() {
+    $('#pbList1').slideToggle('fast');
+})
 
-*/
+/// Renders the Panel with the given settings
+function renderPersonalBests(data) {
+
+    console.log(data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+/// Unused atm, because twitch's handler is what we actually need
+$(document).ready(function() {
+
+
+
+})

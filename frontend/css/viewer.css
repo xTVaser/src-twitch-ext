@@ -14,8 +14,19 @@ or in the "license" file accompanying this file. This file is distributed on an 
 
 */
 
+.pbRow {
+	display: none;
+}
+
+.col-1-3 {
+	width: 33%;
+	float: left;
+}
+
+
+
+
 body {
-	font: 12px arial, sans-serif;
 }
 div {
 	margin: 0px;
