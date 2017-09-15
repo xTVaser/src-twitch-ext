@@ -8,5 +8,5 @@ COPY ./package.json ./
 RUN npm install supervisor -g
 RUN npm install
 
-EXPOSE 8080
+EXPOSE 443
 CMD ["./entrypoint.sh"]

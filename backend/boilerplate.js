@@ -10,7 +10,7 @@ ORIGINAL HAS BEEN MODIFIED
 require('dotenv').config()
 const express = require('express');
 const fs = require('fs');
-const http = require('http');
+const https = require('https');
 const bodyParser = require('body-parser');
 const Datastore = require('@google-cloud/datastore');
 const twitch = require('./twitchlib')
@@ -31,7 +31,7 @@ class Channel {
 // Instantiates a client
 const datastore = Datastore();
 const app = express();
-const PORT = 8080;
+const PORT = 443;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -112,6 +112,12 @@ app.use((req, res, next) => {
 
 app.use(express.static('../frontend'))
 
-http.createServer(app).listen(PORT, function () {
-    console.log('Extension Boilerplate service running on http', PORT);
+let options = {
+    cert : fs.readFileSync('../certs/server.crt'),
+    key  : fs.readFileSync('../certs/server.key')
+};
+
+
+https.createServer(options, app).listen(PORT, function () {
+    console.log('Extension Boilerplate service running on https', PORT);
 });

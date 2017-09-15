@@ -110,7 +110,7 @@ $("#saveBtn").click(function(){
 function sendResult(gamesToSend) {
     $.ajax({
         type: "POST",
-        url: "https://3b2821fc.ngrok.io/save",
+        url: "https://extension.xtvaser.xyz/save",
         headers: {
           'x-extension-jwt': authObject.token,
         },
