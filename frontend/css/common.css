@@ -1,42 +1,25 @@
-/*
-Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
-
-    http://aws.amazon.com/apache2.0/
-
-or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-*/
-
-/*
-
-  Set CSS common to all extension views in this file.
-
-*/
-
 * {
 	margin: 0;
 	padding: 0;
 }
 
-body {
-	background-color: #222;
-	font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
-	font-size: 15px;
-	line-height: 1.42857143; /* lol what? */
-	color: #fff;
-	height: 100%;
-	width: 100%; /* having these set to a fixed number can hurt relative positioning */
+.clear {
+    clear:both;
+    line-height:0;
 }
 
-.container {
-	display: block;
-	width: 300px;
-	height: 500px;
-	padding-left: 10px;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	box-sizing: border-box;
+.col-8-10 {
+	width: 80%;
+	float: left;
+}
+.col-6-10 {
+	width: 60%;
+	float: left;
+}
+
+.col-2-10 {
+	width: 20%;
+	float: left;
 }
 
 .row {

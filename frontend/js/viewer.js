@@ -5,6 +5,9 @@ var title
 var theme
 var srcID
 
+
+/// TODO option to omit subcategory labels?
+
 var pbList = new Array()
 
 window.Twitch.ext.onAuthorized(function(auth) {
