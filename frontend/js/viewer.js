@@ -34,7 +34,8 @@ window.Twitch.ext.onAuthorized(function(auth) {
            });
         },
         error: function () {
-            alert('Error');
+            // no object or something, so need to output something
+            console.log('Error');
         }
     });
 });
@@ -81,6 +82,7 @@ function getPersonalBests(json) {
                     pbLink: run.weblink,
                     wrLink: null,
                     wrTime: null,
+                    isLevel: run.level != null,
                     rank: personalBests[iter].place
                 })
             }
@@ -88,13 +90,9 @@ function getPersonalBests(json) {
         },
         callback: function() {
             // We will get the category link first then
-            console.log("finished")
-            console.log(pbList)
             getCategories()
         }
     })
-
-    // And finally, the world records for each category using the variable
 }
 
 function getCategoryName(url, currentPBEntry) {
@@ -108,7 +106,6 @@ function getCategoryName(url, currentPBEntry) {
 function getCategories() {
     gameIDs = Object.keys(pbList)
     categoryAPILink = "https://www.speedrun.com/api/v1/categories/"
-    var ajaxRequests = []
     for (var i = 0; i < gameIDs.length; i++) {
         for (var j = 0; j < pbList[gameIDs[i]].length; j++) {
             currentPBEntry = pbList[gameIDs[i]][j]
@@ -141,31 +138,97 @@ function examineVariables(url, currentPBEntry) {
 function getSubcategories() {
     gameIDs = Object.keys(pbList)
     variableAPILink = "https://www.speedrun.com/api/v1/categories/"
-    var ajaxRequests = []
     for (var i = 0; i < gameIDs.length; i++) {
         for (var j = 0; j < pbList[gameIDs[i]].length; j++) {
             currentPBEntry = pbList[gameIDs[i]][j]
             examineVariables(variableAPILink + currentPBEntry.categoryID + "/variables", currentPBEntry)
         }
     }
-    // Finally, get the WRs
+    // Finally, get the WR's information
+    getWorldRecords()
 }
 
-/// Collapse or Expand Game's Row
-$('.gameTitle').click(function(e) {
+function examineWorldRecordEntry(url, currentPBEntry) {
+    $.getJSON(url + "&callback=?", function(json) {
+        wr = json.data
+        // Guaranteed to a be wr as we only check categories that streamer has done
+        // a run of, which means there is atleast one (theres)
+        currentPBEntry.wrLink = wr.runs[0].run.weblink
+        currentPBEntry.wrTime = wr.runs[0].run.times.primary_t
+    })
+}
+
+function getWorldRecords() {
+    gameIDs = Object.keys(pbList)
+    // format for api link                          v if not null v
+    //.../gameid/category/categoryid?top=1&var-subcategoryid=subcategoryvalue
+    for (var i = 0; i < gameIDs.length; i++) {
+        for (var j = 0; j < pbList[gameIDs[i]].length; j++) {
+            currentPBEntry = pbList[gameIDs[i]][j]
+            // Construct API Request
+            requestURL = `https://www.speedrun.com/api/v1/leaderboards/${currentPBEntry.gameId}/category/${currentPBEntry.categoryID}?top=1`
+            if (currentPBEntry.subCategoryID != null) {
+                requestURL += `&var-${currentPBEntry.subCategoryID}=${currentPBEntry.subcategoryVal}`
+            }
+            if (currentPBEntry.isLevel == false) {
+                examineWorldRecordEntry(requestURL, currentPBEntry)
+            }
+        }
+    }
+    // Now we can finally render the contents of the panel
+    renderPersonalBests(pbList)
+}
+
+$(document).on('click', '.gameTitle', function(e) {
     id = e.currentTarget.id.substring(1)
     $('#pbRow' + id).slideToggle('fast');
-})
+});
 
 /// Renders the Panel with the given settings
-function renderPersonalBests(data) {
+function renderPersonalBests(pbList) {
 
-    // If we find nothing, output some default stuff
+    // Set the Title
+    $("#viewerPanelTitle").text(
+        title
+    )
+    // Headers
+    $("#contentContainer").append(
+        '<div class="row">'+
+            '<h2>Category PB WR</h2>'+
+        '</div>'
+    )
+    // Personal Bests
+    // Loop through every Game
+    gameIDs = Object.keys(pbList)
+    for (var i = 0; i < gameIDs.length; i++) {
+        // Games are already in order
+        currentGame = pbList[gameIDs[i]]
+        gameName = games[i].name
+        htmlString = '<div class="row">' +
+        `<h2 class="gameTitle" id="g${i}"><a href="#">${gameName}</a></h2>` +
+        `<div class="pbRow" id="pbRow${i}"><ul>`
+        // Get all the Personal Bests now
+        for (var j = 0; j < currentGame.length; j++) {
+
+            pb = currentGame[j]
+            // Skip ILs
+            if (pb.isLevel == true) {
+                continue
+            }
+            htmlString +=   '<li>'+
+                                `<div class="col-1-3"><a href="${pb.categoryLink}">${pb.categoryName}</a></div>` +
+                                `<div class="col-1-3"><a href="${pb.pbLink}">${pb.pbTime}</a></div>` +
+                                `<div class="col-1-3"><a href="${pb.wrLink}">${pb.wrTime}</a></div>` +
+                            `</li>`
+        }
+        htmlString += '</ul></div>'
+        // Add to the panel
+        $("#contentContainer").append(htmlString)
+    }
 }
 
 /// Unused atm, because twitch's handler is what we actually need
 $(document).ready(function() {
 
-
-
+    // Maybe add a spinner until something is loaded in
 })
