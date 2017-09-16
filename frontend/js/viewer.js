@@ -15,6 +15,20 @@ window.Twitch.ext.onAuthorized(function(auth) {
     console.log('The JWT that will be passed to the EBS is', auth.token);
     console.log('The channel ID is', auth.channelId);
 
+    $(".frameWrapper").append(
+        `<section class="spinnerWrapper">
+          <div class="spinner">
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+          </div>
+        </section>`
+    )
+
     $.ajax({
         type: "POST",
         url: "https://extension.xtvaser.xyz/fetch",
@@ -200,6 +214,9 @@ $(document).on('click', '.gameTitle', function(e) {
 /// Renders the Panel with the given settings
 function renderPersonalBests() {
 
+    // Disable the spinner
+    $('.spinnerWrapper').remove();
+
     // TODO css theme selection
 
     // Begin Creating the Title Header
@@ -260,6 +277,8 @@ function renderPersonalBests() {
                 <div class="pbRow outlineText" id="pbRow${i}">
                     <ul>`
 
+        // Sort the Games by their names
+        currentGame.sort(dynamicSort("categoryName"))
         // Get all the Personal Bests now
         for (var j = 0; j < currentGame.length; j++) {
 
@@ -290,6 +309,18 @@ function secondsToTimeStr(seconds) {
     hours = ("0" + parseInt(minutes / 60)).slice(-2);
     minutes = ("0" + minutes % 60).slice(-2);
     return `${hours}:${minutes}:${seconds}`
+}
+
+function dynamicSort(property) {
+    var sortOrder = 1;
+    if(property[0] === "-") {
+        sortOrder = -1;
+        property = property.substr(1);
+    }
+    return function (a,b) {
+        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+        return result * sortOrder;
+    }
 }
 
 /// Unused atm, because twitch's handler is what we actually need
