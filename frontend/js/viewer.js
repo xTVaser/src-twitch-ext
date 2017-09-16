@@ -95,12 +95,13 @@ function getPersonalBests(json) {
     })
 }
 
+var deferreds = []
 function getCategoryName(url, currentPBEntry) {
-    $.getJSON(url + "?callback=?", function(json) {
+    deferreds.push($.getJSON(url + "?callback=?", function(json) {
         category = json.data
         currentPBEntry.categoryName = category.name
         currentPBEntry.categoryLink = category.weblink
-    })
+    }))
 }
 
 function getCategories() {
@@ -113,12 +114,15 @@ function getCategories() {
         }
     }
     // Then the variable link to fully construct the category link
-    getSubcategories()
+    $.when.apply(null, deferreds).done(function() {
+            getSubcategories()
+            deferreds = [] // clear ready for next group of calls
+    });
 }
 
 function examineVariables(url, currentPBEntry) {
 
-    $.getJSON(url + "?callback=?", function(json) {
+    deferreds.push($.getJSON(url + "?callback=?", function(json) {
         variables = json.data
         for (var i = 0; i < variables.length; i++) {
             if (variables[i]["is-subcategory"] == true &&
@@ -132,7 +136,7 @@ function examineVariables(url, currentPBEntry) {
                 currentPBEntry.categoryName += " - " + variables[i].values.values[currentPBEntry.subcategoryVal].label
             }
         }
-    })
+    }))
 }
 
 function getSubcategories() {
@@ -145,17 +149,20 @@ function getSubcategories() {
         }
     }
     // Finally, get the WR's information
-    getWorldRecords()
+    $.when.apply(null, deferreds).done(function() {
+            getWorldRecords()
+            deferreds = [] // clear ready for next group of calls
+    });
 }
 
 function examineWorldRecordEntry(url, currentPBEntry) {
-    $.getJSON(url + "&callback=?", function(json) {
+    deferreds.push($.getJSON(url + "&callback=?", function(json) {
         wr = json.data
         // Guaranteed to a be wr as we only check categories that streamer has done
         // a run of, which means there is atleast one (theres)
         currentPBEntry.wrLink = wr.runs[0].run.weblink
         currentPBEntry.wrTime = wr.runs[0].run.times.primary_t
-    })
+    }))
 }
 
 function getWorldRecords() {
@@ -176,7 +183,10 @@ function getWorldRecords() {
         }
     }
     // Now we can finally render the contents of the panel
-    renderPersonalBests(pbList)
+    $.when.apply(null, deferreds).done(function() {
+            renderPersonalBests()
+            deferreds = [] // clear ready for next group of calls
+    });
 }
 
 $(document).on('click', '.gameTitle', function(e) {
@@ -185,16 +195,21 @@ $(document).on('click', '.gameTitle', function(e) {
 });
 
 /// Renders the Panel with the given settings
-function renderPersonalBests(pbList) {
+function renderPersonalBests() {
 
-    // Set the Title
-    $("#viewerPanelTitle").text(
-        title
+    // Set the title
+    $("#contentContainer").append(
+        `<div class="row">
+            <h1 id="viewerPanelTitle">${title}</h1>
+        </div>`
     )
+
     // Headers
     $("#contentContainer").append(
-        '<div class="row">'+
-            '<h2>Category PB WR</h2>'+
+        '<div class="row" id="headers">'+
+            `<div class="col-6-10"><h3>Category</h3></div>` +
+            `<div class="col-2-10"><h3>PB</h3></div>` +
+            `<div class="col-2-10"><h3>WR</h3></div>` +
         '</div>'
     )
     // Personal Bests
@@ -216,9 +231,9 @@ function renderPersonalBests(pbList) {
                 continue
             }
             htmlString +=   '<li>'+
-                                `<div class="col-1-3"><a href="${pb.categoryLink}">${pb.categoryName}</a></div>` +
-                                `<div class="col-1-3"><a href="${pb.pbLink}">${pb.pbTime}</a></div>` +
-                                `<div class="col-1-3"><a href="${pb.wrLink}">${pb.wrTime}</a></div>` +
+                                `<div class="col-6-10"><a href="${pb.categoryLink}">${pb.categoryName}</a></div>` +
+                                `<div class="col-2-10"><a href="${pb.pbLink}">${pb.pbTime}</a></div>` +
+                                `<div class="col-2-10"><a href="${pb.wrLink}">${pb.wrTime}</a></div>` +
                             `</li>`
         }
         htmlString += '</ul></div>'
