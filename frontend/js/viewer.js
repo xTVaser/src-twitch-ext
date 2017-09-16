@@ -200,31 +200,66 @@ $(document).on('click', '.gameTitle', function(e) {
 /// Renders the Panel with the given settings
 function renderPersonalBests() {
 
-    // Set the title
-    $("#contentContainer").append(
-        `<div class="row">
+    // TODO css theme selection
+
+    // Begin Creating the Title Header
+    $(".frameWrapper").append(
+        `<div class="titleContainer outlineText">
+        </div>`
+    )
+
+    // Add the Title
+    $(".titleContainer").append(
+        `<div class="row center">
             <h1 id="viewerPanelTitle">${title}</h1>
         </div>`
     )
 
-    // Headers
-    $("#contentContainer").append(
-        '<div class="row" id="headers">'+
-            `<div class="col-6-10"><h3>Category</h3></div>` +
-            `<div class="col-2-10"><h3>PB</h3></div>` +
-            `<div class="col-2-10"><h3>WR</h3></div>` +
-        '</div>'
+    // Add the Headers
+    $(".titleContainer").append(
+        `<div class="row" id="headers">
+            <div class="col-6-10">
+                <h3>Category</h3></div>
+            <div class="col-2-10 center">
+                <h3>PB</h3></div>
+            <div class="col-2-10 center">
+                <h3>WR</h3>
+            </div>
+        </div>
+        <br class="clear" />`
     )
-    // Personal Bests
+
+    // Visual Spacer
+    $(".frameWrapper").append(
+        `<div class="fancyStripeGreen"></div>`
+    )
+
+    // Adding Games and PBs
     // Loop through every Game
     gameIDs = Object.keys(pbList)
     for (var i = 0; i < gameIDs.length; i++) {
         // Games are already in order
         currentGame = pbList[gameIDs[i]]
         gameName = games[i].name
-        htmlString = '<div class="row">' +
-        `<h2 class="gameTitle" id="g${i}"><a href="#">${gameName}</a></h2>` +
-        `<div class="pbRow" id="pbRow${i}"><ul>`
+        // Add Game Name / Collapsable button
+        $(".frameWrapper").append(
+            `<div class="gameTitle outlineText" id="g${i}">
+                <div class="col-8-10">
+                    <h2>${gameName}</h2>
+                </div>
+                <div class="col-2-10 center">
+                    <i class="fa fa-plus-square-o fa-2x" aria-hidden="true"></i>
+                </div>
+                <br class="clear" />
+            </div>
+            <div class="fancyStripeBlue"></div>`
+        )
+        pbHTML =
+        `<div class="pbContainer">
+            <div class="row">
+                <div class="pbRow outlineText" id="pbRow${i}">
+                    <ul>`
+
         // Get all the Personal Bests now
         for (var j = 0; j < currentGame.length; j++) {
 
@@ -233,16 +268,28 @@ function renderPersonalBests() {
             if (pb.isLevel == true) {
                 continue
             }
-            htmlString +=   '<li>'+
-                                `<div class="col-6-10"><a href="${pb.categoryLink}">${pb.categoryName}</a></div>` +
-                                `<div class="col-2-10"><a href="${pb.pbLink}">${pb.pbTime}</a></div>` +
-                                `<div class="col-2-10"><a href="${pb.wrLink}">${pb.wrTime}</a></div>` +
-                            `</li>`
+            // TODO straight up links through CORS errors on twitchs end
+            // so open in a new tab....but that prevent the links from being clickable...?
+            pbHTML +=
+            `<li>
+                <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
+            </li>`
         }
-        htmlString += '</ul></div>'
+        pbHTML +=`</ul></div></div></div>`
+
         // Add to the panel
-        $("#contentContainer").append(htmlString)
+        $(".frameWrapper").append(pbHTML)
     }
+}
+
+function secondsToTimeStr(seconds) {
+    minutes = parseInt(seconds / 60)
+    seconds = ("0" + seconds % 60).slice(-2);
+    hours = ("0" + parseInt(minutes / 60)).slice(-2);
+    minutes = ("0" + minutes % 60).slice(-2);
+    return `${hours}:${minutes}:${seconds}`
 }
 
 /// Unused atm, because twitch's handler is what we actually need
