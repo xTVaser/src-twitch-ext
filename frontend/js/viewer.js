@@ -12,22 +12,8 @@ var pbList = new Array()
 
 window.Twitch.ext.onAuthorized(function(auth) {
 
-    console.log('The JWT that will be passed to the EBS is', auth.token);
-    console.log('The channel ID is', auth.channelId);
-
-    $(".frameWrapper").append(
-        `<section class="spinnerWrapper">
-          <div class="spinner">
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-          </div>
-        </section>`
-    )
+    // console.log('The JWT that will be passed to the EBS is', auth.token);
+    // console.log('The channel ID is', auth.channelId);
 
     $.ajax({
         type: "POST",
@@ -323,8 +309,19 @@ function dynamicSort(property) {
     }
 }
 
-/// Unused atm, because twitch's handler is what we actually need
 $(document).ready(function() {
 
-    // Maybe add a spinner until something is loaded in
+    $(".frameWrapper").append(
+        `<section class="spinnerWrapper">
+          <div class="spinner">
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+          </div>
+        </section>`
+    )
 })

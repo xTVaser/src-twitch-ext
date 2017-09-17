@@ -1,75 +1,70 @@
 <!doctype html>
-<!--
-Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
-
-    http://aws.amazon.com/apache2.0/
-
-or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
--->
-<!--
-
-   Use this file as a starting point for your configuration extension view.
-
--->
 <html lang="">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="css/common.css">
-        <link rel="stylesheet" href="css/config.css">
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    </head>
-    <body>
-        <div class="container">
-            <div class="row">
-                <p>Speedruns (Customizable)</p>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/vividspinner.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/config.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://use.fontawesome.com/d761b53750.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="col-6-10">
+            <div class="row center">
+                <h1>Speedruns (Customizable)</h1>
             </div>
-            <!--
-            // change title - textbox
-            // css theme dropdown - dropdown
-            // search for their name - textbox and search
-            // will output the games - ul with checkboxes
-            // can toggle on or off certain games - the checkboxes
-            // can chaange position of those games in the list - https://lukasoppermann.github.io/html5sortable/index.html (final feature)
-            -->
             <div class="row">
-                <label for="theme">Panel Theme</label><br>
+                <label for="theme"><h2>Panel Theme (Currently Unsupported)</h2></label><br>
                 <select name="theme" id="panelTheme">
-                  <option value="light" selected>Light</option>
-                  <option value="dark">Dark</option>
-                </select>
+                <option value="dark" selected>Dark</option>
+                 <option value="light">Light</option>
+            </select>
             </div>
             <div class="row">
-                <label for="title">Panel Title</label><br>
-                <input id="panelTitle" type="text" name="title" value="" placeholder="title placeholder">
+                <label for="title"><h2>Panel Title</h2></label><br>
+                <input id="panelTitle" type="text" name="title" value="" placeholder="My Personal Bests">
             </div>
+
             <div class="row">
-                <label for="search">Speedrun.com Name</label>
-                <input id="srcName" type="text" name="search" value="" placeholder="Speedrun.com Name">
-            </div>
-            <div class="row">
-                <button id = "searchBtn" type="button" name="button" class="btn-success">Search</button>
-            </div>
-            <div class="row">
-                <div class="center">
-                    Game List (Reorderable)<br>
+                <label for="search"><h2>Speedrun.com Name</h2></label>
+                <div class="col-8-10">
+                    <input id="srcName" type="text" name="search" value="" placeholder="Speedrun.com Name">
                 </div>
-                <ul id="sortableGames">
-                </ul>
+                <div class="col-2-10">
+                    <div class="row">
+                        <button id="searchBtn" type="button" name="button" class="btn-primary">Find Games</button>
+                    </div>
+                </div>
             </div>
             <div class="row">
-                <button type="button" name="button" class="btn-primary" id="saveBtn" disabled>Save</button>
+                <div class="gameListing" id="gameListingContainer">
+                    <div class="center" id="gamesHeader">
+                    </div>
+                    <ul id="sortableGames">
+                    </ul>
+                </div>
+            </div>
+            <div class="row errorOutput center" id="errorDialog">
+            </div>
+            <div class="row">
+                <button type="button" name="button" class="btn-warning" id="saveBtn">Save</button>
             </div>
         </div>
+        <br class="clear" />
+    </div>
 
-        <!-- Scripts at Bottom of Page -->
-        <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script src="js/common.js"></script>
-        <script src="js/config.js"></script>
-    </body>
+    <!-- Scripts at Bottom of Page -->
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/config.js"></script>
+</body>
+
 </html>

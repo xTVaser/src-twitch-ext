@@ -1,21 +1,68 @@
-/*
-Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
-
-    http://aws.amazon.com/apache2.0/
-
-or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-*/
-
-/*
-
-  Set CSS specific to the extension configuration view in this file.
-
-*/
-
 body {
+    font-family: 'Roboto Condensed', sans-serif;
 }
-div {
-	margin: 0px;
+
+.container {
+    padding: 10px;
+}
+
+.col-6-10 {
+    padding-left: 20%;
+}
+
+input {
+    min-height: 3em;
+}
+
+ul {
+    list-style-type: none;
+}
+
+h1 {
+    margin-bottom: 2em;
+}
+
+button {
+    cursor:pointer;
+}
+
+section.spinnerWrapper {
+    padding-top: 0px;
+    background-color: transparent;
+    background: transparent;
+}
+
+.errorOutput {
+    text-weight: 700;
+    color: red;
+}
+
+.row {
+    margin-bottom: 2em;
+}
+
+.btn-primary {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: #fff;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+}
+.btn-disabled {
+    background-color: grey;
+    border: none;
+    color: #afafaf;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-warning {
+    background-color: orange;
+    border: none;
+    color: #fff;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
 }
