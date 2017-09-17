@@ -270,9 +270,9 @@ function renderPersonalBests() {
             // so open in a new tab....but that prevent the links from being clickable...?
             pbHTML +=
             `<li>
-                <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
-                <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
-                <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
+                <div class="col-6-10 truncate"><a class="categoryName" href="#" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                <div class="col-2-10 rightAlign"><a class="pbTime" href="#" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                <div class="col-2-10 rightAlign"><a class="wrTime" href="#" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
             </li>`
         }
         pbHTML +=`</ul></div></div></div>`

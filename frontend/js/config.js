@@ -26,7 +26,6 @@ window.Twitch.ext.onAuthorized(function(auth) {
         dataType: "json",
         data: {},
         success: function(res) {
-            console.log('Success\nResponse Code:' + res.status + '\nMessage: ' + res.message);
             savedData = res.data
             if (savedData != null) {
                 $('#panelTheme').val(savedData.theme)
