@@ -55,6 +55,9 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.post('/save', function(req, res) {
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With', 'x-extension-jwt');
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
+    res.setHeader('Access-Control-Allow-Origin', '*');
     var response = {
         status: 200,
         message: 'Saved Successfully'
@@ -89,7 +92,22 @@ app.post('/save', function(req, res) {
     res.send(JSON.stringify(response));
 });
 
+app.options('/fetch', function(req, res) {
+    console.log("in fetch options")
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, x-extension-jwt');
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    var response = {
+        status: 200
+    }
+    res.send(response)
+})
+
 app.post('/fetch', function(req, res) {
+    console.log("in post")
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, x-extension-jwt');
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
+    res.setHeader('Access-Control-Allow-Origin', '*');
     var response = {
         status: 200,
         message: 'Retrieved Data Successfully',
@@ -126,7 +144,7 @@ app.post('/fetch', function(req, res) {
 
 app.use((req, res, next) => {
     console.log('Got request', req.path, req.method);
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With', 'x-extension-jwt');
     res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
     res.setHeader('Access-Control-Allow-Origin', '*');
     return next();

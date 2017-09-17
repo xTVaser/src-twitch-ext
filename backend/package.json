@@ -1,5 +1,5 @@
 {
-  "author": "Twitch Interactive, Inc.",
+  "author": "Tyler Wilding",
   "dependencies": {
     "@google-cloud/datastore": "^1.1.0",
     "body-parser": "^1.18.0",
@@ -7,9 +7,9 @@
     "express": "^4.15.4",
     "jsonwebtoken": "^8.0.0"
   },
-  "description": "Provides a simple starting point to create and locally develop your Twitch extension.",
-  "license": "Apache-2.0",
-  "main": "boilerplate.js",
-  "name": "twitch-extension-boilerplate",
-  "version": "1.0.0"
+  "description": "Displays Up-to-date Speedrun Personal Bests",
+  "license": "ye",
+  "main": "server.js",
+  "name": "src-twitch-ext",
+  "version": "0.0.1"
 }

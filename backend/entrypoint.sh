@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-supervisor boilerplate.js
+supervisor server.js
