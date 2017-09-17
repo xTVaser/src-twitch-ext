@@ -18,13 +18,29 @@ const lib = require('./lib')
 
 /// Simple object to represent channel object in database
 class Channel {
-    constructor(key, theme, title, srcID, games) {
+    constructor(key, theme, title, srcID, srcName, games) {
         this.key = key
-        this.data = [
-            {name:'theme',value:theme},
-            {name:'title',value:title},
-            {name:'srcID',value:srcID},
-            {name:'games',value:games}]
+        this.data = [{
+                name: 'theme',
+                value: theme
+            },
+            {
+                name: 'title',
+                value: title
+            },
+            {
+                name: 'srcID',
+                value: srcID
+            },
+            {
+                name: 'srcName',
+                value: srcName
+            },
+            {
+                name: 'games',
+                value: games
+            }
+        ]
     }
 }
 
@@ -34,12 +50,14 @@ const app = express();
 const PORT = 443;
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 
-app.post('/save', function (req, res) {
+app.post('/save', function(req, res) {
     var response = {
-        status  : 200,
-        message : 'Saved Successfully'
+        status: 200,
+        message: 'Saved Successfully'
     }
 
     var token = twitch.verifyToken(req.header('x-extension-jwt'))
@@ -55,27 +73,27 @@ app.post('/save', function (req, res) {
     var data = req.body
     // Channel kind, combined with channelid, every channel is isolated
     const taskKey = datastore.key([
-      'Channel',
-      token.channel_id
+        'Channel',
+        token.channel_id
     ]);
     // Actual data
     console.log(data)
     console.log(data.games)
-    const chan = new Channel(taskKey, data.theme, data.title, data.srcID, data.games)
+    const chan = new Channel(taskKey, data.theme, data.title, data.srcID, data.srcName, data.games)
     datastore.upsert(chan)
         .then(() => {})
         .catch((err) => {
-          response.status = 501
-          response.message = "Database Saving Unsuccessful"
+            response.status = 501
+            response.message = "Database Saving Unsuccessful"
         });
     res.send(JSON.stringify(response));
 });
 
-app.post('/fetch', function (req, res) {
+app.post('/fetch', function(req, res) {
     var response = {
-        status  : 200,
-        message : 'Retrieved Data Successfully',
-        data : null
+        status: 200,
+        message: 'Retrieved Data Successfully',
+        data: null
     }
 
     var token = twitch.verifyToken(req.header('x-extension-jwt'))
@@ -89,35 +107,39 @@ app.post('/fetch', function (req, res) {
     // Else fetch the value from the datastore and return it
     // Channel kind, combined with channelid, every channel is isolated
     const taskKey = datastore.key([
-      'Channel',
-      token.channel_id
+        'Channel',
+        token.channel_id
     ]);
     datastore.get(taskKey)
-      .then((results) => {
-        // Task found.
-        const entity = results[0];
-        console.log(entity);
-        response.data = entity;
-        res.send(JSON.stringify(response))
-      });
+        .then((results) => {
+            // Task found.
+            const entity = results[0];
+            response.data = entity;
+            res.send(JSON.stringify(response))
+        })
+        .catch((err) => {
+            response.status = 501
+            response.message = "Nothing to Retrieve"
+            res.send(JSON.stringify(response))
+        });
 });
 
 app.use((req, res, next) => {
-  console.log('Got request', req.path, req.method);
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  return next();
+    console.log('Got request', req.path, req.method);
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    return next();
 });
 
 app.use(express.static('../frontend'))
 
 let options = {
-    cert : fs.readFileSync('../certs/server.crt'),
-    key  : fs.readFileSync('../certs/server.key')
+    cert: fs.readFileSync('../certs/server.crt'),
+    key: fs.readFileSync('../certs/server.key')
 };
 
 
-https.createServer(options, app).listen(PORT, function () {
+https.createServer(options, app).listen(PORT, function() {
     console.log('Extension Boilerplate service running on https', PORT);
 });

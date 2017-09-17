@@ -1,18 +1,52 @@
 /// Config Page for Frontend
 
-$( "#sortableGames" ).sortable();
-$( "#sortableGames" ).disableSelection();
+$("#sortableGames").sortable();
+$("#sortableGames").disableSelection();
 
 var authObject = null;
 var srcID = null;
+var srcName = null;
 var canSave = false;
 
 window.Twitch.ext.onAuthorized(function(auth) {
     authObject = auth;
     // console.log('The JWT that will be passed to the EBS is', authObject.token);
     // console.log('The channel ID is', authObject.channelId);
+    $('#saveBtn').prop("disabled", true)
+    $("#saveBtn").attr('class', 'btn-disabled');
+    $("#searchBtn").prop("disabled", true);
+    $("#searchBtn").attr('class', 'btn-disabled');
+    // Get previous settings
+    $.ajax({
+        type: "POST",
+        url: "https://extension.xtvaser.xyz/fetch",
+        headers: {
+            'x-extension-jwt': auth.token,
+        },
+        dataType: "json",
+        data: {},
+        success: function(res) {
+            console.log('Success\nResponse Code:' + res.status + '\nMessage: ' + res.message);
+            savedData = res.data
+            if (savedData != null) {
+                $('#panelTheme').val(savedData.theme)
+                $('#panelTitle').val(savedData.title)
+                $('#srcName').val(savedData.srcName)
+            }
 
-    // Check for existing data and add it to the panels
+            $('#saveBtn').prop("disabled", false)
+            $("#saveBtn").attr('class', 'btn-warning');
+            $("#searchBtn").prop("disabled", false);
+            $("#searchBtn").attr('class', 'btn-primary');
+        },
+        error: function() {
+            $('#saveBtn').prop("disabled", false)
+            $("#saveBtn").attr('class', 'btn-warning');
+            $("#searchBtn").prop("disabled", false);
+            $("#searchBtn").attr('class', 'btn-primary');
+        }
+    });
+
 });
 
 function setError(string) {
@@ -26,7 +60,7 @@ function getPersonalBest(url) {
         game = json.data
         index = gameList.findIndex(x => x.id === game.id)
         gameList[index].name = game.names.international
-        $( "#sortableGames" ).append(
+        $("#sortableGames").append(
             `<li class=ui-state-default>
                 <input type=checkbox value="${game.id}" checked>${gameList[index].name}</input>
             </li>`
@@ -36,6 +70,7 @@ function getPersonalBest(url) {
 
 var gameList = []
 var ajaxCalls = []
+
 function populateGameList(json) {
 
     personalBests = json.data
@@ -101,14 +136,15 @@ function searchForUser(name) {
     });
 }
 
-$("#searchBtn").click(function(){
+$("#searchBtn").click(function() {
     // Clean Potential Previous State
     $("#sortableGames").html('')
     srcID = null;
     gameList = []
+    srcName = $("#srcName").val()
 
     // Disable the search button temporarily
-    $("#searchBtn").prop("disabled",true);
+    $("#searchBtn").prop("disabled", true);
     $("#searchBtn").attr('class', 'btn-disabled');
     $("#saveBtn").attr('class', 'btn-disabled');
     $('#saveBtn').prop("disabled", true)
@@ -133,7 +169,7 @@ $("#searchBtn").click(function(){
 })
 
 
-$("#saveBtn").click(function(){
+$("#saveBtn").click(function() {
 
     // Check to see if we can actually save or not
     if (gameList == []) {
@@ -151,14 +187,15 @@ $("#saveBtn").click(function(){
     $("#errorDialog").html('')
 
     gamesToSend = []
-    $('#sortableGames', function(){
-        $(this).find('li').each(function(){
+    $('#sortableGames', function() {
+        $(this).find('li').each(function() {
             game = {}
             var currentListItem = $(this)
             var checkbox = currentListItem.find('input')
             if (checkbox.is(':checked')) {
                 // Then we will add the game
                 gamesToSend.push({
+                    // TODO this is kinda weird with a lot of whitespace and a new line
                     name: currentListItem.text(),
                     id: checkbox.val()
                 })
@@ -175,24 +212,24 @@ function sendResult(gamesToSend) {
         type: "POST",
         url: "https://extension.xtvaser.xyz/save",
         headers: {
-          'x-extension-jwt': authObject.token,
+            'x-extension-jwt': authObject.token,
         },
         dataType: "json",
         data: {
             theme: $('#panelTheme').val(),
             title: $('#panelTitle').val(),
             srcID: srcID,
+            srcName: srcName,
             games: JSON.stringify(gamesToSend)
         },
-        success: function (res) {
+        success: function(res) {
             if (res.status == 501) {
                 setError("Saving Error: Database Error, Contact Extension Developer")
-            }
-            else {
+            } else {
                 setError("SUCCESS: Saved Successfully!")
             }
         },
-        error: function () {
+        error: function() {
             setError("ERROR: An Unexpected Error Occurred, Contact Extension Developer")
         }
     });

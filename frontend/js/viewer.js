@@ -5,9 +5,6 @@ var title
 var theme
 var srcID
 
-
-/// TODO option to omit subcategory labels?
-
 var pbList = new Array()
 
 window.Twitch.ext.onAuthorized(function(auth) {
@@ -24,7 +21,6 @@ window.Twitch.ext.onAuthorized(function(auth) {
         dataType: "json",
         data: {},
         success: function (res) {
-           console.log('Success\nResponse Code:' + res.status + '\nMessage: ' + res.message);
            games = JSON.parse(res.data.games)
            title = res.data.title
            theme = res.data.theme
@@ -37,8 +33,7 @@ window.Twitch.ext.onAuthorized(function(auth) {
            });
         },
         error: function () {
-            // no object or something, so need to output something
-            console.log('Error');
+            // do nothing, just spin
         }
     });
 });
@@ -239,10 +234,8 @@ function renderPersonalBests() {
 
     // Adding Games and PBs
     // Loop through every Game
-    gameIDs = Object.keys(pbList)
-    for (var i = 0; i < gameIDs.length; i++) {
-        // Games are already in order
-        currentGame = pbList[gameIDs[i]]
+    for (var i = 0; i < games.length; i++) {
+        currentGame = pbList[games[i].id]
         gameName = games[i].name
         // Add Game Name / Collapsable button
         $(".frameWrapper").append(
