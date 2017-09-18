@@ -10,6 +10,10 @@ body {
 	width: 100%; /* having these set to a fixed number can hurt relative positioning */
 }
 
+.fa-2x {
+    font-size: 1.5em;
+}
+
 .fancyStripeGreen {
 	height: 5px;
 	margin-bottom: 5px;
@@ -103,7 +107,7 @@ h2 {
 
 .frameWrapper {
 	display: block;
-	width: 301px; /* actually 318px but this is to account for vertical scrollbar */
+	width: 318px; /* actually 318px but this is to account for vertical scrollbar */
 	height: 500px;
 	box-sizing: border-box;
 }

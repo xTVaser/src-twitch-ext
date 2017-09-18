@@ -286,6 +286,12 @@ function renderPersonalBests() {
 
         // Add to the panel
         $(".frameWrapper").append(pbHTML)
+
+        // Check if there are scrollbars or not
+        if ($("html").height() > 500) {
+            // If so, adjust the frameWrapper to hide scrollbars
+            $(".frameWrapper").css("width", "301px");
+        }
     }
 }
 
