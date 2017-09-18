@@ -15,10 +15,11 @@ const bodyParser = require('body-parser');
 const Datastore = require('@google-cloud/datastore');
 const twitch = require('./twitchlib')
 const lib = require('./lib')
+var morgan = require('morgan')
 
 /// Simple object to represent channel object in database
 class Channel {
-    constructor(key, theme, title, srcID, srcName, games) {
+    constructor(key, theme, title, srcID, srcName, hidePBs, games) {
         this.key = key
         this.data = [{
                 name: 'theme',
@@ -37,6 +38,10 @@ class Channel {
                 value: srcName
             },
             {
+                name: 'hidePBs',
+                value: hidePBs
+            },
+            {
                 name: 'games',
                 value: games
             }
@@ -49,6 +54,7 @@ const datastore = Datastore();
 const app = express();
 const PORT = 443;
 
+app.use(morgan('combined'))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
@@ -82,7 +88,7 @@ app.post('/save', function(req, res) {
     // Actual data
     console.log(data)
     console.log(data.games)
-    const chan = new Channel(taskKey, data.theme, data.title, data.srcID, data.srcName, data.games)
+    const chan = new Channel(taskKey, data.theme, data.title, data.srcID, data.srcName, data.hidePBs, data.games)
     datastore.upsert(chan)
         .then(() => {})
         .catch((err) => {

@@ -211,6 +211,10 @@ $("#saveBtn").click(function() {
 });
 
 function sendResult(gamesToSend) {
+    hidePBs = true
+    if ($('#hidePBs').is(':checked')) {
+        hidePBs = false
+    }
     $.ajax({
         type: "POST",
         url: "https://extension.xtvaser.xyz/save",
@@ -223,6 +227,7 @@ function sendResult(gamesToSend) {
             title: $('#panelTitle').val(),
             srcID: srcID,
             srcName: srcName,
+            hidePBs: hidePBs,
             games: JSON.stringify(gamesToSend)
         },
         success: function(res) {

@@ -25,6 +25,7 @@ window.Twitch.ext.onAuthorized(function(auth) {
            title = res.data.title
            theme = res.data.theme
            srcID = res.data.srcID
+           hidePBs = res.data.hidePBs
            // First we will get all the runner's personal bests
            $.ajax({
                url: "https://www.speedrun.com/api/v1/users/" + srcID + "/personal-bests",
@@ -252,10 +253,14 @@ function renderPersonalBests() {
             </div>
             <div class="fancyStripeBlue"></div>`
         )
+        displayPBs = "none"
+        if (hidePBs == "false") {
+            displayPBs = "block"
+        }
         pbHTML =
         `<div class="pbContainer">
             <div class="row">
-                <div class="pbRow outlineText" id="pbRow${i}">
+                <div class="pbRow outlineText" id="pbRow${i}" style="display: ${displayPBs};">
                     <ul>`
 
         // Sort the Games by their names

@@ -27,6 +27,10 @@ body {
 	display: none;
 }
 
+.pbRowNotHidden {
+	display: block;
+}
+
 .rightAlign {
 	text-align: right;
 }
@@ -52,6 +56,10 @@ body {
 	background: radial-gradient( rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6) ), url('../img/DarkTheme.png');
     background-position:center top;
 	font-weight: 700;
+}
+
+h2 {
+	font-size: 1.20em;
 }
 
 .gameTitle {
@@ -95,7 +103,7 @@ body {
 
 .frameWrapper {
 	display: block;
-	width: 318px;
+	width: 301px; /* actually 318px but this is to account for vertical scrollbar */
 	height: 500px;
 	box-sizing: border-box;
 }
