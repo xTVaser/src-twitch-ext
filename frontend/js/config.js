@@ -85,7 +85,7 @@ function populateGameList(json) {
 
     // Get the names for all the games we added
     for (let game of gameList) {
-        getPersonalBest(`https://www.speedrun.com/api/v1/games/${game.id}?callback=?`)
+        getPersonalBest(`https://www.speedrun.com/api/v1/games/${game.id}`)
     }
 
     $.when.apply(null, ajaxCalls).done(function() {
@@ -102,8 +102,10 @@ function populateGameList(json) {
 function getGameList() {
     $.ajax({
         url: "https://www.speedrun.com/api/v1/users/" + srcID + "/personal-bests",
-        dataType: "jsonp",
-        jsonpCallback: "populateGameList"
+        dataType: "json",
+        success: function(data) {
+            populateGameList(data)
+        }
     });
 }
 
@@ -130,8 +132,10 @@ function printResults(json) {
 function searchForUser(name) {
     $.ajax({
         url: `https://www.speedrun.com/api/v1/users?lookup=${name}`,
-        dataType: "jsonp",
-        jsonpCallback: "printResults"
+        dataType: "json",
+        success: function(data) {
+            printResults(data)
+        }
     });
 }
 

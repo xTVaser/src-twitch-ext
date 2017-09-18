@@ -28,8 +28,10 @@ window.Twitch.ext.onAuthorized(function(auth) {
            // First we will get all the runner's personal bests
            $.ajax({
                url: "https://www.speedrun.com/api/v1/users/" + srcID + "/personal-bests",
-               dataType: "jsonp",
-               jsonpCallback: "getPersonalBests"
+               dataType: "json",
+               success: function(data) {
+                   getPersonalBests(data)
+               }
            });
         },
         error: function () {
@@ -95,7 +97,7 @@ function getPersonalBests(json) {
 
 var deferreds = []
 function getCategoryName(url, currentPBEntry) {
-    deferreds.push($.getJSON(url + "?callback=?", function(json) {
+    deferreds.push($.getJSON(url, function(json) {
         category = json.data
         currentPBEntry.categoryName = category.name
         currentPBEntry.categoryLink = category.weblink
@@ -120,7 +122,7 @@ function getCategories() {
 
 function examineVariables(url, currentPBEntry) {
 
-    deferreds.push($.getJSON(url + "?callback=?", function(json) {
+    deferreds.push($.getJSON(url, function(json) {
         variables = json.data
         for (var i = 0; i < variables.length; i++) {
             if (variables[i]["is-subcategory"] == true &&
@@ -154,7 +156,7 @@ function getSubcategories() {
 }
 
 function examineWorldRecordEntry(url, currentPBEntry) {
-    deferreds.push($.getJSON(url + "&callback=?", function(json) {
+    deferreds.push($.getJSON(url, function(json) {
         wr = json.data
         // Guaranteed to a be wr as we only check categories that streamer has done
         // a run of, which means there is atleast one (theres)
@@ -266,8 +268,8 @@ function renderPersonalBests() {
             if (pb.isLevel == true) {
                 continue
             }
-            // TODO straight up links through CORS errors on twitchs end
-            // so open in a new tab....but that prevent the links from being clickable...?
+            // TODO links have to be added to a whitelist....but only specific allowed.
+            // regex allowed?
             pbHTML +=
             `<li>
                 <div class="col-6-10 truncate"><a class="categoryName" href="#" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
