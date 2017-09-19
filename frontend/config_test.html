@@ -22,40 +22,60 @@
             <div class="row">
                 <label for="theme"><h2>Panel Theme (Currently Unsupported)</h2></label><br>
                 <select name="theme" id="panelTheme">
-                    <option value="dark" selected>Dark</option>
+                    <option value="dark" selected="">Dark</option>
                     <option value="light">Light</option>
                 </select>
             </div>
             <div class="row">
                 <label for="collapse"><h2>Don't Hide Personal Bests Initially</h2></label><br>
-                <input type=checkbox id="hidePBs" name="collapse"></input>
+                <input type="checkbox" id="hidePBs" name="collapse">
             </div>
             <div class="row">
                 <label for="title"><h2>Panel Title</h2></label><br>
                 <input id="panelTitle" type="text" name="title" value="" placeholder="My Personal Bests">
             </div>
+
             <div class="row">
                 <label for="search"><h2>Speedrun.com Name</h2></label>
                 <input id="srcName" type="text" name="search" value="" placeholder="Speedrun.com Name">
             </div>
+
             <div class="row">
                 <button id="searchBtn" type="button" name="button" class="btn-primary">Find Games</button>
             </div>
             <div class="row">
                 <div class="gameListing" id="gameListingContainer">
                     <div class="center" id="gamesHeader">
-                    </div>
-                    <ul id="sortableGames">
+                        <h3>Game List (Reorderable and Toggleable)</h3><br></div>
+                    <ul id="sortableGames" class="ui-sortable">
+                        <li class="ui-state-default">
+                            <div class="col-19-20">
+                                <input type="checkbox" value="ok6qlo1g" checked="">Jak II
+                            </div>
+                            <div class="col-1-20">
+                                <i class="fa fa-bars" aria-hidden="true"></i>
+                            </div>
+                            <br class="clear">
+                        </li>
+                        <li class="ui-state-default">
+                            <input type="checkbox" value="3692x0dl" checked="">Jak II Flashgame
+                        </li>
+                        <li class="ui-state-default">
+                            <input type="checkbox" value="ldemjl13" checked="">Counter-Strike: Global Offensive
+                        </li>
+                        <li class="ui-state-default">
+                            <input type="checkbox" value="nj1nww1p" checked="">Jak 3
+                        </li>
                     </ul>
                 </div>
             </div>
             <div class="row errorOutput center" id="errorDialog">
-            </div>
+                <h3>SUCCESS: Saved Successfully!</h3></div>
             <div class="row">
                 <button type="button" name="button" class="btn-warning" id="saveBtn">Save</button>
             </div>
         </div>
-        <br class="clear" />
+        <br class="clear">
     </div>
 
     <!-- Scripts at Bottom of Page -->
@@ -64,6 +84,9 @@
     <script src="js/jquery-ui.js"></script>
     <script src="js/common.js"></script>
     <script src="js/config.js"></script>
+
+
+
 </body>
 
 </html>

@@ -12,7 +12,12 @@ body {
 }
 
 input {
-    min-height: 3em;
+    margin-right: 25px;
+}
+
+li {
+    margin-bottom: 10px;
+    padding: 5px;
 }
 
 ul {

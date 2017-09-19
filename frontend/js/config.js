@@ -61,7 +61,13 @@ function getPersonalBest(url) {
         gameList[index].name = game.names.international
         $("#sortableGames").append(
             `<li class=ui-state-default>
-                <input type=checkbox value="${game.id}" checked>${gameList[index].name}</input>
+                <div class="col-19-20">
+                    <input type=checkbox value="${game.id}" checked>${gameList[index].name}
+                </div>
+                <div class="col-1-20">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                </div>
+                <br class="clear">
             </li>`
         )
     }))
