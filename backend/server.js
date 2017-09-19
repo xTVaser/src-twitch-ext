@@ -43,7 +43,8 @@ class Channel {
             },
             {
                 name: 'games',
-                value: games
+                value: games,
+                excludeFromIndexes: true
             }
         ]
     }
@@ -54,7 +55,11 @@ const datastore = Datastore();
 const app = express();
 const PORT = 443;
 
-app.use(morgan('combined'))
+// create a write stream (in append mode)
+var accessLogStream = fs.createWriteStream('./logs.log', {flags: 'a'})
+
+// setup the logger
+app.use(morgan('combined', {stream: accessLogStream}))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
@@ -90,12 +95,17 @@ app.post('/save', function(req, res) {
     console.log(data.games)
     const chan = new Channel(taskKey, data.theme, data.title, data.srcID, data.srcName, data.hidePBs, data.games)
     datastore.upsert(chan)
-        .then(() => {})
+        .then(() => {
+            res.send(JSON.stringify(response));
+            console.log(response)
+        })
         .catch((err) => {
             response.status = 501
             response.message = "Database Saving Unsuccessful"
+            res.send(JSON.stringify(response));
+            console.log(err)
         });
-    res.send(JSON.stringify(response));
+
 });
 
 app.options('/fetch', function(req, res) {

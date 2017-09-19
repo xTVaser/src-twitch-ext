@@ -205,8 +205,8 @@ $("#saveBtn").click(function() {
                 // Then we will add the game
                 gamesToSend.push({
                     // TODO this is kinda weird with a lot of whitespace and a new line
-                    name: currentListItem.text(),
-                    id: checkbox.val()
+                    name: currentListItem.text().trim(),
+                    id: checkbox.val().trim() // Get rid of whitespace and new lines
                 })
             }
         })
@@ -237,6 +237,7 @@ function sendResult(gamesToSend) {
             games: JSON.stringify(gamesToSend)
         },
         success: function(res) {
+            console.log(res)
             if (res.status == 501) {
                 setError("Saving Error: Database Error, Contact Extension Developer")
             } else {
