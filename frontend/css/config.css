@@ -7,8 +7,8 @@ body {
     padding: 10px;
 }
 
-.col-6-10 {
-    padding-left: 20%;
+div.col-19-20 .gameTitleBox {
+    width: 75%;
 }
 
 input {
@@ -26,6 +26,10 @@ ul {
 
 h1 {
     margin-bottom: 2em;
+}
+
+h3 {
+    font-size: 1em;
 }
 
 button {

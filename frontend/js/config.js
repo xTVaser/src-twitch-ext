@@ -121,11 +121,17 @@ function printResults(json) {
     // No name found
     if (data.length <= 0) {
         setError("No one found on Speedrun.com by that name!")
+        $("#searchBtn").prop("disabled", false);
+        $("#searchBtn").attr('class', 'btn-primary');
+        $('.spinnerWrapper').remove();
         return;
     }
     // More than 1 result, not going to handle this, so be more specific please
     else if (data.length > 1) {
         setError("Found too many users by that name, be more specific!")
+        $("#searchBtn").prop("disabled", false);
+        $("#searchBtn").attr('class', 'btn-primary');
+        $('.spinnerWrapper').remove();
         return;
     }
 
@@ -183,14 +189,23 @@ $("#saveBtn").click(function() {
     // Check to see if we can actually save or not
     if (gameList == []) {
         setError("ERROR: There are no Games Selected!")
+        $("#searchBtn").prop("disabled", false);
+        $("#searchBtn").attr('class', 'btn-primary');
+        $('.spinnerWrapper').remove();
         return;
     }
     if (srcID == null) {
         setError("ERROR: No Speedrun.com Name Choosen")
+        $("#searchBtn").prop("disabled", false);
+        $("#searchBtn").attr('class', 'btn-primary');
+        $('.spinnerWrapper').remove();
         return;
     }
     if ($('#panelTitle').val() == "") {
         setError("ERROR: No title given to panel!")
+        $("#searchBtn").prop("disabled", false);
+        $("#searchBtn").attr('class', 'btn-primary');
+        $('.spinnerWrapper').remove();
         return;
     }
     $("#errorDialog").html('')

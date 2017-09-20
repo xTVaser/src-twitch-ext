@@ -15,42 +15,206 @@
 
 <body>
     <div class="container">
-        <div class="col-6-10">
-            <div class="row center">
-                <h1>Speedruns (Customizable)</h1>
+        <div class="col-4-10">
+            <div class="row">
+                <div class="col-5-10">
+                    <h3>Panel Theme (Currently Unsupported)</h3>
+                </div>
+                <div class="col-5-10">
+                    <select id="panelTheme">
+                        <option value="dark" selected>Dark</option>
+                        <option value="light">Light</option>
+                    </select>
+                </div>
+                <br class="clear">
             </div>
             <div class="row">
-                <label for="theme"><h2>Panel Theme (Currently Unsupported)</h2></label><br>
-                <select name="theme" id="panelTheme">
-                    <option value="dark" selected="">Dark</option>
-                    <option value="light">Light</option>
-                </select>
+                <div class="col-5-10">
+                    <h3>Don't Hide Personal Bests Initially</h3>
+                </div>
+                <div class="col-5-10">
+                    <input type="checkbox" id="hidePBs">
+                </div>
+                <br class="clear">
             </div>
             <div class="row">
-                <label for="collapse"><h2>Don't Hide Personal Bests Initially</h2></label><br>
-                <input type="checkbox" id="hidePBs" name="collapse">
+                <div class="col-5-10">
+                    <h3>Panel Title</h3>
+                </div>
+                <div class="col-5-10">
+                    <input id="panelTitle" type="text" name="title" value="" placeholder="My Personal Bests">
+                </div>
+                <br class="clear">
             </div>
             <div class="row">
-                <label for="title"><h2>Panel Title</h2></label><br>
-                <input id="panelTitle" type="text" name="title" value="" placeholder="My Personal Bests">
+                <div class="col-5-10">
+                    <h3>Speedrun.com Name</h3>
+                </div>
+                <div class="col-5-10">
+                    <input id="srcName" type="text" name="search" value="" placeholder="Speedrun.com Name">
+                </div>
+                <br class="clear">
             </div>
+            <div class="row">
+                <div class="col-5-10">
+                    <h3>Panel Title Background</h3>
+                </div>
+                <div class="col-5-10" id="titleBackgroundOptions">
+                    <select name="theme" id="panelTitleBackgroundType">
+                        <option value="image" selected>Built-in Image</option>
+                        <option value="solid">Solid Color</option>
+                        <option value="vGradient">Vertical Gradient</option>
+                        <option value="hGradient">Horizontal Gradient</option>
+                    </select>
+                </div>
+                <br class="clear">
+            </div>
+            <div class="row">
+                <div class="col-5-10">
+                    <h3>Panel Title Divider Color</h3>
+                </div>
+                <div class="col-5-10">
+                    <input type="color" value="#008000" id="panelTitleDividerColor">
+                </div>
+                <br class="clear">
+            </div>
+            <div class="row">
+                <div class="col-5-10">
+                    <h3>Game Title Divider Color</h3>
+                </div>
+                <div class="col-5-10">
+                    <input type="color" value="#205f6b" id="panelTitleDividerColor">
+                </div>
+                <br class="clear">
+            </div>
+            <div class="row">
+                <div class="col-5-10">
+                    <h3>Panel Title Shadow</h3>
+                </div>
+                <div class="col-5-10">
+                    <input type="checkbox" id="titleShadow">
+                </div>
+                <br class="clear">
+            </div>
+            <div class="row">
+                <div class="col-5-10">
+                    <h3>Panel Title Font Options</h3>
+                </div>
+                <div class="col-5-10">
+                    <div class="col-5-20">
+                        <label for="panelTitleFontBold">Bold</label>
+                        <input type="checkbox" id="panelTitleFontBold">
+                    </div>
+                    <div class="col-5-20">
+                        <label for="panelTitleFontItalic">Italic</label>
+                        <input type="checkbox" id="panelTitleFontItalic">
+                    </div>
+                    <div class="col-5-10">
+                        <label for="titleFont">Font Family</label>
+                        <select name="titleFont" id="panelTitleFont">
+                            <option value="'Roboto Condensed', sans-serif;" selected>Roboto Condensed</option>
+                            <option value="'Roboto', sans-serif;">Roboto</option>
+                            <option value="'Open Sans', sans-serif;">Open Sans</option>
+                            <option value="'Lato', sans-serif;">Lato</option>
+                            <option value="'Source Sans Pro', sans-serif;">Source Sans Pro</option>
+                            <option value="'Oswald', sans-serif;">Oswald</option>
+                            <option value="'Raleway', sans-serif;">Raleway</option>
+                            <option value="'PT Sans Narrow', sans-serif;">PT Sans Narrow</option>
+                            <option value="'Muli', sans-serif;">Muli</option>
+                            <option value="'Anton', sans-serif;">Anton</option>
+                            <option value="'Fjalla One', sans-serif;">Fjalla One</option>
+                        </select>
+                    </div>
+                </div>
+                <br class="clear">
+            </div>
+            <div class="row">
+                <div class="col-5-10">
+                    <h3>Game Title Font Options</h3>
+                </div>
+                <div class="col-5-10">
+                    <div class="col-5-20">
+                        <label for="gameTitleFontBold">Bold</label>
+                        <input type="checkbox" id="gameTitleFontBold">
+                    </div>
+                    <div class="col-5-20">
+                        <label for="gameTitleFontItalic">Italic</label>
+                        <input type="checkbox" id="gameTitleFontItalic">
+                    </div>
+                    <div class="col-5-10">
+                        <label for="gameTitleFont">Font Family</label>
+                        <select name="gameTitleFont" id="gameTitleFont">
+                            <option value="'Roboto Condensed', sans-serif;" selected>Roboto Condensed</option>
+                            <option value="'Roboto', sans-serif;">Roboto</option>
+                            <option value="'Open Sans', sans-serif;">Open Sans</option>
+                            <option value="'Lato', sans-serif;">Lato</option>
+                            <option value="'Source Sans Pro', sans-serif;">Source Sans Pro</option>
+                            <option value="'Oswald', sans-serif;">Oswald</option>
+                            <option value="'Raleway', sans-serif;">Raleway</option>
+                            <option value="'PT Sans Narrow', sans-serif;">PT Sans Narrow</option>
+                            <option value="'Muli', sans-serif;">Muli</option>
+                            <option value="'Anton', sans-serif;">Anton</option>
+                            <option value="'Fjalla One', sans-serif;">Fjalla One</option>
+                        </select>
+                    </div>
+                </div>
+                <br class="clear">
+            </div>
+            <div class="row">
+                <div class="col-5-10">
+                    <h3>PB Info Font Options</h3>
+                </div>
+                <div class="col-5-10">
+                    <div class="col-5-20">
+                        <label for="pbFontBold">Bold</label>
+                        <input type="checkbox" id="pbFontBold">
+                    </div>
+                    <div class="col-5-20">
+                        <label for="pbFontItalic">Italic</label>
+                        <input type="checkbox" id="pbFontItalic">
+                    </div>
+                    <div class="col-5-10">
+                        <label for="pbFont">Font Family</label>
+                        <select name="pbFont" id="pbFont">
+                            <option value="'Roboto Condensed', sans-serif;" selected>Roboto Condensed</option>
+                            <option value="'Roboto', sans-serif;">Roboto</option>
+                            <option value="'Open Sans', sans-serif;">Open Sans</option>
+                            <option value="'Lato', sans-serif;">Lato</option>
+                            <option value="'Source Sans Pro', sans-serif;">Source Sans Pro</option>
+                            <option value="'Oswald', sans-serif;">Oswald</option>
+                            <option value="'Raleway', sans-serif;">Raleway</option>
+                            <option value="'PT Sans Narrow', sans-serif;">PT Sans Narrow</option>
+                            <option value="'Muli', sans-serif;">Muli</option>
+                            <option value="'Anton', sans-serif;">Anton</option>
+                            <option value="'Fjalla One', sans-serif;">Fjalla One</option>
+                        </select>
+                    </div>
+                </div>
+                <br class="clear">
+            </div>
+        </div>
 
-            <div class="row">
-                <label for="search"><h2>Speedrun.com Name</h2></label>
-                <input id="srcName" type="text" name="search" value="" placeholder="Speedrun.com Name">
-            </div>
-
+        <div class="col-4-10">
             <div class="row">
                 <button id="searchBtn" type="button" name="button" class="btn-primary">Find Games</button>
             </div>
+            <div class="row errorOutput center" id="errorDialog">
+                <h3>SUCCESS: Saved Successfully!</h3></div>
+            <div class="row">
+                <button type="button" name="button" class="btn-warning" id="saveBtn">Save</button>
+            </div>
+            <div class="row center">
+                <div class="center" id="gamesHeader">
+                    <h3>Game List (Reorderable and Toggleable)</h3><br>
+                </div>
+            </div>
             <div class="row">
                 <div class="gameListing" id="gameListingContainer">
-                    <div class="center" id="gamesHeader">
-                        <h3>Game List (Reorderable and Toggleable)</h3><br></div>
                     <ul id="sortableGames" class="ui-sortable">
                         <li class="ui-state-default">
                             <div class="col-19-20">
-                                <input type="checkbox" value="ok6qlo1g" checked="">Jak II
+                                <input type="checkbox" value="ok6qlo1g" checked="">
+                                <input class="gameTitleBox" type="text" value="Jak II">
                             </div>
                             <div class="col-1-20">
                                 <i class="fa fa-bars" aria-hidden="true"></i>
@@ -58,21 +222,37 @@
                             <br class="clear">
                         </li>
                         <li class="ui-state-default">
-                            <input type="checkbox" value="3692x0dl" checked="">Jak II Flashgame
+                            <div class="col-19-20">
+                                <input type="checkbox" value="3692x0dl" checked="">
+                                <input class="gameTitleBox" type="text" value="Jak II Flashgame">
+                            </div>
+                            <div class="col-1-20">
+                                <i class="fa fa-bars" aria-hidden="true"></i>
+                            </div>
+                            <br class="clear">
                         </li>
                         <li class="ui-state-default">
-                            <input type="checkbox" value="ldemjl13" checked="">Counter-Strike: Global Offensive
+                            <div class="col-19-20">
+                                <input type="checkbox" value="ldemjl13" checked="">
+                                <input class="gameTitleBox" type="text" value="Counter-Strike: Global Offensive">
+                            </div>
+                            <div class="col-1-20">
+                                <i class="fa fa-bars" aria-hidden="true"></i>
+                            </div>
+                            <br class="clear">
                         </li>
                         <li class="ui-state-default">
-                            <input type="checkbox" value="nj1nww1p" checked="">Jak 3
+                            <div class="col-19-20">
+                                <input type="checkbox" value="nj1nww1p" checked="">
+                                <input class="gameTitleBox" type="text" value="Jak 3">
+                            </div>
+                            <div class="col-1-20">
+                                <i class="fa fa-bars" aria-hidden="true"></i>
+                            </div>
+                            <br class="clear">
                         </li>
                     </ul>
                 </div>
-            </div>
-            <div class="row errorOutput center" id="errorDialog">
-                <h3>SUCCESS: Saved Successfully!</h3></div>
-            <div class="row">
-                <button type="button" name="button" class="btn-warning" id="saveBtn">Save</button>
             </div>
         </div>
         <br class="clear">
