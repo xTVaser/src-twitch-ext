@@ -261,16 +261,16 @@ $("#saveBtn").click(function() {
     settings.gameTitleDivColor = $('#gameTitleDividerColor').val()
     settings.panelTitleShadow = $('#titleShadow').is(':checked')
     titleBackgroundType = $('#panelTitleBackgroundType').val().trim()
-    if (value == 'solid') {
+    if (titleBackgroundType == 'solid') {
         settings.panelTitleBackgroundType = 'solid'
         settings.panelTitleBackgroundColor1 = $('#solidBackgroundColor').val()
     }
-    else if (value == 'vGradient') {
+    else if (titleBackgroundType == 'vGradient') {
         settings.panelTitleBackgroundType = 'vGradient'
         settings.panelTitleBackgroundColor1 = $('#gradientColor1').val()
         settings.panelTitleBackgroundColor2 = $('#gradientColor2').val()
     }
-    else if (value == 'hGradient') {
+    else if (titleBackgroundType == 'hGradient') {
         settings.panelTitleBackgroundType = 'hGradient'
         settings.panelTitleBackgroundColor1 = $('#gradientColor1').val()
         settings.panelTitleBackgroundColor2 = $('#gradientColor2').val()

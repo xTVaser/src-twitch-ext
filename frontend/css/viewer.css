@@ -10,14 +10,28 @@ body {
 	width: 100%; /* having these set to a fixed number can hurt relative positioning */
 }
 
+.pbWrapper::-webkit-scrollbar {
+    width: 0.5em;
+}
+
+.pbWrapper::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+
+.pbWrapper::-webkit-scrollbar-thumb {
+  background-color: #232323;
+  outline: 1px solid slategrey;
+}
+
 .pbWrapper {
-	height: 400px;
+	height: 392px;
 	margin-top: 3px;
 	overflow: auto;
 }
 
 .fa-2x {
-    font-size: 1.5em;
+	font-size: 1em;
+    margin-top: 10%;
 }
 
 .fancyStripeGreen {
@@ -89,6 +103,7 @@ h2 {
 
 .pbRow a {
 	text-decoration: none;
+	cursor: default; /* disabled for now */
 }
 
 .truncate {
