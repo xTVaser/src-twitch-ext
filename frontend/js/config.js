@@ -187,6 +187,45 @@ $("#searchBtn").click(function() {
     searchForUser($("#srcName").val())
 })
 
+$('#panelTitleBackgroundType').change(function() {
+    value = $('#panelTitleBackgroundType').val().trim()
+    // Clear Container
+    $('#colorPickerContainer').html('')
+
+    if (value == 'image') {
+        // Do nothing, only got 1 image atm
+    }
+    else if (value == 'solid') {
+        spawnSolidColorPicker()
+    }
+    else if (value == 'vGradient') {
+        spawnGradientColorPicker("Top Color", "Bottom Color")
+    }
+    else {
+        spawnGradientColorPicker("Left Color", "Right Color")
+    }
+})
+
+function spawnSolidColorPicker() {
+    $('#colorPickerContainer').append(
+        `<div>
+            Panel Title Background Color
+            <input type="color" value="#FFFFFF" id="solidBackgroundColor">
+        </div>`
+    )
+}
+function spawnGradientColorPicker(label1, label2) {
+    $('#colorPickerContainer').append(
+        `<div>
+            ${label1}
+            <input type="color" value="#205f6b" id="gradientColor1">
+        </div>
+        <div>
+            ${label2}
+            <input type="color" value="#205f6b" id="gradientColor2">
+        </div>`
+    )
+}
 
 $("#saveBtn").click(function() {
 
@@ -221,6 +260,24 @@ $("#saveBtn").click(function() {
     settings.panelTitleDivColor = $('#panelTitleDividerColor').val()
     settings.gameTitleDivColor = $('#gameTitleDividerColor').val()
     settings.panelTitleShadow = $('#titleShadow').is(':checked')
+    titleBackgroundType = $('#panelTitleBackgroundType').val().trim()
+    if (value == 'solid') {
+        settings.panelTitleBackgroundType = 'solid'
+        settings.panelTitleBackgroundColor1 = $('#solidBackgroundColor').val()
+    }
+    else if (value == 'vGradient') {
+        settings.panelTitleBackgroundType = 'vGradient'
+        settings.panelTitleBackgroundColor1 = $('#gradientColor1').val()
+        settings.panelTitleBackgroundColor2 = $('#gradientColor2').val()
+    }
+    else if (value == 'hGradient') {
+        settings.panelTitleBackgroundType = 'hGradient'
+        settings.panelTitleBackgroundColor1 = $('#gradientColor1').val()
+        settings.panelTitleBackgroundColor2 = $('#gradientColor2').val()
+    }
+    else {
+        settings.panelTitleBackgroundType = 'image'
+    }
     // Panel Title Font
     settings.panelTitleFontBold = $('#panelTitleFontBold').is(':checked')
     settings.panelTitleFontItalic = $('#panelTitleFontItalic').is(':checked')

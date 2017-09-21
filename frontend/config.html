@@ -51,12 +51,16 @@
                     <h3>Panel Title Background</h3>
                 </div>
                 <div class="col-5-10" id="titleBackgroundOptions">
-                    <select name="theme" id="panelTitleBackgroundType">
-                        <option value="image" selected>Built-in Image</option>
-                        <option value="solid">Solid Color</option>
-                        <option value="vGradient">Vertical Gradient</option>
-                        <option value="hGradient">Horizontal Gradient</option>
-                    </select>
+                    <div>
+                        <select name="theme" id="panelTitleBackgroundType">
+                            <option value="image" selected>Built-in Image</option>
+                            <option value="solid">Solid Color</option>
+                            <option value="vGradient">Vertical Gradient</option>
+                            <option value="hGradient">Horizontal Gradient</option>
+                        </select>
+                    </div>
+                    <div id="colorPickerContainer">
+                    </div>
                 </div>
                 <br class="clear">
             </div>
@@ -102,7 +106,7 @@
                     </div>
                     <div>
                         <label for="panelTitleFontSize">Size</label>
-                        <input class="fontSize" type="number" min="1" max= "64" value="30" id="panelTitleFontSize">
+                        <input class="fontSize" type="number" min="1" max="64" value="30" id="panelTitleFontSize">
                     </div>
                     <div>
                         <label for="titleFont">Font Family</label>
@@ -138,7 +142,7 @@
                     </div>
                     <div>
                         <label for="panelHeaderFontSize">Size</label>
-                        <input class="fontSize" type="number" min="1" max= "64" value="15" id="panelHeaderFontSize">
+                        <input class="fontSize" type="number" min="1" max="64" value="15" id="panelHeaderFontSize">
                     </div>
                     <div>
                         <label for="panelHeaderFont">Font Family</label>
@@ -174,7 +178,7 @@
                     </div>
                     <div>
                         <label for="gameTitleFontSize">Size</label>
-                        <input class="fontSize" type="number" min="1" max= "64" value="19" id="gameTitleFontSize">
+                        <input class="fontSize" type="number" min="1" max="64" value="19" id="gameTitleFontSize">
                     </div>
                     <div>
                         <label for="gameTitleFont">Font Family</label>
@@ -210,7 +214,7 @@
                     </div>
                     <div>
                         <label for="pbFontSize">Size</label>
-                        <input class="fontSize" type="number" min="1" max= "64" value="15" id="pbFontSize">
+                        <input class="fontSize" type="number" min="1" max="64" value="15" id="pbFontSize">
                     </div>
                     <div>
                         <label for="pbFont">Font Family</label>

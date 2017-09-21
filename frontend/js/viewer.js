@@ -198,12 +198,9 @@ function renderPersonalBests() {
 
     // Disable the spinner
     $('.spinnerWrapper').remove();
-
-    // Begin Creating the Title Header
-    $(".frameWrapper").append(
-        `<div class="titleContainer outlineText">
-        </div>`
-    )
+    $('.titleContainer').css("display", "block")
+    $('.fancyStripeGreen').css("display", "block")
+    $('.pbWrapper').css("display", "block")
 
     // Add the Title
     $(".titleContainer").append(
@@ -226,18 +223,13 @@ function renderPersonalBests() {
         <br class="clear" />`
     )
 
-    // Visual Spacer
-    $(".frameWrapper").append(
-        `<div class="fancyStripeGreen"></div>`
-    )
-
     // Adding Games and PBs
     // Loop through every Game
     for (var i = 0; i < games.length; i++) {
         currentGame = pbList[games[i].id]
         gameName = games[i].name
         // Add Game Name / Collapsable button
-        $(".frameWrapper").append(
+        $(".pbWrapper").append(
             `<div class="gameTitle outlineText" id="g${i}">
                 <div class="col-8-10">
                     <h2>${gameName}</h2>
@@ -281,13 +273,7 @@ function renderPersonalBests() {
         pbHTML +=`</ul></div></div></div>`
 
         // Add to the panel
-        $(".frameWrapper").append(pbHTML)
-
-        // Check if there are scrollbars or not
-        if ($("html").height() > 500) {
-            // If so, adjust the frameWrapper to hide scrollbars
-            $(".frameWrapper").css("width", "301px");
-        }
+        $(".pbWrapper").append(pbHTML)
     } // end of game loop
 
     // Setup Streamer's Styling
@@ -295,6 +281,21 @@ function renderPersonalBests() {
     $(".fancyStripeGreen").css("background", `linear-gradient(180deg, #101010, ${settings.panelTitleDivColor}, #101010)`);
     // gameTitleDivColor
     $(".fancyStripeBlue").css("background", `linear-gradient(0deg, #101010, ${settings.gameTitleDivColor})`)
+
+    // panelBackgroundColor
+    if (settings.panelTitleBackgroundType == 'solid') {
+        $('.titleContainer').css("background", settings.panelTitleBackgroundColor1)
+    }
+    else if (settings.panelTitleBackgroundType == 'vGradient') {
+        $('.titleContainer').css("background", `linear-gradient(${settings.panelTitleBackgroundColor1}, ${settings.panelTitleBackgroundColor2})`)
+    }
+    else if (settings.panelTitleBackgroundType == 'hGradient') {
+        $('.titleContainer').css("background", `linear-gradient(left, ${settings.panelTitleBackgroundColor1}, ${settings.panelTitleBackgroundColor2})`)
+    }
+    else {
+        // do nothing, only one image and its the current default at the moment
+    }
+
     // panelTitleShadow
     if (settings.panelTitleShadow == true) {
         $(".outlineText").css("text-shadow", "2px 2px 3px #000, 2px 2px 3px #000")
