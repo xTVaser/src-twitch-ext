@@ -19,15 +19,13 @@ var morgan = require('morgan')
 
 /// Simple object to represent channel object in database
 class Channel {
-    constructor(key, theme, title, srcID, srcName, hidePBs, games) {
+    constructor(key, settings, srcID, srcName, games) {
         this.key = key
-        this.data = [{
-                name: 'theme',
-                value: theme
-            },
+        this.data = [
             {
-                name: 'title',
-                value: title
+                name: 'settings',
+                value: settings,
+                excludeFromIndexes: true
             },
             {
                 name: 'srcID',
@@ -36,10 +34,6 @@ class Channel {
             {
                 name: 'srcName',
                 value: srcName
-            },
-            {
-                name: 'hidePBs',
-                value: hidePBs
             },
             {
                 name: 'games',
@@ -93,7 +87,8 @@ app.post('/save', function(req, res) {
     // Actual data
     console.log(data)
     console.log(data.games)
-    const chan = new Channel(taskKey, data.theme, data.title, data.srcID, data.srcName, data.hidePBs, data.games)
+    // TODO strip tags before storing
+    const chan = new Channel(taskKey, data.settings, data.srcID, data.srcName, data.games)
     datastore.upsert(chan)
         .then(() => {
             res.send(JSON.stringify(response));

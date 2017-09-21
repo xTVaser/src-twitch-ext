@@ -8,10 +8,10 @@ body {
 }
 
 div.col-19-20 .gameTitleBox {
-    width: 75%;
+    width: auto;
 }
 
-input {
+.expandBox {
     margin-right: 25px;
 }
 

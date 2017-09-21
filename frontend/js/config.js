@@ -62,7 +62,11 @@ function getPersonalBest(url) {
         $("#sortableGames").append(
             `<li class=ui-state-default>
                 <div class="col-19-20">
-                    <input type=checkbox value="${game.id}" checked>${gameList[index].name}
+                    Display
+                    <input type=checkbox value="${game.id}" class="displayBox" checked>
+                    Initally Expand
+                    <input type="checkbox" value="ok6qlo1g" checked="" class="expandBox">
+                    <input class="gameTitleBox" type="text" value="${gameList[index].name}">
                 </div>
                 <div class="col-1-20">
                     <i class="fa fa-bars" aria-hidden="true"></i>
@@ -210,32 +214,52 @@ $("#saveBtn").click(function() {
     }
     $("#errorDialog").html('')
 
+    settings = {}
+    settings.theme = $('#panelTheme').val()
+    settings.title = $('#panelTitle').val()
+    // panel title background
+    settings.panelTitleDivColor = $('#panelTitleDividerColor').val()
+    settings.gameTitleDivColor = $('#gameTitleDividerColor').val()
+    settings.panelTitleShadow = $('#titleShadow').is(':checked')
+    // Panel Title Font
+    settings.panelTitleFontBold = $('#panelTitleFontBold').is(':checked')
+    settings.panelTitleFontItalic = $('#panelTitleFontItalic').is(':checked')
+    settings.panelTitleFont = $('#panelTitleFont').val()
+    // Game Title Font
+    settings.gameTitleFontBold = $('#gameTitleFontBold').is(':checked')
+    settings.gameTitleFontItalic = $('#gameTitleFontItalic').is(':checked')
+    settings.gameTitleFont = $('#gameTitleFont').val()
+    // PB Info Font
+    settings.pbFontBold = $('#pbFontBold').is(':checked')
+    settings.pbFontItalic = $('#pbFontItalic').is(':checked')
+    settings.pbFont = $('#pbFont').val()
+
     gamesToSend = []
     $('#sortableGames', function() {
         $(this).find('li').each(function() {
             game = {}
             var currentListItem = $(this)
-            var checkbox = currentListItem.find('input')
+            var checkbox = currentListItem.find('.displayBox')
             if (checkbox.is(':checked')) {
                 // Then we will add the game
                 gamesToSend.push({
-                    // TODO this is kinda weird with a lot of whitespace and a new line
-                    name: currentListItem.text().trim(),
-                    id: checkbox.val().trim() // Get rid of whitespace and new lines
+                    name: currentListItem.find('.gameTitleBox').val().trim(),
+                    id: checkbox.val().trim(),
+                    shouldExpand: currentListItem.find('.expandBox').is(':checked')
                 })
             }
         })
         // Re have all results
-        sendResult(gamesToSend)
+        sendResult(gamesToSend, settings)
     });
 
 });
 
-function sendResult(gamesToSend) {
-    hidePBs = true
-    if ($('#hidePBs').is(':checked')) {
-        hidePBs = false
-    }
+function sendResult(gamesToSend, settings) {
+    // TODO remove
+    console.log(gamesToSend)
+    console.log(settings)
+
     $.ajax({
         type: "POST",
         url: "https://extension.xtvaser.xyz/save",
@@ -244,11 +268,9 @@ function sendResult(gamesToSend) {
         },
         dataType: "json",
         data: {
-            theme: $('#panelTheme').val(),
-            title: $('#panelTitle').val(),
+            settings: JSON.stringify(settings),
             srcID: srcID,
             srcName: srcName,
-            hidePBs: hidePBs,
             games: JSON.stringify(gamesToSend)
         },
         success: function(res) {
