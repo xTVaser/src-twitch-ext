@@ -224,14 +224,17 @@ $("#saveBtn").click(function() {
     // Panel Title Font
     settings.panelTitleFontBold = $('#panelTitleFontBold').is(':checked')
     settings.panelTitleFontItalic = $('#panelTitleFontItalic').is(':checked')
+    settings.panelTitleFontSize = $('#panelTitleFontSize').val()
     settings.panelTitleFont = $('#panelTitleFont').val()
     // Game Title Font
     settings.gameTitleFontBold = $('#gameTitleFontBold').is(':checked')
     settings.gameTitleFontItalic = $('#gameTitleFontItalic').is(':checked')
+    settings.gameTitleFontSize = $('#gameTitleFontSize').val()
     settings.gameTitleFont = $('#gameTitleFont').val()
     // PB Info Font
     settings.pbFontBold = $('#pbFontBold').is(':checked')
     settings.pbFontItalic = $('#pbFontItalic').is(':checked')
+    settings.pbFontSize = $('#pbFontSize').val()
     settings.pbFont = $('#pbFont').val()
 
     gamesToSend = []

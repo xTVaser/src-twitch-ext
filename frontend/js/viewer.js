@@ -288,7 +288,53 @@ function renderPersonalBests() {
             // If so, adjust the frameWrapper to hide scrollbars
             $(".frameWrapper").css("width", "301px");
         }
+    } // end of game loop
+
+    // Setup Streamer's Styling
+    // panelTitleDivColor
+    $(".fancyStripeGreen").css("background", `linear-gradient(180deg, #101010, ${settings.panelTitleDivColor}, #101010)`);
+    // gameTitleDivColor
+    $(".fancyStripeBlue").css("background", `linear-gradient(0deg, #101010, ${settings.gameTitleDivColor})`)
+    // panelTitleShadow
+    if (settings.panelTitleShadow == true) {
+        $(".outlineText").css("text-shadow", "2px 2px 3px #000, 2px 2px 3px #000")
     }
+    // panelTitleFontBold
+    if (settings.panelTitleFontBold == false) { // Bold by default, so false
+        $(".titleContainer").css("font-weight", "400")
+    }
+    // panelTitleFontItalic
+    if (settings.panelTitleFontItalic == true) {
+        $(".titleContainer").css("font-style", "italic")
+    }
+    // panelTitleFontSize
+    $(".titleContainer").css("font-size", settings.panelTitleFontSize)
+    // panelTitleFont
+    $(".titleContainer").css("font-family", settings.panelTitleFont)
+    // gameTitleFontBold
+    if (settings.gameTitleFontBold == true) {
+        $(".gameTitle").css("font-weight", "700")
+    }
+    // gameTitleFontItalic
+    if (settings.gameTitleFontItalic == true) {
+        $(".gameTitle").css("font-style", "italic")
+    }
+    // gameTitleFontSize
+    $(".gameTitle").css("font-size", settings.gameTitleFontSize)
+    // gameTitleFont
+    $(".gameTitle").css("font-family", settings.gameTitleFont)
+    // pbFontBold
+    if (settings.pbFontBold == true) {
+        $(".pbRow").css("font-weight", 700)
+    }
+    // pbFontItalic
+    if (settings.pbFontItalic == true) {
+        $(".pbRow").css("font-style", "italic")
+    }
+    // pbFontSize
+    $(".pbRow").css("font-size", settings.pbFontSize)
+    // pbFont
+    $(".pbRow").css("font-family", settings.pbFont)
 }
 
 function secondsToTimeStr(seconds) {

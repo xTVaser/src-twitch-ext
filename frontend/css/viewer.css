@@ -17,7 +17,7 @@ body {
 .fancyStripeGreen {
 	height: 5px;
 	margin-bottom: 5px;
-	background: linear-gradient(180deg, #205f6b, green, #101010);
+	background: linear-gradient(180deg, #101010, green, #101010);
 	background-color: green;
 }
 .fancyStripeBlue {
