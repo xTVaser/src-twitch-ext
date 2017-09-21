@@ -254,12 +254,18 @@ $("#saveBtn").click(function() {
     $("#errorDialog").html('')
 
     settings = {}
-    settings.theme = $('#panelTheme').val()
+    settings.theme = "stub"//$('#panelTheme').val()
     settings.title = $('#panelTitle').val()
+    // scrollbar
+    settings.scrollbarColor = $('#scrollbarColor').val()
     // panel title background
     settings.panelTitleDivColor = $('#panelTitleDividerColor').val()
     settings.gameTitleDivColor = $('#gameTitleDividerColor').val()
+    // wr cycling
+    settings.wrRainbow = $('#wrRainbow').is(':checked')
     settings.panelTitleShadow = $('#titleShadow').is(':checked')
+    // height of panel title
+    settings.panelTitleHeight = $('#panelTitleHeight').val()
     titleBackgroundType = $('#panelTitleBackgroundType').val().trim()
     if (titleBackgroundType == 'solid') {
         settings.panelTitleBackgroundType = 'solid'
@@ -282,21 +288,31 @@ $("#saveBtn").click(function() {
     settings.panelTitleFontBold = $('#panelTitleFontBold').is(':checked')
     settings.panelTitleFontItalic = $('#panelTitleFontItalic').is(':checked')
     settings.panelTitleFontSize = $('#panelTitleFontSize').val()
+    settings.panelTitleFontColor = $('#panelTitleFontColor').val()
     settings.panelTitleFont = $('#panelTitleFont').val()
     // Panel Header Font
     settings.panelHeaderFontBold = $('#panelHeaderFontBold').is(':checked')
     settings.panelHeaderFontItalic = $('#panelHeaderFontItalic').is(':checked')
     settings.panelHeaderFontSize = $('#panelHeaderFontSize').val()
+    settings.panelHeaderFontColor = $('#panelHeaderFontColor').val()
     settings.panelHeaderFont = $('#panelHeaderFont').val()
     // Game Title Font
     settings.gameTitleFontBold = $('#gameTitleFontBold').is(':checked')
     settings.gameTitleFontItalic = $('#gameTitleFontItalic').is(':checked')
     settings.gameTitleFontSize = $('#gameTitleFontSize').val()
+    settings.gameTitleFontColor = $('#gameTitleFontColor').val()
     settings.gameTitleFont = $('#gameTitleFont').val()
+    // Game Category Font
+    settings.gameCategoryFontBold = $('#gameCategoryFontBold').is(':checked')
+    settings.gameCategoryFontItalic = $('#gameCategoryFontItalic').is(':checked')
+    settings.gameCategoryFontSize = $('#gameCategoryFontSize').val()
+    settings.gameCategoryFontColor = $('#gameCategoryFontColor').val()
+    settings.gameCategoryFont = $('#gameCategoryFont').val()
     // PB Info Font
     settings.pbFontBold = $('#pbFontBold').is(':checked')
     settings.pbFontItalic = $('#pbFontItalic').is(':checked')
     settings.pbFontSize = $('#pbFontSize').val()
+    settings.pbFontColor = $('#pbFontColor').val()
     settings.pbFont = $('#pbFont').val()
 
     gamesToSend = []

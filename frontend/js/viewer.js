@@ -296,10 +296,22 @@ function renderPersonalBests() {
         // do nothing, only one image and its the current default at the moment
     }
 
+    // Scrollbar Color
+    $(".pbWrapper::-webkit-scrollbar-thumb").css("background-color", settings.scrollbarColor)
+
+    // WR Rainbow Cycling
+    if (settings.wrRainbow == true) {
+        $(".wrTime").css("animation", "rainbowText 10s linear infinite")
+    }
+
+    // Panel title Height
+    $(".titleContainer").css("height", `${settings.panelTitleHeight}px`)
+
     // panelTitleShadow
     if (settings.panelTitleShadow == true) {
         $(".outlineText").css("text-shadow", "2px 2px 3px #000, 2px 2px 3px #000")
     }
+
     // panelTitleFontBold
     if (settings.panelTitleFontBold == false) { // Bold by default, so false
         $("#viewerPanelTitle").css("font-weight", "400")
@@ -310,6 +322,8 @@ function renderPersonalBests() {
     }
     // panelTitleFontSize
     $("#viewerPanelTitle").css("font-size", `${settings.panelTitleFontSize}px`)
+    // panelTitleFontColor
+    $("#viewerPanelTitle").css("color", settings.panelTitleFontColor)
     // panelTitleFont
     $("#viewerPanelTitle").css("font-family", settings.panelTitleFont)
 
@@ -323,6 +337,8 @@ function renderPersonalBests() {
     }
     // panelHeaderFontSize
     $("#headers").css("font-size", `${settings.panelHeaderFontSize}px`)
+    // panelHeaderFontColor
+    $("#headers").css("color", settings.panelHeaderFontColor)
     // panelHeaderFont
     $("#headers").css("font-family", settings.panelHeaderFont)
 
@@ -336,20 +352,40 @@ function renderPersonalBests() {
     }
     // gameTitleFontSize
     $(".gameTitle").css("font-size", `${settings.gameTitleFontSize}px`)
+    // gameTitleFontColor
+    $(".gameTitle").css("color", settings.gameTitleFontColor)
     // gameTitleFont
     $(".gameTitle").css("font-family", settings.gameTitleFont)
+
+    // gameCategoryFontBold
+    if (settings.gameCategoryFontBold == true) {
+        $(".categoryName").css("font-weight", "700")
+    }
+    // gameCategoryFontItalic
+    if (settings.gameCategoryFontItalic == true) {
+        $(".categoryName").css("font-style", "italic")
+    }
+    // gameCategoryFontSize
+    $(".categoryName").css("font-size", `${settings.gameCategoryFontSize}px`)
+    // gameCategoryFontColor
+    $(".categoryName").css("color", settings.gameCategoryFontColor)
+    // gameCategoryFont
+    $(".categoryName").css("font-family", settings.gameCategoryFont)
+
     // pbFontBold
     if (settings.pbFontBold == true) {
-        $(".pbRow").css("font-weight", 700)
+        $(".pbTime").css("font-weight", 700)
     }
     // pbFontItalic
     if (settings.pbFontItalic == true) {
-        $(".pbRow").css("font-style", "italic")
+        $(".pbTime").css("font-style", "italic")
     }
     // pbFontSize
-    $(".pbRow").css("font-size", `${settings.pbFontSize}px`)
+    $(".pbTime").css("font-size", `${settings.pbFontSize}px`)
+    // gameCategoryFontColor
+    $(".pbTime").css("color", settings.pbFontColor)
     // pbFont
-    $(".pbRow").css("font-family", settings.pbFont)
+    $(".pbTime").css("font-family", settings.pbFont)
 }
 
 function secondsToTimeStr(seconds) {
