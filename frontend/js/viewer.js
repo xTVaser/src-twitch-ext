@@ -301,16 +301,30 @@ function renderPersonalBests() {
     }
     // panelTitleFontBold
     if (settings.panelTitleFontBold == false) { // Bold by default, so false
-        $(".titleContainer").css("font-weight", "400")
+        $("#viewerPanelTitle").css("font-weight", "400")
     }
     // panelTitleFontItalic
     if (settings.panelTitleFontItalic == true) {
-        $(".titleContainer").css("font-style", "italic")
+        $("#viewerPanelTitle").css("font-style", "italic")
     }
     // panelTitleFontSize
-    $(".titleContainer").css("font-size", settings.panelTitleFontSize)
+    $("#viewerPanelTitle").css("font-size", `${settings.panelTitleFontSize}px`)
     // panelTitleFont
-    $(".titleContainer").css("font-family", settings.panelTitleFont)
+    $("#viewerPanelTitle").css("font-family", settings.panelTitleFont)
+
+    // panelHeaderFontBold
+    if (settings.panelHeaderFontBold == false) { // Bold by default, so false
+        $("#headers").css("font-weight", "400")
+    }
+    // panelHeaderFontItalic
+    if (settings.panelHeaderFontItalic == true) {
+        $("#headers").css("font-style", "italic")
+    }
+    // panelHeaderFontSize
+    $("#headers").css("font-size", `${settings.panelHeaderFontSize}px`)
+    // panelHeaderFont
+    $("#headers").css("font-family", settings.panelHeaderFont)
+
     // gameTitleFontBold
     if (settings.gameTitleFontBold == true) {
         $(".gameTitle").css("font-weight", "700")
@@ -320,7 +334,7 @@ function renderPersonalBests() {
         $(".gameTitle").css("font-style", "italic")
     }
     // gameTitleFontSize
-    $(".gameTitle").css("font-size", settings.gameTitleFontSize)
+    $(".gameTitle").css("font-size", `${settings.gameTitleFontSize}px`)
     // gameTitleFont
     $(".gameTitle").css("font-family", settings.gameTitleFont)
     // pbFontBold
@@ -332,7 +346,7 @@ function renderPersonalBests() {
         $(".pbRow").css("font-style", "italic")
     }
     // pbFontSize
-    $(".pbRow").css("font-size", settings.pbFontSize)
+    $(".pbRow").css("font-size", `${settings.pbFontSize}px`)
     // pbFont
     $(".pbRow").css("font-family", settings.pbFont)
 }

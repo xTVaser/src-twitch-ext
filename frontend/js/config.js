@@ -226,6 +226,11 @@ $("#saveBtn").click(function() {
     settings.panelTitleFontItalic = $('#panelTitleFontItalic').is(':checked')
     settings.panelTitleFontSize = $('#panelTitleFontSize').val()
     settings.panelTitleFont = $('#panelTitleFont').val()
+    // Panel Header Font
+    settings.panelHeaderFontBold = $('#panelHeaderFontBold').is(':checked')
+    settings.panelHeaderFontItalic = $('#panelHeaderFontItalic').is(':checked')
+    settings.panelHeaderFontSize = $('#panelHeaderFontSize').val()
+    settings.panelHeaderFont = $('#panelHeaderFont').val()
     // Game Title Font
     settings.gameTitleFontBold = $('#gameTitleFontBold').is(':checked')
     settings.gameTitleFontItalic = $('#gameTitleFontItalic').is(':checked')
