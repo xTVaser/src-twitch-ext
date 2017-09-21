@@ -1,8 +1,7 @@
 /// Javascript to render the personal bests on the channel page
 
 var games
-var title
-var theme
+var settings
 var srcID
 
 var pbList = new Array()
@@ -22,8 +21,7 @@ window.Twitch.ext.onAuthorized(function(auth) {
         data: {},
         success: function (res) {
            games = JSON.parse(res.data.games)
-           title = res.data.title
-           theme = res.data.theme
+           settings = JSON.parse(res.data.settings)
            srcID = res.data.srcID
            hidePBs = res.data.hidePBs
            // First we will get all the runner's personal bests
@@ -36,7 +34,7 @@ window.Twitch.ext.onAuthorized(function(auth) {
            });
         },
         error: function () {
-            // do nothing, just spin
+            // TODO if nothing returned, display a message saying so
         }
     });
 });
@@ -201,8 +199,6 @@ function renderPersonalBests() {
     // Disable the spinner
     $('.spinnerWrapper').remove();
 
-    // TODO css theme selection
-
     // Begin Creating the Title Header
     $(".frameWrapper").append(
         `<div class="titleContainer outlineText">
@@ -212,7 +208,7 @@ function renderPersonalBests() {
     // Add the Title
     $(".titleContainer").append(
         `<div class="row center">
-            <h1 id="viewerPanelTitle">${title}</h1>
+            <h1 id="viewerPanelTitle">${settings.title}</h1>
         </div>`
     )
 
@@ -254,7 +250,7 @@ function renderPersonalBests() {
             <div class="fancyStripeBlue"></div>`
         )
         displayPBs = "none"
-        if (hidePBs == "false") {
+        if (games[i].shouldExpand == true) {
             displayPBs = "block"
         }
         pbHTML =
