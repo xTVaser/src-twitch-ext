@@ -25,28 +25,28 @@ class Channel {
         var settingsObj = JSON.parse(settings)
         for (var k in settingsObj) {
             if (settingsObj.hasOwnProperty(k)) {
-               settingsObj[k] = striptags(settingsObj[k])
+                if (settingsObj[k] != true && settingsObj[k] != false) {
+                    settingsObj[k] = striptags(settingsObj[k])
+                }
             }
         }
         srcID = striptags(srcID)
         srcName = striptags(srcName)
         // Allow br tags, thats it
         var gamesObj = JSON.parse(games)
-        console.log(gamesObj)
         for (var i = 0; i < gamesObj.length; i++) {
             for (var k in gamesObj[i]) {
                 if (k == "name" && gamesObj[i].hasOwnProperty(k)) {
                     gamesObj[i][k] = striptags(gamesObj[i][k], '<br>')
-                }
-                else if (gamesObj[i].hasOwnProperty(k)) {
-                    gamesObj[i][k] = striptags(gamesObj[i][k])
+                } else if (gamesObj[i].hasOwnProperty(k)) {
+                    if (gamesObj[i][k] != true & gamesObj[i][k] != false) {
+                        gamesObj[i][k] = striptags(gamesObj[i][k])
+                    }
                 }
             }
         }
-        console.log(gamesObj)
         this.key = key
-        this.data = [
-            {
+        this.data = [{
                 name: 'settings',
                 value: JSON.stringify(settingsObj),
                 excludeFromIndexes: true
@@ -75,10 +75,14 @@ const app = express();
 const PORT = 443;
 
 // create a write stream (in append mode)
-var accessLogStream = fs.createWriteStream('./logs.log', {flags: 'a'})
+var accessLogStream = fs.createWriteStream('./logs.log', {
+    flags: 'a'
+})
 
 // setup the logger
-app.use(morgan('combined', {stream: accessLogStream}))
+app.use(morgan('combined', {
+    stream: accessLogStream
+}))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false

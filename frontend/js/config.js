@@ -6,7 +6,6 @@ $("#sortableGames").disableSelection();
 var authObject = null;
 var srcID = null;
 var srcName = null;
-var canSave = false;
 
 window.Twitch.ext.onAuthorized(function(auth) {
     authObject = auth;
@@ -28,9 +27,7 @@ window.Twitch.ext.onAuthorized(function(auth) {
         success: function(res) {
             savedData = res.data
             if (savedData != null) {
-                $('#panelTheme').val(savedData.theme)
-                $('#panelTitle').val(savedData.title)
-                $('#srcName').val(savedData.srcName)
+                restorePreviousSettings(savedData)
             }
 
             $('#saveBtn').prop("disabled", false)
@@ -45,8 +42,77 @@ window.Twitch.ext.onAuthorized(function(auth) {
             $("#searchBtn").attr('class', 'btn-primary');
         }
     });
-
 });
+
+function restorePreviousSettings(savedData) {
+
+    var settings = JSON.parse(savedData.settings)
+    var games = JSON.parse(savedData.games)
+    srcID = savedData.srcID;
+    srcName = savedData.srcName;
+
+    // Restore All Settings
+    //$('#panelTheme').val(settings.theme)
+    $('#panelTitle').val(settings.title)
+    $('#srcName').val(srcName)
+    $('#titleBackgroundOptions').val(settings.panelTitleBackgroundType)
+    // handle this
+    $('#scrollbarColor').val(settings.scrollbarColor)
+    $('#panelTitleDividerColor').val(settings.panelTitleDivColor)
+    $('#gameTitleDividerColor').val(settings.gameTitleDivColor)
+    $('#wrRainbow').prop('checked', settings.wrRainbow == true);
+    $('#titleShadow').prop('checked', settings.panelTitleShadow == true);
+    $('#panelTitleHeight').val(settings.panelTitleHeight)
+    $('#panelTitleFontBold').prop('checked', settings.panelTitleFontBold == true);
+    $('#panelTitleFontItalic').prop('checked', settings.panelTitleFontItalic == true);
+    $('#panelTitleFontSize').val(settings.panelTitleFontSize)
+    $('#panelTitleFontColor').val(settings.panelTitleFontColor)
+    $('#panelTitleFont').val(settings.panelTitleFont)
+    $('#panelHeaderFontBold').prop('checked', settings.panelHeaderFontBold == true);
+    $('#panelHeaderFontItalic').prop('checked', settings.panelHeaderFontItalic == true);
+    $('#panelHeaderFontSize').val(settings.panelHeaderFontSize)
+    $('#panelHeaderFontColor').val(settings.panelHeaderFontColor)
+    $('#panelHeaderFont').val(settings.panelHeaderFont)
+    $('#gameTitleFontBold').prop('checked', settings.gameTitleFontBold == true);
+    $('#gameTitleFontItalic').prop('checked', settings.gameTitleFontItalic == true);
+    $('#gameTitleFontSize').val(settings.gameTitleFontSize)
+    $('#gameTitleFontColor').val(settings.gameTitleFontColor)
+    $('#gameTitleFont').val(settings.gameTitleFont)
+    $('#gameCategoryFontBold').prop('checked', settings.gameCategoryFontBold == true);
+    $('#gameCategoryFontItalic').prop('checked', settings.gameCategoryFontItalic == true);
+    $('#gameCategoryFontSize').val(settings.gameCategoryFontSize)
+    $('#gameCategoryFontColor').val(settings.gameCategoryFontColor)
+    $('#gameCategoryFont').val(settings.gameCategoryFont)
+    $('#pbFontBold').prop('checked', settings.pbFontBold == true);
+    $('#pbFontItalic').prop('checked', settings.pbFontItalic == true);
+    $('#pbFontSize').val(settings.pbFontSize)
+    $('#pbFontColor').val(settings.pbFontColor)
+    $('#pbFont').val(settings.pbFont)
+
+    // Repopulate Game List
+    for (var i = 0; i < games.length; i++) {
+        var gameName
+        var gameID
+        var shouldExpand
+        for (var k in games[i]) {
+            if (k == 'name' && games[i].hasOwnProperty(k)) {
+                gameName = games[i][k]
+            }
+            else if (k == 'id' && games[i].hasOwnProperty(k)) {
+                gameID = games[i][k]
+            }
+            else if (k == 'shouldExpand' && games[i].hasOwnProperty(k)) {
+                if (games[i][k] == true) {
+                    shouldExpand = 'checked'
+                }
+                else {
+                    shouldExpand = ''
+                }
+            }
+        }
+        addGameToList(gameID, gameName, '', shouldExpand)
+    }
+}
 
 function setError(string) {
     $("#errorDialog").html(
@@ -59,22 +125,26 @@ function getPersonalBest(url) {
         game = json.data
         index = gameList.findIndex(x => x.id === game.id)
         gameList[index].name = game.names.international
-        $("#sortableGames").append(
-            `<li class=ui-state-default>
-                <div class="col-19-20">
-                    Remove
-                    <input type=checkbox value="${game.id}" class="displayBox" checked>
-                    Initally Expand
-                    <input type="checkbox" value="ok6qlo1g" checked="" class="expandBox">
-                    <input class="gameTitleBox" type="text" value="${gameList[index].name}">
-                </div>
-                <div class="col-1-20">
-                    <i class="fa fa-bars" aria-hidden="true"></i>
-                </div>
-                <br class="clear">
-            </li>`
-        )
+        addGameToList(game.id, gameList[index].name, '', '')
     }))
+}
+
+function addGameToList(gameID, gameName, removeBox, expandBox) {
+    $("#sortableGames").append(
+        `<li class=ui-state-default>
+            <div class="col-19-20">
+                Remove
+                <input type=checkbox value="${gameID}" class="displayBox" ${removeBox}>
+                Initally Expand
+                <input type="checkbox" value="ok6qlo1g" class="expandBox" ${expandBox}>
+                <input class="gameTitleBox" type="text" value="${gameName}">
+            </div>
+            <div class="col-1-20">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+            <br class="clear">
+        </li>`
+    )
 }
 
 var gameList = []
@@ -321,7 +391,7 @@ $("#saveBtn").click(function() {
             game = {}
             var currentListItem = $(this)
             var checkbox = currentListItem.find('.displayBox')
-            if (checkbox.is(':checked')) {
+            if (checkbox.is(':checked') == false) {
                 // Then we will add the game
                 gamesToSend.push({
                     name: currentListItem.find('.gameTitleBox').val().trim(),
