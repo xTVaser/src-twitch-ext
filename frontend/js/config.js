@@ -62,7 +62,7 @@ function getPersonalBest(url) {
         $("#sortableGames").append(
             `<li class=ui-state-default>
                 <div class="col-19-20">
-                    Display
+                    Remove
                     <input type=checkbox value="${game.id}" class="displayBox" checked>
                     Initally Expand
                     <input type="checkbox" value="ok6qlo1g" checked="" class="expandBox">

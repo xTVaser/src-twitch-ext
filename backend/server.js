@@ -16,15 +16,39 @@ const Datastore = require('@google-cloud/datastore');
 const twitch = require('./twitchlib')
 const lib = require('./lib')
 var morgan = require('morgan')
+var striptags = require('striptags');
 
 /// Simple object to represent channel object in database
 class Channel {
     constructor(key, settings, srcID, srcName, games) {
+        // Sanitize Data
+        var settingsObj = JSON.parse(settings)
+        for (var k in settingsObj) {
+            if (settingsObj.hasOwnProperty(k)) {
+               settingsObj[k] = striptags(settingsObj[k])
+            }
+        }
+        srcID = striptags(srcID)
+        srcName = striptags(srcName)
+        // Allow br tags, thats it
+        var gamesObj = JSON.parse(games)
+        console.log(gamesObj)
+        for (var i = 0; i < gamesObj.length; i++) {
+            for (var k in gamesObj[i]) {
+                if (k == "name" && gamesObj[i].hasOwnProperty(k)) {
+                    gamesObj[i][k] = striptags(gamesObj[i][k], '<br>')
+                }
+                else if (gamesObj[i].hasOwnProperty(k)) {
+                    gamesObj[i][k] = striptags(gamesObj[i][k])
+                }
+            }
+        }
+        console.log(gamesObj)
         this.key = key
         this.data = [
             {
                 name: 'settings',
-                value: settings,
+                value: JSON.stringify(settingsObj),
                 excludeFromIndexes: true
             },
             {
@@ -37,10 +61,11 @@ class Channel {
             },
             {
                 name: 'games',
-                value: games,
+                value: JSON.stringify(gamesObj),
                 excludeFromIndexes: true
             }
         ]
+
     }
 }
 
@@ -85,9 +110,8 @@ app.post('/save', function(req, res) {
         token.channel_id
     ]);
     // Actual data
-    console.log(data)
-    console.log(data.games)
-    // TODO strip tags before storing
+    //console.log(data)
+    //console.log(data.games)
     const chan = new Channel(taskKey, data.settings, data.srcID, data.srcName, data.games)
     datastore.upsert(chan)
         .then(() => {
@@ -154,6 +178,7 @@ app.post('/fetch', function(req, res) {
 });
 
 app.use((req, res, next) => {
+    // try to remove these after
     console.log('Got request', req.path, req.method);
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With', 'x-extension-jwt');
     res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
