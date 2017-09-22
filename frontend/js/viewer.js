@@ -15,35 +15,41 @@ window.Twitch.ext.onAuthorized(function(auth) {
         type: "POST",
         url: "https://extension.xtvaser.xyz/fetch",
         headers: {
-          'x-extension-jwt': auth.token,
+            'x-extension-jwt': auth.token,
         },
         dataType: "json",
         data: {},
-        success: function (res) {
-           games = JSON.parse(res.data.games)
-           settings = JSON.parse(res.data.settings)
-           srcID = res.data.srcID
-           hidePBs = res.data.hidePBs
-           // First we will get all the runner's personal bests
-           $.ajax({
-               url: "https://www.speedrun.com/api/v1/users/" + srcID + "/personal-bests",
-               dataType: "json",
-               success: function(data) {
-                   getPersonalBests(data)
-               }
-           });
+        success: function(res) {
+            if (res.hasOwnProperty('data') == true) {
+                games = JSON.parse(res.data.games)
+                settings = JSON.parse(res.data.settings)
+                srcID = res.data.srcID
+                hidePBs = res.data.hidePBs
+                // First we will get all the runner's personal bests
+                $.ajax({
+                    url: "https://www.speedrun.com/api/v1/users/" + srcID + "/personal-bests",
+                    dataType: "json",
+                    success: function(data) {
+                        getPersonalBests(data)
+                        console.log(data)
+                    }
+                });
+            }
+            else {
+                $('.spinnerError').html('Extension not Configured')
+            }
         },
-        error: function () {
-            // TODO if nothing returned, display a message saying so
+        error: function() {
+            $('.spinnerError').html('Extension Error')
         }
     });
 });
 
-var asyncLoop = function(o){
+var asyncLoop = function(o) {
     var iter = -1
     var length = o.length
 
-    var loop = function(){
+    var loop = function() {
         iter++
         if (iter == length) {
             o.callback();
@@ -95,6 +101,7 @@ function getPersonalBests(json) {
 }
 
 var deferreds = []
+
 function getCategoryName(url, currentPBEntry) {
     deferreds.push($.getJSON(url, function(json) {
         category = json.data
@@ -114,8 +121,8 @@ function getCategories() {
     }
     // Then the variable link to fully construct the category link
     $.when.apply(null, deferreds).done(function() {
-            getSubcategories()
-            deferreds = [] // clear ready for next group of calls
+        getSubcategories()
+        deferreds = [] // clear ready for next group of calls
     });
 }
 
@@ -149,8 +156,8 @@ function getSubcategories() {
     }
     // Finally, get the WR's information
     $.when.apply(null, deferreds).done(function() {
-            getWorldRecords()
-            deferreds = [] // clear ready for next group of calls
+        getWorldRecords()
+        deferreds = [] // clear ready for next group of calls
     });
 }
 
@@ -183,8 +190,8 @@ function getWorldRecords() {
     }
     // Now we can finally render the contents of the panel
     $.when.apply(null, deferreds).done(function() {
-            renderPersonalBests()
-            deferreds = [] // clear ready for next group of calls
+        renderPersonalBests()
+        deferreds = [] // clear ready for next group of calls
     });
 }
 
@@ -246,7 +253,7 @@ function renderPersonalBests() {
             displayPBs = "block"
         }
         pbHTML =
-        `<div class="pbContainer">
+            `<div class="pbContainer">
             <div class="row">
                 <div class="pbRow outlineText" id="pbRow${i}" style="display: ${displayPBs};">
                     <ul>`
@@ -264,13 +271,13 @@ function renderPersonalBests() {
             // TODO links have to be added to a whitelist....but only specific allowed.
             // regex allowed?
             pbHTML +=
-            `<li>
+                `<li>
                 <div class="col-6-10 truncate"><a class="categoryName" href="#" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
                 <div class="col-2-10 rightAlign"><a class="pbTime" href="#" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
                 <div class="col-2-10 rightAlign"><a class="wrTime" href="#" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
             </li>`
         }
-        pbHTML +=`</ul></div></div></div>`
+        pbHTML += `</ul></div></div></div>`
 
         // Add to the panel
         $(".pbWrapper").append(pbHTML)
@@ -285,19 +292,13 @@ function renderPersonalBests() {
     // panelBackgroundColor
     if (settings.panelTitleBackgroundType == 'solid') {
         $('.titleContainer').css("background", settings.panelTitleBackgroundColor1)
-    }
-    else if (settings.panelTitleBackgroundType == 'vGradient') {
+    } else if (settings.panelTitleBackgroundType == 'vGradient') {
         $('.titleContainer').css("background", `linear-gradient(${settings.panelTitleBackgroundColor1}, ${settings.panelTitleBackgroundColor2})`)
-    }
-    else if (settings.panelTitleBackgroundType == 'hGradient') {
-        $('.titleContainer').css("background", `linear-gradient(left, ${settings.panelTitleBackgroundColor1}, ${settings.panelTitleBackgroundColor2})`)
-    }
-    else {
+    } else if (settings.panelTitleBackgroundType == 'hGradient') {
+        $('.titleContainer').css("background", `linear-gradient(90deg, ${settings.panelTitleBackgroundColor1}, ${settings.panelTitleBackgroundColor2})`)
+    } else {
         // do nothing, only one image and its the current default at the moment
     }
-
-    // Scrollbar Color
-    $(".pbWrapper::-webkit-scrollbar-thumb").css("background-color", settings.scrollbarColor)
 
     // WR Rainbow Cycling
     if (settings.wrRainbow == true) {
@@ -305,7 +306,17 @@ function renderPersonalBests() {
     }
 
     // Panel title Height
-    $(".titleContainer").css("height", `${settings.panelTitleHeight}px`)
+    var newPanelTitleHeight = settings.panelTitleHeight
+    if (newPanelTitleHeight < 80) {
+        newPanelTitleHeight = 80
+    }
+    else if (newPanelTitleHeight > 150) {
+        newPanelTitleHeight = 150
+    }
+    $(".titleContainer").css("height", `${newPanelTitleHeight}px`)
+    // Adjust the pbWrapper's height accordingly
+    var newPbWrapperHeight = 500 - newPanelTitleHeight - 8
+    $(".pbWrapper").css("height", `${newPbWrapperHeight}px`)
 
     // panelTitleShadow
     if (settings.panelTitleShadow == true) {
@@ -398,11 +409,11 @@ function secondsToTimeStr(seconds) {
 
 function dynamicSort(property) {
     var sortOrder = 1;
-    if(property[0] === "-") {
+    if (property[0] === "-") {
         sortOrder = -1;
         property = property.substr(1);
     }
-    return function (a,b) {
+    return function(a, b) {
         var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
         return result * sortOrder;
     }
@@ -420,6 +431,8 @@ $(document).ready(function() {
             <i></i>
             <i></i>
             <i></i>
+          </div>
+          <div class="spinnerError center">
           </div>
         </section>`
     )

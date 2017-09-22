@@ -55,9 +55,19 @@ function restorePreviousSettings(savedData) {
     //$('#panelTheme').val(settings.theme)
     $('#panelTitle').val(settings.title)
     $('#srcName').val(srcName)
-    $('#titleBackgroundOptions').val(settings.panelTitleBackgroundType)
-    // handle this
-    $('#scrollbarColor').val(settings.scrollbarColor)
+    $('#panelTitleBackgroundType').val(settings.panelTitleBackgroundType)
+    if (settings.panelTitleBackgroundType == 'image') {
+        // Do nothing, only got 1 image atm
+    }
+    else if (settings.panelTitleBackgroundType == 'solid') {
+        spawnSolidColorPicker(settings.panelTitleBackgroundColor1)
+    }
+    else if (settings.panelTitleBackgroundType == 'vGradient') {
+        spawnGradientColorPicker("Top Color", "Bottom Color", settings.panelTitleBackgroundColor1, settings.panelTitleBackgroundColor2)
+    }
+    else {
+        spawnGradientColorPicker("Left Color", "Right Color", settings.panelTitleBackgroundColor1, settings.panelTitleBackgroundColor2)
+    }
     $('#panelTitleDividerColor').val(settings.panelTitleDivColor)
     $('#gameTitleDividerColor').val(settings.gameTitleDivColor)
     $('#wrRainbow').prop('checked', settings.wrRainbow == true);
@@ -266,33 +276,33 @@ $('#panelTitleBackgroundType').change(function() {
         // Do nothing, only got 1 image atm
     }
     else if (value == 'solid') {
-        spawnSolidColorPicker()
+        spawnSolidColorPicker('#ffffff')
     }
     else if (value == 'vGradient') {
-        spawnGradientColorPicker("Top Color", "Bottom Color")
+        spawnGradientColorPicker("Top Color", "Bottom Color", '#ffffff', '#000000')
     }
     else {
-        spawnGradientColorPicker("Left Color", "Right Color")
+        spawnGradientColorPicker("Left Color", "Right Color", '#ffffff', '#000000')
     }
 })
 
-function spawnSolidColorPicker() {
+function spawnSolidColorPicker(color1) {
     $('#colorPickerContainer').append(
         `<div>
             Panel Title Background Color
-            <input type="color" value="#FFFFFF" id="solidBackgroundColor">
+            <input type="color" value="${color1}" id="solidBackgroundColor">
         </div>`
     )
 }
-function spawnGradientColorPicker(label1, label2) {
+function spawnGradientColorPicker(label1, label2, color1, color2) {
     $('#colorPickerContainer').append(
         `<div>
             ${label1}
-            <input type="color" value="#205f6b" id="gradientColor1">
+            <input type="color" value="${color1}" id="gradientColor1">
         </div>
         <div>
             ${label2}
-            <input type="color" value="#205f6b" id="gradientColor2">
+            <input type="color" value="${color2}" id="gradientColor2">
         </div>`
     )
 }
@@ -326,8 +336,6 @@ $("#saveBtn").click(function() {
     settings = {}
     settings.theme = "stub"//$('#panelTheme').val()
     settings.title = $('#panelTitle').val()
-    // scrollbar
-    settings.scrollbarColor = $('#scrollbarColor').val()
     // panel title background
     settings.panelTitleDivColor = $('#panelTitleDividerColor').val()
     settings.gameTitleDivColor = $('#gameTitleDividerColor').val()
