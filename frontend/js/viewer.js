@@ -31,7 +31,6 @@ window.Twitch.ext.onAuthorized(function(auth) {
                     dataType: "json",
                     success: function(data) {
                         getPersonalBests(data)
-                        console.log(data)
                     }
                 });
             }

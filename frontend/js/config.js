@@ -416,8 +416,6 @@ $("#saveBtn").click(function() {
 
 function sendResult(gamesToSend, settings) {
     // TODO remove
-    console.log(gamesToSend)
-    console.log(settings)
 
     $.ajax({
         type: "POST",
@@ -433,7 +431,6 @@ function sendResult(gamesToSend, settings) {
             games: JSON.stringify(gamesToSend)
         },
         success: function(res) {
-            console.log(res)
             if (res.status == 501) {
                 setError("Saving Error: Database Error, Contact Extension Developer")
             } else {
