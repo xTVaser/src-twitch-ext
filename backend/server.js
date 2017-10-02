@@ -88,6 +88,17 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 
+app.options('/save', function(req, res) {
+    console.log("in fetch options")
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, x-extension-jwt');
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    var response = {
+        status: 200
+    }
+    res.send(response)
+})
+
 app.post('/save', function(req, res) {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With', 'x-extension-jwt');
     res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
