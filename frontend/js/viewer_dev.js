@@ -414,6 +414,11 @@ function renderPersonalBests() {
 }
 
 function secondsToTimeStr(seconds) {
+    // Truncate off milliseconds
+    // TODO modify output to truncate hours / get rid of hours
+    // so that we dont have to sacrifice space to display milliseconds
+    seconds = Math.round(seconds)
+
     minutes = parseInt(seconds / 60)
     seconds = ("0" + seconds % 60).slice(-2);
     hours = ("0" + parseInt(minutes / 60)).slice(-2);
