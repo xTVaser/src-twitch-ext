@@ -179,8 +179,8 @@ function getWorldRecords() {
             currentPBEntry = pbList[gameIDs[i]][j]
             // Construct API Request
             requestURL = `https://www.speedrun.com/api/v1/leaderboards/${currentPBEntry.gameId}/category/${currentPBEntry.categoryID}?top=1`
-            if (currentPBEntry.subCategoryID != null) {
-                requestURL += `&var-${currentPBEntry.subCategoryID}=${currentPBEntry.subcategoryVal}`
+            if (currentPBEntry.subcategoryID != null) {
+                requestURL += `&var-${currentPBEntry.subcategoryID}=${currentPBEntry.subcategoryVal}`
             }
             if (currentPBEntry.isLevel == false) {
                 examineWorldRecordEntry(requestURL, currentPBEntry)
