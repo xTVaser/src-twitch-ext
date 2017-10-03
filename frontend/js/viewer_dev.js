@@ -1,4 +1,5 @@
 /// Javascript to render the personal bests on the channel page
+var loaded = false
 
 var games
 var settings
@@ -10,6 +11,10 @@ window.Twitch.ext.onAuthorized(function(auth) {
 
     // console.log('The JWT that will be passed to the EBS is', auth.token);
     // console.log('The channel ID is', auth.channelId);
+    if (loaded == true) {
+        return;
+    }
+    loaded = true
 
     $.ajax({
         type: "POST",
