@@ -120,8 +120,7 @@ h2 {
 
 .pbRow a {
     text-decoration: none;
-    cursor: default;
-    /* disabled for now */
+    /*cursor: default;*/
 }
 
 .truncate {

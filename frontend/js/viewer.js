@@ -1,4 +1,5 @@
 /// Javascript to render the personal bests on the channel page
+var loaded = false
 
 var games
 var settings
@@ -10,6 +11,10 @@ window.Twitch.ext.onAuthorized(function(auth) {
 
     // console.log('The JWT that will be passed to the EBS is', auth.token);
     // console.log('The channel ID is', auth.channelId);
+    if (loaded == true) {
+        return;
+    }
+    loaded = true
 
     $.ajax({
         type: "POST",
@@ -179,8 +184,8 @@ function getWorldRecords() {
             currentPBEntry = pbList[gameIDs[i]][j]
             // Construct API Request
             requestURL = `https://www.speedrun.com/api/v1/leaderboards/${currentPBEntry.gameId}/category/${currentPBEntry.categoryID}?top=1`
-            if (currentPBEntry.subCategoryID != null) {
-                requestURL += `&var-${currentPBEntry.subCategoryID}=${currentPBEntry.subcategoryVal}`
+            if (currentPBEntry.subcategoryID != null) {
+                requestURL += `&var-${currentPBEntry.subcategoryID}=${currentPBEntry.subcategoryVal}`
             }
             if (currentPBEntry.isLevel == false) {
                 examineWorldRecordEntry(requestURL, currentPBEntry)
@@ -271,9 +276,9 @@ function renderPersonalBests() {
             // regex allowed?
             pbHTML +=
                 `<li>
-                <div class="col-6-10 truncate"><a class="categoryName" href="#" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
-                <div class="col-2-10 rightAlign"><a class="pbTime" href="#" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
-                <div class="col-2-10 rightAlign"><a class="wrTime" href="#" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
+                <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
             </li>`
         }
         pbHTML += `</ul></div></div></div>`
@@ -392,13 +397,33 @@ function renderPersonalBests() {
     }
     // pbFontSize
     $(".pbTime").css("font-size", `${settings.pbFontSize}px`)
-    // gameCategoryFontColor
+    // pbFontColor
     $(".pbTime").css("color", settings.pbFontColor)
     // pbFont
     $(".pbTime").css("font-family", settings.pbFont)
+
+    // wrFontBold
+    if (settings.pbFontBold == true) {
+        $(".wrTime").css("font-weight", 700)
+    }
+    // wrFontItalic
+    if (settings.pbFontItalic == true) {
+        $(".wrTime").css("font-style", "italic")
+    }
+    // wrFontSize
+    $(".wrTime").css("font-size", `${settings.pbFontSize}px`)
+    // wrFontColor
+    $(".wrTime").css("color", settings.pbFontColor)
+    // wrFont
+    $(".wrTime").css("font-family", settings.pbFont)
 }
 
 function secondsToTimeStr(seconds) {
+    // Truncate off milliseconds
+    // TODO modify output to truncate hours / get rid of hours
+    // so that we dont have to sacrifice space to display milliseconds
+    seconds = Math.round(seconds)
+
     minutes = parseInt(seconds / 60)
     seconds = ("0" + seconds % 60).slice(-2);
     hours = ("0" + parseInt(minutes / 60)).slice(-2);
