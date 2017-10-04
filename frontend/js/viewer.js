@@ -412,8 +412,6 @@ function renderPersonalBests() {
     }
     // wrFontSize
     $(".wrTime").css("font-size", `${settings.pbFontSize}px`)
-    // wrFontColor
-    $(".wrTime").css("color", settings.pbFontColor)
     // wrFont
     $(".wrTime").css("font-family", settings.pbFont)
 }
