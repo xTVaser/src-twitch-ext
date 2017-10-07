@@ -38,8 +38,7 @@ window.Twitch.ext.onAuthorized(function(auth) {
                         getPersonalBests(data)
                     }
                 });
-            }
-            else {
+            } else {
                 $('.spinnerError').html('Extension not Configured')
             }
         },
@@ -204,6 +203,8 @@ $(document).on('click', '.gameTitle', function(e) {
     $('#pbRow' + id).slideToggle('fast');
 });
 
+
+
 /// Renders the Panel with the given settings
 function renderPersonalBests() {
 
@@ -314,8 +315,7 @@ function renderPersonalBests() {
     var newPanelTitleHeight = settings.panelTitleHeight
     if (newPanelTitleHeight < 80) {
         newPanelTitleHeight = 80
-    }
-    else if (newPanelTitleHeight > 150) {
+    } else if (newPanelTitleHeight > 150) {
         newPanelTitleHeight = 150
     }
     $(".titleContainer").css("height", `${newPanelTitleHeight}px`)
@@ -418,6 +418,27 @@ function renderPersonalBests() {
     $(".wrTime").css("font-size", `${settings.pbFontSize}px`)
     // wrFont
     $(".wrTime").css("font-family", settings.pbFont)
+
+    // Hover colors for links, progammatically darker
+    $(".categoryName, .pbTime, .wrTime").hover(
+        function(e) {
+            nonHoverColor = rgb2hex($(e.target).css("color"))
+            hoverColor = (parseInt(nonHoverColor.replace(/^#/, ''), 16) & 0xfefefe) >> 1;
+            $(e.target).css("color", `#${hoverColor.toString(16)}`)
+            e.target.name = nonHoverColor
+        },
+        function(e) {
+            $(e.target).css("color", e.target.name)
+            e.target.name = ""
+        });
+}
+
+function rgb2hex(rgb) {
+    rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+    function hex(x) {
+        return ("0" + parseInt(x).toString(16)).slice(-2);
+    }
+    return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }
 
 function secondsToTimeStr(seconds) {
