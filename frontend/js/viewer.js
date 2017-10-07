@@ -309,6 +309,7 @@ function renderPersonalBests() {
         $(".wrTime").css("animation", "rainbowText 10s linear infinite")
     }
 
+
     // Panel title Height
     var newPanelTitleHeight = settings.panelTitleHeight
     if (newPanelTitleHeight < 80) {
@@ -321,6 +322,9 @@ function renderPersonalBests() {
     // Adjust the pbWrapper's height accordingly
     var newPbWrapperHeight = 500 - newPanelTitleHeight - 8
     $(".pbWrapper").css("height", `${newPbWrapperHeight}px`)
+
+    // Panel Background Color
+    $("body").css("background-color", `${settings.panelBackgroundColor}`)
 
     // panelTitleShadow
     if (settings.panelTitleShadow == true) {

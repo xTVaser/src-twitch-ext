@@ -70,6 +70,7 @@ function restorePreviousSettings(savedData) {
     }
     $('#panelTitleDividerColor').val(settings.panelTitleDivColor)
     $('#gameTitleDividerColor').val(settings.gameTitleDivColor)
+    $('#panelBackgroundColor').val(settings.panelBackgroundColor)
     $('#wrRainbow').prop('checked', settings.wrRainbow == true);
     $('#titleShadow').prop('checked', settings.panelTitleShadow == true);
     $('#panelTitleHeight').val(settings.panelTitleHeight)
@@ -339,6 +340,8 @@ $("#saveBtn").click(function() {
     // panel title background
     settings.panelTitleDivColor = $('#panelTitleDividerColor').val()
     settings.gameTitleDivColor = $('#gameTitleDividerColor').val()
+    // panel background color
+    settings.panelBackgroundColor = $('#panelBackgroundColor').val()
     // wr cycling
     settings.wrRainbow = $('#wrRainbow').is(':checked')
     settings.panelTitleShadow = $('#titleShadow').is(':checked')
