@@ -9,6 +9,7 @@ var srcName = null;
 
 window.Twitch.ext.onAuthorized(function(auth) {
     authObject = auth;
+    //document.getElementById("previewFrame").contentWindow.renderPreview(authObject)
     // console.log('The JWT that will be passed to the EBS is', authObject.token);
     // console.log('The channel ID is', authObject.channelId);
     $('#saveBtn').prop("disabled", true)
@@ -72,14 +73,11 @@ function restorePreviousSettings(savedData) {
     $('#panelTitleBackgroundType').val(settings.panelTitleBackgroundType)
     if (settings.panelTitleBackgroundType == 'image') {
         // Do nothing, only got 1 image atm
-    }
-    else if (settings.panelTitleBackgroundType == 'solid') {
+    } else if (settings.panelTitleBackgroundType == 'solid') {
         spawnSolidColorPicker(settings.panelTitleBackgroundColor1)
-    }
-    else if (settings.panelTitleBackgroundType == 'vGradient') {
+    } else if (settings.panelTitleBackgroundType == 'vGradient') {
         spawnGradientColorPicker("Top Color", "Bottom Color", settings.panelTitleBackgroundColor1, settings.panelTitleBackgroundColor2)
-    }
-    else {
+    } else {
         spawnGradientColorPicker("Left Color", "Right Color", settings.panelTitleBackgroundColor1, settings.panelTitleBackgroundColor2)
     }
     $('#panelTitleDividerColor').val(settings.panelTitleDivColor)
@@ -134,15 +132,12 @@ function restorePreviousSettings(savedData) {
         for (var k in games[i]) {
             if (k == 'name' && games[i].hasOwnProperty(k)) {
                 gameName = games[i][k]
-            }
-            else if (k == 'id' && games[i].hasOwnProperty(k)) {
+            } else if (k == 'id' && games[i].hasOwnProperty(k)) {
                 gameID = games[i][k]
-            }
-            else if (k == 'shouldExpand' && games[i].hasOwnProperty(k)) {
+            } else if (k == 'shouldExpand' && games[i].hasOwnProperty(k)) {
                 if (games[i][k] == true) {
                     shouldExpand = 'checked'
-                }
-                else {
+                } else {
                     shouldExpand = ''
                 }
             }
@@ -301,14 +296,11 @@ $('#panelTitleBackgroundType').change(function() {
 
     if (value == 'image') {
         // Do nothing, only got 1 image atm
-    }
-    else if (value == 'solid') {
+    } else if (value == 'solid') {
         spawnSolidColorPicker('#ffffff')
-    }
-    else if (value == 'vGradient') {
+    } else if (value == 'vGradient') {
         spawnGradientColorPicker("Top Color", "Bottom Color", '#ffffff', '#000000')
-    }
-    else {
+    } else {
         spawnGradientColorPicker("Left Color", "Right Color", '#ffffff', '#000000')
     }
 })
@@ -321,6 +313,7 @@ function spawnSolidColorPicker(color1) {
         </div>`
     )
 }
+
 function spawnGradientColorPicker(label1, label2, color1, color2) {
     $('#colorPickerContainer').append(
         `<div>
@@ -361,7 +354,7 @@ $("#saveBtn").click(function() {
     $("#errorDialog").html('')
 
     settings = {}
-    settings.theme = "stub"//$('#panelTheme').val()
+    settings.theme = "stub" //$('#panelTheme').val()
     settings.title = $('#panelTitle').val()
     // panel title background
     settings.panelTitleDivColor = $('#panelTitleDividerColor').val()
@@ -384,18 +377,15 @@ $("#saveBtn").click(function() {
     if (titleBackgroundType == 'solid') {
         settings.panelTitleBackgroundType = 'solid'
         settings.panelTitleBackgroundColor1 = $('#solidBackgroundColor').val()
-    }
-    else if (titleBackgroundType == 'vGradient') {
+    } else if (titleBackgroundType == 'vGradient') {
         settings.panelTitleBackgroundType = 'vGradient'
         settings.panelTitleBackgroundColor1 = $('#gradientColor1').val()
         settings.panelTitleBackgroundColor2 = $('#gradientColor2').val()
-    }
-    else if (titleBackgroundType == 'hGradient') {
+    } else if (titleBackgroundType == 'hGradient') {
         settings.panelTitleBackgroundType = 'hGradient'
         settings.panelTitleBackgroundColor1 = $('#gradientColor1').val()
         settings.panelTitleBackgroundColor2 = $('#gradientColor2').val()
-    }
-    else {
+    } else {
         settings.panelTitleBackgroundType = 'image'
     }
     // Panel Title Font
@@ -451,8 +441,6 @@ $("#saveBtn").click(function() {
 });
 
 function sendResult(gamesToSend, settings) {
-    // TODO remove
-
     $.ajax({
         type: "POST",
         url: "https://extension.xtvaser.xyz/save",
@@ -471,10 +459,15 @@ function sendResult(gamesToSend, settings) {
                 setError("Saving Error: Database Error, Contact Extension Developer")
             } else {
                 setError("SUCCESS: Saved Successfully!")
+                document.getElementById('previewFrame').contentWindow.location.reload(true);
             }
         },
         error: function() {
             setError("ERROR: An Unexpected Error Occurred, Contact Extension Developer")
         }
     });
+}
+
+function previewLoaded() {
+    document.getElementById("previewFrame").contentWindow.renderPreview(authObject)
 }
