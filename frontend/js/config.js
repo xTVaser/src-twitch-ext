@@ -84,8 +84,20 @@ function restorePreviousSettings(savedData) {
     }
     $('#panelTitleDividerColor').val(settings.panelTitleDivColor)
     $('#gameTitleDividerColor').val(settings.gameTitleDivColor)
-    $('#panelBackgroundColor').val(settings.panelBackgroundColor)
+    if (settings.panelBackgroundColor != undefined) {
+        $('#panelBackgroundColor').val(settings.panelBackgroundColor)
+    }
     $('#wrRainbow').prop('checked', settings.wrRainbow == true);
+    // misc settings
+    if (settings.miscShow != undefined && settings.miscSep != undefined) {
+        $('#miscShow').prop('checked', settings.miscShow == true);
+        $('#miscSep').prop('checked', settings.miscSep == true);
+    }
+    // il settings
+    if (settings.ilShow != undefined && settings.ilSep != undefined) {
+        $('#ilShow').prop('checked', settings.ilShow == true);
+        $('#ilSep').prop('checked', settings.ilSep == true);
+    }
     $('#titleShadow').prop('checked', settings.panelTitleShadow == true);
     $('#panelTitleHeight').val(settings.panelTitleHeight)
     $('#panelTitleFontBold').prop('checked', settings.panelTitleFontBold == true);
@@ -358,6 +370,13 @@ $("#saveBtn").click(function() {
     settings.panelBackgroundColor = $('#panelBackgroundColor').val()
     // wr cycling
     settings.wrRainbow = $('#wrRainbow').is(':checked')
+    // misc settings
+    settings.miscShow = $('#miscShow').is(':checked')
+    settings.miscSep = $('#miscSep').is(':checked')
+    // il settings
+    settings.ilShow = $('#ilShow').is(':checked')
+    settings.ilSep = $('#ilSep').is(':checked')
+    // panel title shadow
     settings.panelTitleShadow = $('#titleShadow').is(':checked')
     // height of panel title
     settings.panelTitleHeight = $('#panelTitleHeight').val()

@@ -85,11 +85,13 @@ function getPersonalBests(json) {
                     categoryLink: null,
                     subcategoryID: null, // may not exist, will leave null if that is the case
                     subcategoryVal: null, // may not exist, will leave null if that is the case
+                    levelID: run.level, // will be null if not a level
                     variables: run.values, // We have no guarantee which variables are subcategories or not until we check
                     pbTime: run.times.primary_t,
                     pbLink: run.weblink,
                     wrLink: null,
                     wrTime: null,
+                    isMisc: false,
                     isLevel: run.level != null,
                     rank: personalBests[iter].place
                 })
@@ -110,6 +112,7 @@ function getCategoryName(url, currentPBEntry) {
         category = json.data
         currentPBEntry.categoryName = category.name
         currentPBEntry.categoryLink = category.weblink
+        currentPBEntry.isMisc = category.miscellaneous
     }))
 }
 
@@ -193,6 +196,45 @@ function getWorldRecords() {
     }
     // Now we can finally render the contents of the panel
     $.when.apply(null, deferreds).done(function() {
+        getLevelInfo()
+        deferreds = [] // clear ready for next group of calls
+    });
+}
+
+function examineLevelEntry(url, currentPBEntry) {
+    deferreds.push($.getJSON(url, function(json) {
+        level = json.data
+        currentPBEntry.categoryName = level.name
+    }))
+}
+
+function examineLevelWorldRecord(url, currentPBEntry) {
+    deferreds.push($.getJSON(url, function(json) {
+        wr = json.data
+        currentPBEntry.wrLink = wr.runs[0].run.weblink
+        currentPBEntry.wrTime = wr.runs[0].run.times.primary_t
+    }))
+}
+
+function getLevelInfo() {
+    gameIDs = Object.keys(pbList)
+    // format for api link
+    // ../levels/nwl7kg9v
+    for (var i = 0; i < gameIDs.length; i++) {
+        for (var j = 0; j < pbList[gameIDs[i]].length; j++) {
+            currentPBEntry = pbList[gameIDs[i]][j]
+            if (currentPBEntry.isLevel == true) {
+                // Construct API Request
+                requestURL = `https://www.speedrun.com/api/v1/levels/${currentPBEntry.levelID}`
+                examineLevelEntry(requestURL, currentPBEntry)
+                // Get the Level WR as well
+                requestURL = `https://www.speedrun.com/api/v1/leaderboards/${currentPBEntry.gameId}/level/${currentPBEntry.levelID}/${currentPBEntry.categoryID}`
+                examineLevelWorldRecord(requestURL, currentPBEntry)
+            }
+        }
+    }
+    // Now we can finally render the contents of the panel
+    $.when.apply(null, deferreds).done(function() {
         renderPersonalBests()
         deferreds = [] // clear ready for next group of calls
     });
@@ -269,12 +311,15 @@ function renderPersonalBests() {
         for (var j = 0; j < currentGame.length; j++) {
 
             pb = currentGame[j]
-            // Skip ILs
-            if (pb.isLevel == true) {
+            // Skip misc
+            if ((settings.miscShow == false || settings.miscSep == true) && pb.isMisc == true) {
                 continue
             }
-            // TODO links have to be added to a whitelist....but only specific allowed.
-            // regex allowed?
+            // Skip ils
+            if ((settings.ilShow == false || settings.ilSep == true) && pb.isLevel == true) {
+                continue
+            }
+
             pbHTML +=
                 `<li>
                 <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
@@ -282,6 +327,45 @@ function renderPersonalBests() {
                 <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
             </li>`
         }
+        // If we wanted to seperate runs, print misc > ils now
+        if (settings.miscShow == true && settings.miscSep == true) {
+            pbHTML +=
+                `<li>
+                <div><p class="timeHeader">Miscellaneous Categories</div>
+            </li>`
+            for (var j = 0; j < currentGame.length; j++) {
+                pb = currentGame[j]
+                // Only mess with misc categories
+                if (pb.isMisc == true) {
+                    pbHTML +=
+                        `<li>
+                        <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                        <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                        <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
+                    </li>`
+                }
+            }
+        }
+
+        if (settings.ilShow == true && settings.ilSep == true) {
+            pbHTML +=
+                `<li>
+                <div><p class="timeHeader">Individual Levels</div>
+            </li>`
+            for (var j = 0; j < currentGame.length; j++) {
+                pb = currentGame[j]
+                // Only mess with misc categories
+                if (pb.isLevel == true) {
+                    pbHTML +=
+                        `<li>
+                        <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                        <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                        <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
+                    </li>`
+                }
+            }
+        }
+
         pbHTML += `</ul></div></div></div>`
 
         // Add to the panel
