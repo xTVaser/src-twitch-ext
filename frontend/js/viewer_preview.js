@@ -1,6 +1,4 @@
 /// Javascript to render the personal bests on the channel page
-var loaded = false
-
 var games
 var settings
 var srcID
@@ -9,12 +7,28 @@ var pbList = new Array()
 
 function renderPreview(auth) {
 
-    // console.log('The JWT that will be passed to the EBS is', auth.token);
-    // console.log('The channel ID is', auth.channelId);
-    if (loaded == true) {
-        return;
-    }
-    loaded = true
+    // Clear the Preview
+    pbList = new Array()
+    $("#previewHolder").html(
+        `<div class="frameWrapper">
+            <div class="titleContainer outlineText" style="display: none;"></div>
+            <div class="fancyStripeGreen" style="display: none;"></div>
+            <div class="pbWrapper" style="display: none;"></div>
+            <section class="spinnerWrapper">
+              <div class="spinner">
+                <i></i>
+                <i></i>
+                <i></i>
+                <i></i>
+                <i></i>
+                <i></i>
+                <i></i>
+              </div>
+              <div class="spinnerError center">
+              </div>
+            </section>
+        </div>`
+    )
 
     $.ajax({
         type: "POST",
@@ -205,6 +219,7 @@ function examineLevelEntry(url, currentPBEntry) {
     deferreds.push($.getJSON(url, function(json) {
         level = json.data
         currentPBEntry.categoryName = level.name
+        currentPBEntry.categoryLink = level.weblink
     }))
 }
 
@@ -412,7 +427,8 @@ function renderPersonalBests() {
     $(".pbWrapper").css("height", `${newPbWrapperHeight}px`)
 
     // Panel Background Color
-    $("body").css("background-color", `${settings.panelBackgroundColor}`)
+    $("#previewHolder").css("background-color", `${settings.panelBackgroundColor}`)
+    $(".pbWrapper").css("background-color", `${settings.panelBackgroundColor}`)
 
     // panelTitleShadow
     if (settings.panelTitleShadow == true) {
@@ -507,6 +523,21 @@ function renderPersonalBests() {
     // wrFont
     $(".wrTime").css("font-family", settings.pbFont)
 
+    // timeHeaderFontBold
+    if (settings.timeHeaderFontBold == true) {
+        $(".timeHeader").css("font-weight", 700)
+    }
+    // timeHeaderFontItalic
+    if (settings.timeHeaderFontItalic == true) {
+        $(".timeHeader").css("font-style", "italic")
+    }
+    // timeHeaderFontSize
+    $(".timeHeader").css("font-size", `${settings.timeHeaderFontSize}px`)
+    // timeHeaderFontColor
+    $(".timeHeader").css("color", settings.timeHeaderFontColor)
+    // timeHeaderFont
+    $(".timeHeader").css("font-family", settings.timeHeaderFont)
+
     // Hover colors for links, progammatically darker
     $(".categoryName, .pbTime, .wrTime").hover(
         function(e) {
@@ -553,25 +584,3 @@ function dynamicSort(property) {
         return result * sortOrder;
     }
 }
-
-$(document).ready(function() {
-
-    $(".frameWrapper").append(
-        `<section class="spinnerWrapper">
-          <div class="spinner">
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-          </div>
-          <div class="spinnerError center">
-          </div>
-        </section>`
-    )
-    $(function(){
-        parent.previewLoaded();
-    })
-})

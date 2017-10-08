@@ -5,50 +5,39 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="css/vividspinner.css">
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/config.css">
     <link rel="stylesheet" href="css/font-awesome.css">
     <link rel="stylesheet" href="css/jquery-ui.css">
+    <link rel="stylesheet" href="css/vividspinner.css">
+    <link rel="stylesheet" href="css/viewer_preview.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700" rel="stylesheet">
 </head>
 
 <body>
     <div class="container">
         <div class="col-4-10">
-            <!-- <div class="row">
+            <div class="row config">
                 <div class="col-5-10">
-                    <h3>Panel Theme (Currently Unsupported)</h3>
-                </div>
-                <div class="col-5-10">
-                    <select id="panelTheme">
-                        <option value="dark" selected>Dark</option>
-                        <option value="light">Light</option>
-                    </select>
-                </div>
-                <br class="clear">
-            </div> -->
-            <div class="row">
-                <div class="col-5-10">
-                    <h3>Panel Title(*)</h3>
+                    <h3 class="config">Panel Title(*)</h3>
                 </div>
                 <div class="col-5-10">
                     <input id="panelTitle" type="text" name="title" value="" placeholder="My Personal Bests">
                 </div>
                 <br class="clear">
             </div>
-            <div class="row">
+            <div class="row config">
                 <div class="col-5-10">
-                    <h3>Speedrun.com Name(*)</h3>
+                    <h3 class="config">Speedrun.com Name(*)</h3>
                 </div>
                 <div class="col-5-10">
                     <input id="srcName" type="text" name="search" value="" placeholder="Speedrun.com Name">
                 </div>
                 <br class="clear">
             </div>
-            <div class="row">
+            <div class="row config">
                 <div class="col-5-10">
-                    <h3>Panel Title Background</h3>
+                    <h3 class="config">Panel Title Background</h3>
                 </div>
                 <div class="col-5-10" id="titleBackgroundOptions">
                     <div>
@@ -64,45 +53,45 @@
                 </div>
                 <br class="clear">
             </div>
-            <div class="row">
+            <div class="row config">
                 <div class="col-5-10">
-                    <h3>Panel Background Color</h3>
+                    <h3 class="config">Panel Background Color</h3>
                 </div>
                 <div class="col-5-10">
                     <input type="color" value="#101010" id="panelBackgroundColor">
                 </div>
                 <br class="clear">
             </div>
-            <div class="row">
+            <div class="row config">
                 <div class="col-5-10">
-                    <h3>Panel Title Divider Color</h3>
+                    <h3 class="config">Panel Title Divider Color</h3>
                 </div>
                 <div class="col-5-10">
                     <input type="color" value="#008000" id="panelTitleDividerColor">
                 </div>
                 <br class="clear">
             </div>
-            <div class="row">
+            <div class="row config">
                 <div class="col-5-10">
-                    <h3>Game Title Divider Color</h3>
+                    <h3 class="config">Game Title Divider Color</h3>
                 </div>
                 <div class="col-5-10">
                     <input type="color" value="#205f6b" id="gameTitleDividerColor">
                 </div>
                 <br class="clear">
             </div>
-            <div class="row">
+            <div class="row config">
                 <div class="col-5-10">
-                    <h3>WR Time Rainbow Cycling</h3>
+                    <h3 class="config">WR Time Rainbow Cycling</h3>
                 </div>
                 <div class="col-5-10">
                     <input type="checkbox" id="wrRainbow">
                 </div>
                 <br class="clear">
             </div>
-            <div class="row">
+            <div class="row config">
                 <div class="col-5-10">
-                    <h3>Miscellaneous Run Options</h3>
+                    <h3 class="config">Miscellaneous Run Options</h3>
                 </div>
                 <div class="col-5-10">
                     <input type="checkbox" id="miscShow" checked>Show
@@ -110,9 +99,9 @@
                 </div>
                 <br class="clear">
             </div>
-            <div class="row">
+            <div class="row config">
                 <div class="col-5-10">
-                    <h3>Individual Level Options</h3>
+                    <h3 class="config">Individual Level Options</h3>
                 </div>
                 <div class="col-5-10">
                     <input type="checkbox" id="ilShow" checked>Show
@@ -120,27 +109,27 @@
                 </div>
                 <br class="clear">
             </div>
-            <div class="row">
+            <div class="row config">
                 <div class="col-5-10">
-                    <h3>Panel Title Shadow</h3>
+                    <h3 class="config">Panel Title Shadow</h3>
                 </div>
                 <div class="col-5-10">
                     <input type="checkbox" id="titleShadow">
                 </div>
                 <br class="clear">
             </div>
-            <div class="row">
+            <div class="row config">
                 <div class="col-5-10">
-                    <h3>Panel Title Height</h3>
+                    <h3 class="config">Panel Title Height</h3>
                 </div>
                 <div class="col-5-10">
                     <input type="number" min="80" max="150" value="100" id="panelTitleHeight">
                 </div>
                 <br class="clear">
             </div>
-            <div class="row">
+            <div class="row config">
                 <div class="col-5-10">
-                    <h3>Panel Title Font Options</h3>
+                    <h3 class="config">Panel Title Font Options</h3>
                 </div>
                 <div class="col-5-10">
                     <div>
@@ -179,9 +168,9 @@
                 </div>
                 <br class="clear">
             </div>
-            <div class="row">
+            <div class="row config">
                 <div class="col-5-10">
-                    <h3>Panel Header Font Options</h3>
+                    <h3 class="config">Panel Header Font Options</h3>
                 </div>
                 <div class="col-5-10">
                     <div>
@@ -220,9 +209,9 @@
                 </div>
                 <br class="clear">
             </div>
-            <div class="row">
+            <div class="row config">
                 <div class="col-5-10">
-                    <h3>Game Title Font Options</h3>
+                    <h3 class="config">Game Title Font Options</h3>
                 </div>
                 <div class="col-5-10">
                     <div>
@@ -261,9 +250,9 @@
                 </div>
                 <br class="clear">
             </div>
-            <div class="row">
+            <div class="row config">
                 <div class="col-5-10">
-                    <h3>Game Category Font Options</h3>
+                    <h3 class="config">Game Category Font Options</h3>
                 </div>
                 <div class="col-5-10">
                     <div>
@@ -302,9 +291,9 @@
                 </div>
                 <br class="clear">
             </div>
-            <div class="row">
+            <div class="row config">
                 <div class="col-5-10">
-                    <h3>PB/WR Info Font Options</h3>
+                    <h3 class="config">PB/WR Info Font Options</h3>
                 </div>
                 <div class="col-5-10">
                     <div>
@@ -343,31 +332,91 @@
                 </div>
                 <br class="clear">
             </div>
+            <div class="row config">
+                <div class="col-5-10">
+                    <h3 class="config">Misc/IL Header Font Options</h3>
+                </div>
+                <div class="col-5-10">
+                    <div>
+                        <label for="timeHeaderFontBold">Bold</label>
+                        <input type="checkbox" id="timeHeaderFontBold">
+                    </div>
+                    <div>
+                        <label for="timeHeaderFontItalic">Italic</label>
+                        <input type="checkbox" id="timeHeaderFontItalic">
+                    </div>
+                    <div>
+                        <label for="timeHeaderbFontSize">Size</label>
+                        <input class="fontSize" type="number" min="1" max="64" value="15" id="timeHeaderFontSize">
+                    </div>
+                    <div>
+                        <label for"timeHeaderFontColor">Color</label>
+                        <input type="color" value="#FFFFFF" id="timeHeaderFontColor">
+                    </div>
+                    <div>
+                        <label for="timeHeaderFont">Font Family</label>
+                        <select name="timeHeaderFont" id="timeHeaderFont">
+                            <option value="'Roboto Condensed', sans-serif" selected>Roboto Condensed</option>
+                            <option value="'Roboto', sans-serif">Roboto</option>
+                            <option value="'Open Sans', sans-serif">Open Sans</option>
+                            <option value="'Lato', sans-serif">Lato</option>
+                            <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
+                            <option value="'Oswald', sans-serif">Oswald</option>
+                            <option value="'Raleway', sans-serif">Raleway</option>
+                            <option value="'PT Sans Narrow', sans-serif">PT Sans Narrow</option>
+                            <option value="'Muli', sans-serif">Muli</option>
+                            <option value="'Anton', sans-serif">Anton</option>
+                            <option value="'Fjalla One', sans-serif">Fjalla One</option>
+                            <option value="'Helvetica', sans-serif">Helvetica</option>
+                        </select>
+                    </div>
+                </div>
+                <br class="clear">
+            </div>
         </div>
         <div class="col-4-10">
-            <div class="row">
+            <div class="row config">
                 <button id="searchBtn" type="button" name="button" class="btn-primary">Find Games</button>
             </div>
             <div class="row errorOutput center" id="errorDialog">
 
             </div>
-            <div class="row">
+            <div class="row config">
                 <button type="button" name="button" class="btn-warning" id="saveBtn">Save</button>
             </div>
             <div class="row center">
                 <div class="center" id="gamesHeader">
-                    <h3>Game List (Reorder by Dragging) (Names Support &lt;br&gt; Tags)</h3><br>
+                    <h3 class="config">Game List (Reorder by Dragging) (Names Support &lt;br&gt; Tags)</h3><br>
                 </div>
             </div>
-            <div class="row">
+            <div class="row config">
                 <div class="gameListing" id="gameListingContainer">
                     <ul id="sortableGames" class="ui-sortable">
                     </ul>
                 </div>
             </div>
-            <div class="row center">
-                <h3>Preview Window (Will Update on "Save" Button Presses)<h3>
-                <iframe id="previewFrame" src="viewer_preview.html" width="318px" height="500px">Loading Preview</iframe>
+            <div class="row">
+                <h3 class="config">Preview Window (Will Update on "Save" Button Presses)</h3>
+                <div id="previewHolder" style="width:318px;height:500px">
+                    <div class="frameWrapper">
+                        <div class="titleContainer outlineText" style="display: none;"></div>
+                        <div class="fancyStripeGreen" style="display: none;"></div>
+                        <div class="pbWrapper" style="display: none;"></div>
+                        <section class="spinnerWrapper">
+                          <div class="spinner">
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                          </div>
+                          <div class="spinnerError center">
+                          </div>
+                        </section>
+                    </div>
+                </div>
             </div>
         </div>
         <br class="clear">
@@ -379,6 +428,7 @@
     <script src="js/jquery-ui.js"></script>
     <script src="js/common.js"></script>
     <script src="js/config.js"></script>
+    <script src="js/viewer_preview.js"></script>
 </body>
 
 </html>

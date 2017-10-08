@@ -9,7 +9,7 @@ var srcName = null;
 
 window.Twitch.ext.onAuthorized(function(auth) {
     authObject = auth;
-    //document.getElementById("previewFrame").contentWindow.renderPreview(authObject)
+    renderPreview(authObject)
     // console.log('The JWT that will be passed to the EBS is', authObject.token);
     // console.log('The channel ID is', authObject.channelId);
     $('#saveBtn').prop("disabled", true)
@@ -123,6 +123,15 @@ function restorePreviousSettings(savedData) {
     $('#pbFontSize').val(settings.pbFontSize)
     $('#pbFontColor').val(settings.pbFontColor)
     $('#pbFont').val(settings.pbFont)
+    if (settings.timeHeaderFontBold != undefined && settings.timeHeaderFontItalic != undefined &&
+        settings.timeHeaderFontSize != undefined && settings.timeHeaderFontColor != undefined &&
+        settings.timeHeaderFont != undefined) {
+        $('#timeHeaderFontBold').prop('checked', settings.timeHeaderFontBold == true);
+        $('#timeHeaderFontItalic').prop('checked', settings.timeHeaderFontItalic == true);
+        $('#timeHeaderFontSize').val(settings.timeHeaderFontSize)
+        $('#timeHeaderFontColor').val(settings.timeHeaderFontColor)
+        $('#timeHeaderFont').val(settings.timeHeaderFont)
+    }
 
     // Repopulate Game List
     for (var i = 0; i < games.length; i++) {
@@ -148,7 +157,7 @@ function restorePreviousSettings(savedData) {
 
 function setError(string) {
     $("#errorDialog").html(
-        `<h3>${string}</h3>`
+        `<h3 class="config">${string}</h3>`
     )
 }
 
@@ -163,7 +172,7 @@ function getPersonalBest(url) {
 
 function addGameToList(gameID, gameName, removeBox, expandBox) {
     $("#sortableGames").append(
-        `<li class=ui-state-default>
+        `<li class="ui-state-default">
             <div class="col-19-20">
                 Remove
                 <input type=checkbox value="${gameID}" class="displayBox" ${removeBox}>
@@ -284,7 +293,7 @@ $("#searchBtn").click(function() {
         </section>`
     )
     $("#gamesHeader").html(
-        `<h3>Game List (Reorderable and Toggleable)</h3><br>`
+        `<h3 class="config">Game List (Reorderable and Toggleable)</h3><br>`
     )
     searchForUser($("#srcName").val())
 })
@@ -412,32 +421,34 @@ $("#saveBtn").click(function() {
     settings.gameCategoryFontSize = $('#gameCategoryFontSize').val()
     settings.gameCategoryFontColor = $('#gameCategoryFontColor').val()
     settings.gameCategoryFont = $('#gameCategoryFont').val()
-    // PB Info Font
+    // WR/PB Info Font
     settings.pbFontBold = $('#pbFontBold').is(':checked')
     settings.pbFontItalic = $('#pbFontItalic').is(':checked')
     settings.pbFontSize = $('#pbFontSize').val()
     settings.pbFontColor = $('#pbFontColor').val()
     settings.pbFont = $('#pbFont').val()
+    // Time Header Font
+    settings.timeHeaderFontBold = $('#timeHeaderFontBold').is(':checked')
+    settings.timeHeaderFontItalic = $('#timeHeaderFontItalic').is(':checked')
+    settings.timeHeaderFontSize = $('#timeHeaderFontSize').val()
+    settings.timeHeaderFontColor = $('#timeHeaderFontColor').val()
+    settings.timeHeaderFont = $('#timeHeaderFont').val()
 
     gamesToSend = []
-    $('#sortableGames', function() {
-        $(this).find('li').each(function() {
-            game = {}
-            var currentListItem = $(this)
-            var checkbox = currentListItem.find('.displayBox')
-            if (checkbox.is(':checked') == false) {
-                // Then we will add the game
-                gamesToSend.push({
-                    name: currentListItem.find('.gameTitleBox').val().trim(),
-                    id: checkbox.val().trim(),
-                    shouldExpand: currentListItem.find('.expandBox').is(':checked')
-                })
-            }
-        })
-        // Re have all results
-        sendResult(gamesToSend, settings)
-    });
-
+    $('#sortableGames').find('li').each(function() {
+        game = {}
+        var currentListItem = $(this)
+        var checkbox = currentListItem.find('.displayBox')
+        if (checkbox.is(':checked') == false) {
+            // Then we will add the game
+            gamesToSend.push({
+                name: currentListItem.find('.gameTitleBox').val().trim(),
+                id: checkbox.val().trim(),
+                shouldExpand: currentListItem.find('.expandBox').is(':checked')
+            })
+        }
+    })
+    sendResult(gamesToSend, settings)
 });
 
 function sendResult(gamesToSend, settings) {
@@ -459,15 +470,11 @@ function sendResult(gamesToSend, settings) {
                 setError("Saving Error: Database Error, Contact Extension Developer")
             } else {
                 setError("SUCCESS: Saved Successfully!")
-                document.getElementById('previewFrame').contentWindow.location.reload(true);
+                renderPreview(authObject)
             }
         },
         error: function() {
             setError("ERROR: An Unexpected Error Occurred, Contact Extension Developer")
         }
     });
-}
-
-function previewLoaded() {
-    document.getElementById("previewFrame").contentWindow.renderPreview(authObject)
 }

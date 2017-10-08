@@ -205,6 +205,7 @@ function examineLevelEntry(url, currentPBEntry) {
     deferreds.push($.getJSON(url, function(json) {
         level = json.data
         currentPBEntry.categoryName = level.name
+        currentPBEntry.categoryLink = level.weblink
     }))
 }
 
@@ -506,6 +507,21 @@ function renderPersonalBests() {
     $(".wrTime").css("font-size", `${settings.pbFontSize}px`)
     // wrFont
     $(".wrTime").css("font-family", settings.pbFont)
+
+    // timeHeaderFontBold
+    if (settings.timeHeaderFontBold == true) {
+        $(".timeHeader").css("font-weight", 700)
+    }
+    // timeHeaderFontItalic
+    if (settings.timeHeaderFontItalic == true) {
+        $(".timeHeader").css("font-style", "italic")
+    }
+    // timeHeaderFontSize
+    $(".timeHeader").css("font-size", `${settings.timeHeaderFontSize}px`)
+    // timeHeaderFontColor
+    $(".timeHeader").css("color", settings.timeHeaderFontColor)
+    // timeHeaderFont
+    $(".timeHeader").css("font-family", settings.timeHeaderFont)
 
     // Hover colors for links, progammatically darker
     $(".categoryName, .pbTime, .wrTime").hover(
