@@ -546,16 +546,32 @@ function rgb2hex(rgb) {
 }
 
 function secondsToTimeStr(seconds) {
-    // Truncate off milliseconds
-    // TODO modify output to truncate hours / get rid of hours
-    // so that we dont have to sacrifice space to display milliseconds
-    seconds = Math.round(seconds)
-
-    minutes = parseInt(seconds / 60)
-    seconds = ("0" + seconds % 60).slice(-2);
+    conv_seconds = Math.round(seconds)
+    minutes = parseInt(conv_seconds / 60)
+    conv_seconds = ("0" + conv_seconds % 60).slice(-2);
     hours = ("0" + parseInt(minutes / 60)).slice(-2);
     minutes = ("0" + minutes % 60).slice(-2);
-    return `${hours}:${minutes}:${seconds}`
+
+    // Handle milliseconds
+    if (hours == "00" && seconds.toString().includes(".")) {
+        milliseconds = seconds.toString().split(".")[1]
+        // Milliseconds only to 2 significant digits
+        if (milliseconds.length > 2) {
+            keep = milliseconds.substring(0, 2)
+            round = milliseconds.substring(2)
+            milliseconds = parseFloat(`${keep}.${round}`).toString()
+        }
+        if (milliseconds.length == 1) {
+            milliseconds += "0"
+        }
+        conv_seconds = Math.trunc(seconds)
+        minutes = parseInt(conv_seconds / 60)
+        conv_seconds = ("0" + conv_seconds % 60).slice(-2);
+        return `${minutes}:${conv_seconds}.${milliseconds}`
+    }
+    if (hours == "00")
+        return `${minutes}:${conv_seconds}`
+    return `${hours}:${minutes}:${conv_seconds}`
 }
 
 function dynamicSort(property) {
