@@ -271,18 +271,32 @@ function renderPersonalBests() {
     )
 
     // Add the Headers
-    $(".titleContainer").append(
-        `<div class="row" id="headers">
-            <div class="col-6-10 titleHeaders">
-                <h3>Category</h3></div>
-            <div class="col-2-10 center titleHeaders">
-                <h3>PB</h3></div>
-            <div class="col-2-10 center titleHeaders">
-                <h3>WR</h3>
+    if (settings.hideWR) {
+        $(".titleContainer").append(
+            `<div class="row" id="headers">
+                <div class="col-8-10 titleHeaders">
+                    <h3>Category</h3></div>
+                <div class="col-2-10 center titleHeaders">
+                    <h3>PB</h3></div>
             </div>
-        </div>
-        <br class="clear" />`
-    )
+            <br class="clear" />`
+        )
+    }
+    else {
+        $(".titleContainer").append(
+            `<div class="row" id="headers">
+                <div class="col-6-10 titleHeaders">
+                    <h3>Category</h3></div>
+                <div class="col-2-10 center titleHeaders">
+                    <h3>PB</h3></div>
+                <div class="col-2-10 center titleHeaders">
+                    <h3>WR</h3>
+                </div>
+            </div>
+            <br class="clear" />`
+        )
+    }
+    
 
     // Adding Games and PBs
     // Loop through every Game
@@ -331,12 +345,21 @@ function renderPersonalBests() {
                 continue
             }
 
-            pbHTML +=
-                `<li>
-                <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
-                <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
-                <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
-            </li>`
+            if (settings.hideWR) {
+                pbHTML +=
+                    `<li>
+                    <div class="col-8-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                    <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                </li>`
+            }
+            else {
+                pbHTML +=
+                    `<li>
+                    <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                    <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                    <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
+                </li>`
+            }
         }
         // If we wanted to seperate runs, print misc > ils now
         if (settings.miscShow == true && settings.miscSep == true && anyMiscs == true) {
@@ -348,12 +371,21 @@ function renderPersonalBests() {
                 pb = currentGame[j]
                 // Only mess with misc categories
                 if (pb.isMisc == true) {
-                    pbHTML +=
-                        `<li>
-                        <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
-                        <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
-                        <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
-                    </li>`
+                    if (settings.hideWR) {
+                        pbHTML +=
+                            `<li>
+                            <div class="col-8-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                            <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                        </li>`
+                    }
+                    else {
+                        pbHTML +=
+                            `<li>
+                            <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                            <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                            <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
+                        </li>`
+                    }
                 }
             }
         }
@@ -367,12 +399,21 @@ function renderPersonalBests() {
                 pb = currentGame[j]
                 // Only mess with individual levels
                 if (pb.isLevel == true) {
-                    pbHTML +=
-                        `<li>
-                        <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
-                        <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
-                        <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
-                    </li>`
+                    if (settings.hideWR) {
+                        pbHTML +=
+                            `<li>
+                            <div class="col-8-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                            <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                        </li>`
+                    }
+                    else {
+                        pbHTML +=
+                            `<li>
+                            <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                            <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                            <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
+                        </li>`
+                    }
                 }
             }
         }

@@ -372,6 +372,8 @@ $("#saveBtn").click(function() {
     settings.panelBackgroundColor = $('#panelBackgroundColor').val()
     // wr cycling
     settings.wrRainbow = $('#wrRainbow').is(':checked')
+    // hide WR Column
+    settings.hideWR = $('#hideWR').is(':checked')
     // misc settings
     settings.miscShow = $('#miscShow').is(':checked')
     settings.miscSep = $('#miscSep').is(':checked')
