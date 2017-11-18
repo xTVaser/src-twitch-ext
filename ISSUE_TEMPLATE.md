@@ -1,9 +1,11 @@
 **This is a...**  
-- [ ] Bug Report  
+<!-- place an 'X' to check the box -->
+- [X] Bug Report  
 - [ ] Feature Request
 
 ## Brief Description
 
+Quick summary on bug/feature
 
 ## (If Bug Report) Steps to Reproduce
 Speedrun.com Name - `<name here>`  
