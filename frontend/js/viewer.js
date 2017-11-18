@@ -259,7 +259,7 @@ function renderPersonalBests() {
 
     // Add the Title
     $(".titleContainer").append(
-        `<div class="row center">
+        `<div class="row center" id="titleContainerRow">
             <h1 id="viewerPanelTitle">${settings.title}</h1>
         </div>`
     )
@@ -267,11 +267,11 @@ function renderPersonalBests() {
     // Add the Headers
     $(".titleContainer").append(
         `<div class="row" id="headers">
-            <div class="col-6-10">
+            <div class="col-6-10 titleHeaders">
                 <h3>Category</h3></div>
-            <div class="col-2-10 center">
+            <div class="col-2-10 center titleHeaders">
                 <h3>PB</h3></div>
-            <div class="col-2-10 center">
+            <div class="col-2-10 center titleHeaders">
                 <h3>WR</h3>
             </div>
         </div>
@@ -359,7 +359,7 @@ function renderPersonalBests() {
             </li>`
             for (var j = 0; j < currentGame.length; j++) {
                 pb = currentGame[j]
-                // Only mess with misc categories
+                // Only mess with individual levels
                 if (pb.isLevel == true) {
                     pbHTML +=
                         `<li>

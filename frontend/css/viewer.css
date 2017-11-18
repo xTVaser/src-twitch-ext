@@ -52,6 +52,25 @@ body {
     margin-top: 25px;
 }
 
+#titleContainerRow {
+    height:75%; 
+    overflow: hidden; 
+    margin-bottom: 0px;
+}
+
+#viewerPanelTitle {
+    height: 100%;
+}
+
+#headers {
+    height:25%; 
+    margin-bottom: 0px;
+}
+
+#titleHeaders {
+    height:100%;
+}
+
 .pbWrapper {
     height: 392px;
     padding-top: 3px;
