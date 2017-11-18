@@ -243,6 +243,12 @@ function getLevelInfo() {
 
 $(document).on('click', '.gameTitle', function(e) {
     id = e.currentTarget.id.substring(1)
+    if($("#pbRow" + id).is(":hidden")) {
+        $('#pbRowStatus' + id).html('<i class="fa fa-minus-square-o fa-2x" aria-hidden="true"></i>')
+    }
+    else {
+        $('#pbRowStatus' + id).html('<i class="fa fa-plus-square-o fa-2x" aria-hidden="true"></i>')
+    }
     $('#pbRow' + id).slideToggle('fast');
 });
 
@@ -289,7 +295,7 @@ function renderPersonalBests() {
                 <div class="col-8-10">
                     <h2>${gameName}</h2>
                 </div>
-                <div class="col-2-10 center">
+                <div class="col-2-10 center" id="pbRowStatus${i}">
                     <i class="fa fa-plus-square-o fa-2x" aria-hidden="true"></i>
                 </div>
                 <br class="clear" />
