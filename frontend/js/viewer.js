@@ -106,13 +106,31 @@ function getPersonalBests(json) {
 }
 
 var deferreds = []
-
 function getCategoryName(url, currentPBEntry) {
     deferreds.push($.getJSON(url, function(json) {
         category = json.data
-        currentPBEntry.categoryName = category.name
-        currentPBEntry.categoryLink = category.weblink
-        currentPBEntry.isMisc = category.miscellaneous
+        if (currentPBEntry.isLevel) {
+            categories = category
+            for (var i = 0; i < categories.length; i++) {
+                if (categories[i].id == currentPBEntry.categoryID) {
+                    category = categories[i]
+                }
+            }
+            // if there is only one category, then we can omit the name
+            if (categories.length > 1) {
+                currentPBEntry.categoryName = ` - ${category.name}`
+            }
+            else {
+                currentPBEntry.categoryName = ""
+            }
+            currentPBEntry.categoryLink = category.weblink
+            currentPBEntry.isMisc = category.miscellaneous
+        }
+        else {
+            currentPBEntry.categoryName = category.name
+            currentPBEntry.categoryLink = category.weblink
+            currentPBEntry.isMisc = category.miscellaneous
+        }
     }))
 }
 
@@ -122,7 +140,13 @@ function getCategories() {
     for (var i = 0; i < gameIDs.length; i++) {
         for (var j = 0; j < pbList[gameIDs[i]].length; j++) {
             currentPBEntry = pbList[gameIDs[i]][j]
-            getCategoryName(categoryAPILink + currentPBEntry.categoryID, currentPBEntry)
+            if (currentPBEntry.isLevel) {
+                levelCategoryAPILink = `https://www.speedrun.com/api/v1/levels/${currentPBEntry.levelID}/categories`
+                getCategoryName(levelCategoryAPILink, currentPBEntry)
+            }
+            else {
+                getCategoryName(categoryAPILink + currentPBEntry.categoryID, currentPBEntry)
+            }
         }
     }
     // Then the variable link to fully construct the category link
@@ -139,7 +163,7 @@ function examineVariables(url, currentPBEntry) {
         for (var i = 0; i < variables.length; i++) {
             if (variables[i]["is-subcategory"] == true &&
                 variables[i].id in currentPBEntry.variables) {
-
+                
                 // Then its the right subcategory, grab it's label and such
                 currentPBEntry.subcategoryID = variables[i].id
                 currentPBEntry.subcategoryVal = currentPBEntry.variables[currentPBEntry.subcategoryID]
@@ -157,7 +181,13 @@ function getSubcategories() {
     for (var i = 0; i < gameIDs.length; i++) {
         for (var j = 0; j < pbList[gameIDs[i]].length; j++) {
             currentPBEntry = pbList[gameIDs[i]][j]
-            examineVariables(variableAPILink + currentPBEntry.categoryID + "/variables", currentPBEntry)
+            if (currentPBEntry.isLevel) {
+                levelVariableAPILink = `https://www.speedrun.com/api/v1/levels/${currentPBEntry.levelID}/variables`
+                examineVariables(levelVariableAPILink, currentPBEntry)
+            }
+            else {
+                examineVariables(variableAPILink + currentPBEntry.categoryID + "/variables", currentPBEntry)
+            }
         }
     }
     // Finally, get the WR's information
@@ -171,7 +201,7 @@ function examineWorldRecordEntry(url, currentPBEntry) {
     deferreds.push($.getJSON(url, function(json) {
         wr = json.data
         // Guaranteed to a be wr as we only check categories that streamer has done
-        // a run of, which means there is atleast one (theres)
+        // a run of, which means there is atleast one run (theres)
         currentPBEntry.wrLink = wr.runs[0].run.weblink
         currentPBEntry.wrTime = wr.runs[0].run.times.primary_t
     }))
@@ -185,18 +215,22 @@ function getWorldRecords() {
         for (var j = 0; j < pbList[gameIDs[i]].length; j++) {
             currentPBEntry = pbList[gameIDs[i]][j]
             // Construct API Request
-            requestURL = `https://www.speedrun.com/api/v1/leaderboards/${currentPBEntry.gameId}/category/${currentPBEntry.categoryID}?top=1`
+            requestURL = ""
+            if (currentPBEntry.isLevel) {
+                requestURL = `https://www.speedrun.com/api/v1/leaderboards/${currentPBEntry.gameId}/level/${currentPBEntry.levelID}/${currentPBEntry.categoryID}?top=1`
+            }
+            else {
+                requestURL = `https://www.speedrun.com/api/v1/leaderboards/${currentPBEntry.gameId}/category/${currentPBEntry.categoryID}?top=1`
+            }
             if (currentPBEntry.subcategoryID != null) {
                 requestURL += `&var-${currentPBEntry.subcategoryID}=${currentPBEntry.subcategoryVal}`
             }
-            if (currentPBEntry.isLevel == false) {
-                examineWorldRecordEntry(requestURL, currentPBEntry)
-            }
+            examineWorldRecordEntry(requestURL, currentPBEntry)
         }
     }
     // Now we can finally render the contents of the panel
     $.when.apply(null, deferreds).done(function() {
-        getLevelInfo()
+        getLevelNames()
         deferreds = [] // clear ready for next group of calls
     });
 }
@@ -204,20 +238,11 @@ function getWorldRecords() {
 function examineLevelEntry(url, currentPBEntry) {
     deferreds.push($.getJSON(url, function(json) {
         level = json.data
-        currentPBEntry.categoryName = level.name
-        currentPBEntry.categoryLink = level.weblink
+        currentPBEntry.categoryName = level.name + currentPBEntry.categoryName
     }))
 }
 
-function examineLevelWorldRecord(url, currentPBEntry) {
-    deferreds.push($.getJSON(url, function(json) {
-        wr = json.data
-        currentPBEntry.wrLink = wr.runs[0].run.weblink
-        currentPBEntry.wrTime = wr.runs[0].run.times.primary_t
-    }))
-}
-
-function getLevelInfo() {
+function getLevelNames() {
     gameIDs = Object.keys(pbList)
     // format for api link
     // ../levels/nwl7kg9v
@@ -228,9 +253,6 @@ function getLevelInfo() {
                 // Construct API Request
                 requestURL = `https://www.speedrun.com/api/v1/levels/${currentPBEntry.levelID}`
                 examineLevelEntry(requestURL, currentPBEntry)
-                // Get the Level WR as well
-                requestURL = `https://www.speedrun.com/api/v1/leaderboards/${currentPBEntry.gameId}/level/${currentPBEntry.levelID}/${currentPBEntry.categoryID}`
-                examineLevelWorldRecord(requestURL, currentPBEntry)
             }
         }
     }
@@ -606,7 +628,7 @@ function secondsToTimeStr(seconds) {
         if (milliseconds.length > 2) {
             keep = milliseconds.substring(0, 2)
             round = milliseconds.substring(2)
-            milliseconds = parseFloat(`${keep}.${round}`).toString()
+            milliseconds = Math.round(parseFloat(`${keep}.${round}`).toString())
         }
         if (milliseconds.length == 1) {
             milliseconds += "0"
