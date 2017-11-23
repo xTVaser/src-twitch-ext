@@ -1,7 +1,26 @@
 /// Config Page for Frontend
+$("ol.nav").sortable({
+    group: 'nav',
+    nested: false,
+    vertical: false,
+    exclude: '.divider-vertical',
+    onDragStart: function ($item, container, _super) {
+        $item.find('ol.dropdown-menu').sortable('disable');
+        _super($item, container);
+    },
+    onDrop: function ($item, container, _super) {
+        $item.find('ol.dropdown-menu').sortable('enable');
+        _super($item, container);
+    }
+});
 
-$("#sortableGames").sortable();
-$("#sortableGames").disableSelection();
+$("ol.dropdown-menu").sortable({
+    group: 'nav'
+});
+
+$("ol.gameList").sortable({
+
+});
 
 var authObject = null;
 var srcID = null;
@@ -134,6 +153,7 @@ function restorePreviousSettings(savedData) {
     }
 
     // Repopulate Game List
+    // TODO expand this to also add the games categories / levels
     for (var i = 0; i < games.length; i++) {
         var gameName
         var gameID
@@ -161,31 +181,44 @@ function setError(string) {
     )
 }
 
-function getPersonalBest(url) {
+function getGameName(url, gameID) {
     ajaxCalls.push($.getJSON(url, function(json) {
         game = json.data
-        index = gameList.findIndex(x => x.id === game.id)
+        index = gameList.findIndex(x => x.id === gameID)
         gameList[index].name = game.names.international
-        addGameToList(game.id, gameList[index].name, '', '')
     }))
 }
 
-function addGameToList(gameID, gameName, removeBox, expandBox) {
-    $("#sortableGames").append(
-        `<li class="ui-state-default">
-            <div class="col-19-20">
-                Remove
-                <input type=checkbox value="${gameID}" class="displayBox" ${removeBox}>
-                Initally Expand
-                <input type="checkbox" value="ok6qlo1g" class="expandBox" ${expandBox}>
-                <input class="gameTitleBox" type="text" value="${gameName}">
-            </div>
-            <div class="col-1-20">
-                <i class="fa fa-bars" aria-hidden="true"></i>
-            </div>
-            <br class="clear">
-        </li>`
-    )
+function getCategories(url, gameID) {
+    ajaxCalls.push($.getJSON(url, function(json) {
+        categories = json.data
+        index = gameList.findIndex(x => x.id === gameID)
+        if (gameList[index].categories == null)
+            gameList[index].categories = []
+        for (let category of categories) {
+            if (category.type != "per-level") {
+                gameList[index].categories.push({
+                    id: category.id,
+                    name: category.name
+                })
+            }
+        }
+    }))
+}
+
+function getLevels(url, gameID) {
+    ajaxCalls.push($.getJSON(url, function(json) {
+        levels = json.data
+        index = gameList.findIndex(x => x.id === gameID)
+        if (gameList[index].levels == null)
+            gameList[index].levels = []
+        for (let level of levels) {
+            gameList[index].levels.push({
+                id: level.id,
+                name: level.name
+            })
+        }
+    }))
 }
 
 var gameList = []
@@ -205,12 +238,26 @@ function populateGameList(json) {
     }
 
     // Get the names for all the games we added
+    // TODO remove sort in viewer.js
     for (let game of gameList) {
-        getPersonalBest(`https://www.speedrun.com/api/v1/games/${game.id}`)
+        getGameName(`https://www.speedrun.com/api/v1/games/${game.id}`, game.id)
+        getCategories(`https://www.speedrun.com/api/v1/games/${game.id}/categories?orderby=name&max=200`, game.id)
+        getLevels(`https://www.speedrun.com/api/v1/games/${game.id}/levels?orderby=name&max=200`, game.id)
     }
 
     $.when.apply(null, ajaxCalls).done(function() {
         ajaxCalls = []
+        // Display The Games
+        for (let game of gameList) {
+            addGameToList(game.id, game.name, '', '')
+            // Add Categories
+            $(`#game-${game.id}`).append(
+                `<ul id="sortableCategories-${game.id}" class="ui-sortable one-indent"></ul>`
+            )
+            for (let category of game.categories) {
+                addCategoryToGame(game.id, category, '')
+            }
+        }
         // Disable the spinner
         $('.spinnerWrapper').remove();
         $('#saveBtn').prop("disabled", false)
@@ -218,6 +265,40 @@ function populateGameList(json) {
         $("#searchBtn").prop("disabled", false);
         $("#searchBtn").attr('class', 'btn-primary');
     })
+}
+
+function addGameToList(gameID, gameName, removeBox, expandBox) {
+    $("#sortableGames").append(
+        `<li class="ui-state-default" id="game-${gameID}">
+            <div class="col-19-20">
+                Remove
+                <input type=checkbox value="${gameID}" class="displayBox" ${removeBox}>
+                Initally Expand
+                <input type="checkbox" value="ok6qlo1g" class="expandBox" ${expandBox}>
+                <input class="gameTitleBox" type="text" value="${gameName}">
+            </div>
+            <div class="col-1-20">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+            <br class="clear">
+        </li>`
+    )
+}
+
+function addCategoryToGame(gameID, category, removeBox) {
+    $(`#sortableCategories-${gameID}`).append(
+        `<li class="ui-state-default" id="game-${gameID}">
+        <div class="col-19-20">
+            Remove
+            <input type=checkbox value="${category.id}" class="displayBox" ${removeBox}>
+            <span>${category.name}</span>
+        </div>
+        <div class="col-1-20">
+            <i class="fa fa-bars" aria-hidden="true"></i>
+        </div>
+        <br class="clear">
+    </li>`
+    )
 }
 
 function getGameList() {

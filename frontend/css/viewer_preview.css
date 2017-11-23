@@ -164,6 +164,6 @@ ul {
     list-style-type: none;
 }
 
-li {
+li.preview { /* fix */
     height: 1.5em;
 }

@@ -30,6 +30,30 @@ h1.config {
 
 h3.config {
     font-size: 1em;
+    margin: 0px;
+    font-weight: 700;
+}
+
+ul .checkbox {
+    margin-left: 10px;
+}
+
+nav.game {
+    cursor: move;
+}
+
+ol {
+    list-style-type: none;
+}
+
+.fa-config {
+    font-size: 1.5em;
+    margin-top: 0.5em;
+    margin-left: 1em;
+}
+
+li > input {
+    margin-top: 1em;
 }
 
 button {
@@ -43,7 +67,7 @@ section.spinnerWrapper {
 }
 
 .errorOutput {
-    text-weight: 700;
+    font-weight: 700;
     color: red;
 }
 

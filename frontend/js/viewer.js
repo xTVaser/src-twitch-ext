@@ -348,7 +348,8 @@ function renderPersonalBests() {
                 <div class="pbRow outlineText" id="pbRow${i}" style="display: ${displayPBs};">
                     <ul>`
 
-        // Sort the Games by their names
+        // Sort the categories by their names
+        // TODO move this to the config page, assume given in correct order
         currentGame.sort(dynamicSort("categoryName"))
         // Get all the Personal Bests now
         var anyLevels = false
