@@ -348,26 +348,12 @@ function renderPersonalBests() {
                 <div class="pbRow outlineText" id="pbRow${i}" style="display: ${displayPBs};">
                     <ul>`
 
-        // Sort the categories by their names
-        // TODO move this to the config page, assume given in correct order
-        currentGame.sort(dynamicSort("categoryName"))
         // Get all the Personal Bests now
-        var anyLevels = false
-        var anyMiscs = false
-        for (var j = 0; j < currentGame.length; j++) {
-
-            pb = currentGame[j]
-            // Skip misc
-            if ((settings.miscShow == false || settings.miscSep == true) && pb.isMisc == true) {
-                anyMiscs = true
-                continue
-            }
-            // Skip ils
-            if ((settings.ilShow == false || settings.ilSep == true) && pb.isLevel == true) {
-                anyLevels = true
-                continue
-            }
-
+        // Normal Categories
+        sortedCategories = sortCategories(games[i].categories, currentGame)
+        for (var j = 0; j < sortedCategories.length; j++) {
+            pb = sortedCategories[j]
+            // TODO this can be pulled out into func
             if (settings.hideWR) {
                 pbHTML +=
                     `<li>
@@ -384,59 +370,61 @@ function renderPersonalBests() {
                 </li>`
             }
         }
-        // If we wanted to seperate runs, print misc > ils now
-        if (settings.miscShow == true && settings.miscSep == true && anyMiscs == true) {
+        // Misc Categories, if desired
+        sortedMiscCategories = sortMiscCategories(games[i].categories, currentGame)
+        if (settings.miscShow && settings.miscSep && sortedMiscCategories.length > 0) {
             pbHTML +=
                 `<li>
                 <div><p class="timeHeader">Miscellaneous Categories</div>
             </li>`
-            for (var j = 0; j < currentGame.length; j++) {
-                pb = currentGame[j]
-                // Only mess with misc categories
-                if (pb.isMisc == true) {
-                    if (settings.hideWR) {
-                        pbHTML +=
-                            `<li>
-                            <div class="col-8-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
-                            <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
-                        </li>`
-                    }
-                    else {
-                        pbHTML +=
-                            `<li>
-                            <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
-                            <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
-                            <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
-                        </li>`
-                    }
+        }
+        if (settings.miscShow && sortedMiscCategories.length > 0) {
+            for (var j = 0; j < sortedMiscCategories.length; j++) {
+                pb = sortedMiscCategories[j]
+                // TODO this can be pulled out into func
+                if (settings.hideWR) {
+                    pbHTML +=
+                        `<li>
+                        <div class="col-8-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                        <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                    </li>`
+                }
+                else {
+                    pbHTML +=
+                        `<li>
+                        <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                        <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                        <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
+                    </li>`
                 }
             }
         }
-
-        if (settings.ilShow == true && settings.ilSep == true && anyLevels == true) {
+        // ILs, if desired
+        sortedLevels = sortLevels(games[i].levels, currentGame)
+        if (settings.ilShow && settings.ilSep && sortedLevels.length > 0) {
             pbHTML +=
                 `<li>
                 <div><p class="timeHeader">Individual Levels</div>
             </li>`
-            for (var j = 0; j < currentGame.length; j++) {
-                pb = currentGame[j]
-                // Only mess with individual levels
-                if (pb.isLevel == true) {
-                    if (settings.hideWR) {
-                        pbHTML +=
-                            `<li>
-                            <div class="col-8-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
-                            <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
-                        </li>`
-                    }
-                    else {
-                        pbHTML +=
-                            `<li>
-                            <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
-                            <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
-                            <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
-                        </li>`
-                    }
+        }
+        if (settings.ilShow && sortedLevels.length > 0) {
+            for (var j = 0; j < sortedLevels.length; j++) {
+                pb = sortedLevels[j]
+                // TODO this can be pulled out into func
+                if (settings.hideWR) {
+                    pbHTML +=
+                        `<li>
+                        <div class="col-8-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                        <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                    </li>`
+                }
+                else {
+                    pbHTML +=
+                        `<li>
+                        <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                        <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                        <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
+                    </li>`
                 }
             }
         }
@@ -644,16 +632,43 @@ function secondsToTimeStr(seconds) {
     return `${hours}:${minutes}:${conv_seconds}`
 }
 
-function dynamicSort(property) {
-    var sortOrder = 1;
-    if (property[0] === "-") {
-        sortOrder = -1;
-        property = property.substr(1);
+function sortCategories(expectedOrder, categories) {
+    ordered = []
+    for (var i = 0; i < expectedOrder.length; i++) {
+        // Look for that value in categories
+        for (var j = 0; j < categories.length; j++) {
+            if (categories[j].isMisc == false && categories[j].categoryID == expectedOrder[i]) {
+                ordered.push(categories[j])
+            }
+        }
     }
-    return function(a, b) {
-        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
-        return result * sortOrder;
+    return ordered
+}
+
+function sortMiscCategories(expectedOrder, categories) {
+    ordered = []
+    for (var i = 0; i < expectedOrder.length; i++) {
+        // Look for that value in categories
+        for (var j = 0; j < categories.length; j++) {
+            if (categories[j].isMisc && categories[j].categoryID == expectedOrder[i]) {
+                ordered.push(categories[j])
+            }
+        }
     }
+    return ordered
+}
+
+function sortLevels(expectedOrder, levels) {
+    ordered = []
+    for (var i = 0; i < expectedOrder.length; i++) {
+        // Look for that value in categories
+        for (var j = 0; j < levels.length; j++) {
+            if (levels[j].isLevel && levels[j].categoryID == expectedOrder[i]) {
+                ordered.push(levels[j])
+            }
+        }
+    }
+    return ordered
 }
 
 $(document).ready(function() {
