@@ -776,3 +776,13 @@ function sendResult(gamesToSend, settings) {
         }
     });
 }
+
+function exportSettings() {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify({"text":"hello world"})));
+    element.setAttribute('download', "test.json");
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+}
