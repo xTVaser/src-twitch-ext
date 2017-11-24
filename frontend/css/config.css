@@ -46,6 +46,21 @@ ol {
     list-style-type: none;
 }
 
+.dropdown-menu {
+    width: 250%;
+}
+
+.optionRow {
+    padding-left: 5%;
+    padding-right: 5%;
+}
+
+.deleteOption {
+    cursor: pointer;
+    color: red;
+    font-weight: 700;
+}
+
 .fa-config {
     font-size: 1.5em;
     margin-top: 0.5em;
