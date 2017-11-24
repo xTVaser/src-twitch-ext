@@ -225,6 +225,10 @@ function populateGameList(json) {
 
     $.when.apply(null, ajaxCalls).done(function() {
         ajaxCalls = []
+
+        // Wipe Any Existing Games
+        $("#gameList").html('')
+
         // Display The Games
         for (let game of gameList) {
             addGameToList(game, '', '')
@@ -249,7 +253,7 @@ function addGameToList(game, removeBox, expandBox) {
                             <li>
                                 <input type="text" value="${game.name}" class="gameTitleBox">
                             </li>
-                        <li class="dropdown">
+                        <li class="dropdown optionList">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Options
                                 <span class="caret"></span>
                             </a>
@@ -276,12 +280,22 @@ function addGameToList(game, removeBox, expandBox) {
                                 </li>
                             </ol>
                         </li>
-                        <li class="dropdown">
+                        <li class="dropdown categoryList">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Categories
                                 <span class="caret"></span>
                             </a>
                             <ol class="dropdown-menu">`
     // Add Categories
+    if (game.categories.length == 0) {
+        tempGameList += 
+        `<li>
+            <div class="row optionRow">
+                <div class="col-md-8">
+                    <p>No Categories</p>
+                </div>
+            </div>
+        </li>`
+    }
     for (let category of game.categories) {
         if (category.isMisc == false) {
             tempGameList += 
@@ -291,7 +305,7 @@ function addGameToList(game, removeBox, expandBox) {
                             <p>${category.name}</p>
                         </div>
                         <div class="col-md-4">
-                            <input type=checkbox value="${category.id}" class="displayBox" ${removeBox}>
+                            <input type=checkbox value="${category.id}" checked>
                         </div>
                     </div>
                 </li>`
@@ -300,15 +314,29 @@ function addGameToList(game, removeBox, expandBox) {
     tempGameList +=
         `       </ol>
             </li>
-        <li class="dropdown">
+        <li class="dropdown miscList">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Misc.
                 <span class="caret"></span>
             </a>
             <ol class="dropdown-menu">`
     // Add Miscellaneous Categories
+    miscCount = 0
     for (let category of game.categories) {
         // If they are toggled off, display that
+        if ($('#miscShow').is(':checked') == false) {
+            tempGameList += 
+            `<li>
+                <div class="row optionRow">
+                    <div class="col-md-8">
+                        <p>Misc. Disabled!</p>
+                    </div>
+                </div>
+            </li>`
+            miscCount += 1
+            break;
+        }
         if (category.isMisc) {
+            miscCount += 1
             tempGameList += 
                 `<li>
                     <div class="row optionRow">
@@ -316,23 +344,54 @@ function addGameToList(game, removeBox, expandBox) {
                             <p>${category.name}</p>
                         </div>
                         <div class="col-md-4">
-                            <input type=checkbox value="${category.id}" class="displayBox" ${removeBox}>
+                            <input type=checkbox value="${category.id}" checked>
                         </div>
                     </div>
                 </li>`
         }
     }
+    if (miscCount == 0) {
+        tempGameList += 
+        `<li>
+            <div class="row optionRow">
+                <div class="col-md-8">
+                    <p>No Misc. Cats.</p>
+                </div>
+            </div>
+        </li>`
+    }
     tempGameList += 
         `       </ol>
             </li>
-        <li class="dropdown">
+        <li class="dropdown levelList">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Levels
                 <span class="caret"></span>
             </a>
             <ol class="dropdown-menu">`
     // Add Levels
+    if (game.levels.length == 0) {
+        tempGameList += 
+        `<li>
+            <div class="row optionRow">
+                <div class="col-md-8">
+                    <p>No Levels</p>
+                </div>
+            </div>
+        </li>`
+    }
     for (let level of game.levels) {
-        // TODO if toggled off, display something
+        if ($('#ilShow').is(':checked') == false) {
+            tempGameList += 
+            `<li>
+                <div class="row optionRow">
+                    <div class="col-md-8">
+                        <p>ILs Disabled!</p>
+                    </div>
+                </div>
+            </li>`
+            break;
+        }
+        
         tempGameList += 
             `<li>
                 <div class="row optionRow">
@@ -340,7 +399,7 @@ function addGameToList(game, removeBox, expandBox) {
                         <p>${level.name}</p>
                     </div>
                     <div class="col-md-4">
-                        <input type=checkbox value="${level.id}" class="displayBox" ${removeBox}>
+                        <input type=checkbox value="${level.id}" checked>
                     </div>
                 </div>
             </li>`
@@ -600,16 +659,33 @@ $("#saveBtn").click(function() {
     settings.timeHeaderFont = $('#timeHeaderFont').val()
 
     gamesToSend = []
-    $('#sortableGames').find('li').each(function() {
-        game = {}
-        var currentListItem = $(this)
-        var checkbox = currentListItem.find('.displayBox')
+    $('#gameList').find('.game').each(function() {
+        var currentGame = $(this)
+        var checkbox = currentGame.find('.displayBox')
         if (checkbox.is(':checked') == false) {
             // Then we will add the game
+            // categories and misc are seperated visually, but SRC API wise, they are handled
+            // the same, so makes no sense to separate for our purposes
+            categories = []
+            levels = []
+            // Categories
+            $(currentGame).find('.categoryList').find('input').each(function() {
+                categories.push($(this).val().trim())
+            })
+            // Misc Categories
+            $(currentGame).find('.miscList').find('input').each(function() {
+                categories.push($(this).val().trim())
+            })
+            // ILs
+            $(currentGame).find('.levelList').find('input').each(function() {
+                levels.push($(this).val().trim())
+            })
             gamesToSend.push({
-                name: currentListItem.find('.gameTitleBox').val().trim(),
+                name: currentGame.find('.gameTitleBox').val().trim(),
                 id: checkbox.val().trim(),
-                shouldExpand: currentListItem.find('.expandBox').is(':checked')
+                shouldExpand: currentGame.find('.expandBox').is(':checked'),
+                categories: categories,
+                levels: levels
             })
         }
     })
