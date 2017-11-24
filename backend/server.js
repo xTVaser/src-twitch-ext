@@ -34,19 +34,31 @@ class Channel {
     srcName = striptags(srcName);
     // Allow br tags, thats it
     var gamesObj = JSON.parse(games);
-    console.log(gamesObj);
     for (var i = 0; i < gamesObj.length; i++) {
       for (var k in gamesObj[i]) {
+        // TODO duplication, could refactor this into one OR
         if (k == "name" && gamesObj[i].hasOwnProperty(k)) {
           gamesObj[i][k] = striptags(gamesObj[i][k], "<br>");
         } else if (k == "categories" && gamesObj[i].hasOwnProperty(k)) {
-            for (var index = 0; index < gamesObj[i][k].length; index++) {
-                gamesObj[i][k][index] = striptags(gamesObj[i][k][index])
-            }
+          for (var index = 0; index < gamesObj[i][k].length; index++) {
+            gamesObj[i][k][index] = striptags(gamesObj[i][k][index]);
+          }
         } else if (k == "levels" && gamesObj[i].hasOwnProperty(k)) {
-            for (var index = 0; index < gamesObj[i][k].length; index++) {
-                gamesObj[i][k][index] = striptags(gamesObj[i][k][index])
-            }
+          for (var index = 0; index < gamesObj[i][k].length; index++) {
+            gamesObj[i][k][index] = striptags(gamesObj[i][k][index]);
+          }
+        } else if (k == "categoryNames" && gamesObj[i].hasOwnProperty(k)) {
+          for (var index = 0; index < gamesObj[i][k].length; index++) {
+            gamesObj[i][k][index] = striptags(gamesObj[i][k][index]);
+          }
+        } else if (k == "miscCategoryNames" && gamesObj[i].hasOwnProperty(k)) {
+          for (var index = 0; index < gamesObj[i][k].length; index++) {
+            gamesObj[i][k][index] = striptags(gamesObj[i][k][index]);
+          }
+        } else if (k == "levelNames" && gamesObj[i].hasOwnProperty(k)) {
+          for (var index = 0; index < gamesObj[i][k].length; index++) {
+            gamesObj[i][k][index] = striptags(gamesObj[i][k][index]);
+          }
         } else if (gamesObj[i].hasOwnProperty(k)) {
           if ((gamesObj[i][k] != true) & (gamesObj[i][k] != false)) {
             gamesObj[i][k] = striptags(gamesObj[i][k]);
@@ -54,7 +66,6 @@ class Channel {
         }
       }
     }
-    console.log(gamesObj);
     this.key = key;
     this.data = [
       {

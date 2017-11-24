@@ -5,7 +5,7 @@ var srcName = null;
 
 window.Twitch.ext.onAuthorized(function(auth) {
     authObject = auth;
-    renderPreview(authObject)
+    // TODO reenable renderPreview(authObject)
     // console.log('The JWT that will be passed to the EBS is', authObject.token);
     // console.log('The channel ID is', authObject.channelId);
     $('#saveBtn').prop("disabled", true)
@@ -130,17 +130,11 @@ function restorePreviousSettings(savedData) {
     }
 
     // Repopulate Game List
-    // TODO expand this to also add the games categories / levels
     for (var i = 0; i < games.length; i++) {
-        var gameName
-        var gameID
         var shouldExpand
+        // TODO get rid of this for loop, its useless
         for (var k in games[i]) {
-            if (k == 'name' && games[i].hasOwnProperty(k)) {
-                gameName = games[i][k]
-            } else if (k == 'id' && games[i].hasOwnProperty(k)) {
-                gameID = games[i][k]
-            } else if (k == 'shouldExpand' && games[i].hasOwnProperty(k)) {
+            if (k == 'shouldExpand' && games[i].hasOwnProperty(k)) {
                 if (games[i][k] == true) {
                     shouldExpand = 'checked'
                 } else {
@@ -148,7 +142,49 @@ function restorePreviousSettings(savedData) {
                 }
             }
         }
-        addGameToList(gameID, gameName, '', shouldExpand)
+        if (games[i].hasOwnProperty('categories') == false) {
+            games[i]['categories'] = ["temp"]
+            games[i]['categoryNames'] = ["re-find your games!"]
+            games[i]['miscCategories'] = ["temp"]
+            games[i]['miscCategoryNames'] = ["re-find your games!"]
+        }
+        if (games[i].hasOwnProperty('levels') == false) {
+            games[i]['levels'] = ["temp"]
+            games[i]['levelNames'] = ["re-find your games!"]
+        }
+
+        categories = []
+        for (var j = 0; j < games[i].categories.length - games[i].miscCategoryNames.length; j++) {
+            categories.push({
+                name: games[i].categoryNames[j],
+                id: games[i].categories[j],
+                isMisc: false
+            })
+        }
+        offset = (games[i].categories.length - games[i].miscCategoryNames.length) - 1
+        for (var j = 0; j < games[i].miscCategoryNames.length; j++) {
+            categories.push({
+                name: games[i].miscCategoryNames[j],
+                id: games[i].categories[offset+i],
+                isMisc: true
+            })
+        }
+        levels = []
+        for (var j = 0; j < games[i].levels.length; j++) {
+            levels.push({
+                name: games[i].levelNames[j],
+                id: games[i].levels[j]
+            })
+        }
+
+        var constructGameObj = {
+            name: games[i].name,
+            id: games[i].id,
+            categories: categories,
+            levels: levels
+        }
+
+        addGameToList(constructGameObj, '', shouldExpand)
     }
 }
 
@@ -274,7 +310,7 @@ function addGameToList(game, removeBox, expandBox) {
                                             <p>Initial Expand Game</p>
                                         </div>
                                         <div class="col-md-4">
-                                            <input type="checkbox" value="ok6qlo1g" class="expandBox" ${expandBox}>
+                                            <input type="checkbox" class="expandBox" ${expandBox}>
                                         </div>
                                     </div>
                                 </li>
@@ -296,7 +332,8 @@ function addGameToList(game, removeBox, expandBox) {
             </div>
         </li>`
     }
-    for (let category of game.categories) {
+    for (var i = 0; i < game.categories.length; i++) {
+        category = game.categories[i]
         if (category.isMisc == false) {
             tempGameList += 
                 `<li>
@@ -321,7 +358,8 @@ function addGameToList(game, removeBox, expandBox) {
             <ol class="dropdown-menu">`
     // Add Miscellaneous Categories
     miscCount = 0
-    for (let category of game.categories) {
+    for (var i = 0; i < game.categories.length; i++) {
+        category = game.categories[i]
         // If they are toggled off, display that
         if ($('#miscShow').is(':checked') == false) {
             tempGameList += 
@@ -379,7 +417,8 @@ function addGameToList(game, removeBox, expandBox) {
             </div>
         </li>`
     }
-    for (let level of game.levels) {
+    for (var i = 0; i < game.levels.length; i++) {
+        level = game.levels[i]
         if ($('#ilShow').is(':checked') == false) {
             tempGameList += 
             `<li>
@@ -667,25 +706,43 @@ $("#saveBtn").click(function() {
             // categories and misc are seperated visually, but SRC API wise, they are handled
             // the same, so makes no sense to separate for our purposes
             categories = []
+            categoryNames = []
+            miscCategoryNames = []
             levels = []
+            levelNames = []
             // Categories
             $(currentGame).find('.categoryList').find('input').each(function() {
                 categories.push($(this).val().trim())
+            })
+            // Category Names
+            $(currentGame).find('.categoryList').find('p').each(function() {
+                categoryNames.push($(this).text().trim())
             })
             // Misc Categories
             $(currentGame).find('.miscList').find('input').each(function() {
                 categories.push($(this).val().trim())
             })
+            // Misc Category Names
+            $(currentGame).find('.miscList').find('p').each(function() {
+                miscCategoryNames.push($(this).text().trim())
+            })
             // ILs
             $(currentGame).find('.levelList').find('input').each(function() {
                 levels.push($(this).val().trim())
+            })
+            // IL Names
+            $(currentGame).find('.levelList').find('p').each(function() {
+                levelNames.push($(this).text().trim())
             })
             gamesToSend.push({
                 name: currentGame.find('.gameTitleBox').val().trim(),
                 id: checkbox.val().trim(),
                 shouldExpand: currentGame.find('.expandBox').is(':checked'),
                 categories: categories,
-                levels: levels
+                categoryNames: categoryNames,
+                miscCategoryNames: miscCategoryNames,
+                levels: levels,
+                levelNames: levelNames
             })
         }
     })
