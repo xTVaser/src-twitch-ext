@@ -420,231 +420,572 @@
             </div>
 
             <div class="row">
-                <ol class="gameList">
-                    <li>
-                        <div class="row">
-                            <nav class="navbar navbar-default game">
-                                <div class="container-fluid">
-                                    <ul class="nav navbar-nav">
-                                        <li>
-                                            <input type="text">
-                                        </li>
-                                        <li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Options
-                                                <span class="caret"></span>
-                                            </a>
-                                            <ol class="dropdown-menu">
-                                                <li>
-                                                    <div class="row optionRow">
-                                                        <div class="col-md-8">
-                                                            <p>Remove Remove Remove Remove Remove Remove Remove</p>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <a class="deleteOption">DELETE</a>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <input type="checkbox" class="checkbox" name="" id="">
-                                                        </div>
-                                                        <div class="col-md-10">Initially Expand</div>
-                                                    </div>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                        <li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Categories
-                                                <span class="caret"></span>
-                                            </a>
-                                            <ol class="dropdown-menu">
-                                                <li>
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <input type="checkbox" class="checkbox" name="" id="">
-                                                        </div>
-                                                        <div class="col-md-10">Category 1</div>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <input type="checkbox" class="checkbox" name="" id="">
-                                                        </div>
-                                                        <div class="col-md-10">Initially Expand</div>
-                                                    </div>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                        <li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Misc.
-                                                <span class="caret"></span>
-                                            </a>
-                                            <ol class="dropdown-menu">
-                                                <li>
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <input type="checkbox" class="checkbox" name="" id="">
-                                                        </div>
-                                                        <div class="col-md-10">Remove</div>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <input type="checkbox" class="checkbox" name="" id="">
-                                                        </div>
-                                                        <div class="col-md-10">Initially Expand</div>
-                                                    </div>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                        <li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Levels
-                                                <span class="caret"></span>
-                                            </a>
-                                            <ol class="dropdown-menu">
-                                                <li>
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <input type="checkbox" class="checkbox" name="" id="">
-                                                        </div>
-                                                        <div class="col-md-10">Remove</div>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <input type="checkbox" class="checkbox" name="" id="">
-                                                        </div>
-                                                        <div class="col-md-10">Initially Expand</div>
-                                                    </div>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                        <li>
-                                            <i class="fa fa-bars fa-config" aria-hidden="true"></i>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <!--/.container-fluid -->
-                            </nav>
+                    <ol id="gameList" class="ui-sortable" data-vivaldi-spatnav-clickable="1">
+                    <li class="ui-sortable-handle">
+                <div class="row">
+                    <nav class="navbar navbar-default game">
+                        <div class="container-fluid">
+                            <ul class="nav navbar-nav">
+                                <li>
+                                    <input type="text" value="Jak II" class="gameTitleBox">
+                                </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Options
+                                    <span class="caret"></span>
+                                </a>
+                                <ol class="dropdown-menu ui-sortable sortOptions">
+                                    <li>
+                                        <div class="row optionRow">
+                                            <div class="col-md-8">
+                                                <p>Remove Game</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input type="checkbox" value="ok6qlo1g" class="displayBox">
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="row optionRow">
+                                            <div class="col-md-8">
+                                                <p>Initial Expand Game</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input type="checkbox" value="ok6qlo1g" class="expandBox">
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ol>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Categories
+                                    <span class="caret"></span>
+                                </a>
+                                <ol class="dropdown-menu"><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>100%</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="7dg8q424" class="displayBox">
+                            </div>
                         </div>
-
-                    </li>
-                    <li>
-                        <div class="row">
-                            <nav class="navbar navbar-default game">
-                                <div class="container-fluid">
-                                    <ul class="nav navbar-nav">
-                                        <li>
-                                            <input type="text">
-                                        </li>
-                                        <li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Options
-                                                <span class="caret"></span>
-                                            </a>
-                                            <ol class="dropdown-menu">
-                                                <li>
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <input type="checkbox" class="checkbox" name="" id="">
-                                                        </div>
-                                                        <div class="col-md-10">Remove</div>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <input type="checkbox" class="checkbox" name="" id="">
-                                                        </div>
-                                                        <div class="col-md-10">Initially Expand</div>
-                                                    </div>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                        <li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Categories
-                                                <span class="caret"></span>
-                                            </a>
-                                            <ol class="dropdown-menu">
-                                                <li>
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <input type="checkbox" class="checkbox" name="" id="">
-                                                        </div>
-                                                        <div class="col-md-10">Category 1</div>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <input type="checkbox" class="checkbox" name="" id="">
-                                                        </div>
-                                                        <div class="col-md-10">Initially Expand</div>
-                                                    </div>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                        <li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Misc.
-                                                <span class="caret"></span>
-                                            </a>
-                                            <ol class="dropdown-menu">
-                                                <li>
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <input type="checkbox" class="checkbox" name="" id="">
-                                                        </div>
-                                                        <div class="col-md-10">Remove</div>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <input type="checkbox" class="checkbox" name="" id="">
-                                                        </div>
-                                                        <div class="col-md-10">Initially Expand</div>
-                                                    </div>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                        <li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Levels
-                                                <span class="caret"></span>
-                                            </a>
-                                            <ol class="dropdown-menu">
-                                                <li>
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <input type="checkbox" class="checkbox" name="" id="">
-                                                        </div>
-                                                        <div class="col-md-10">Remove</div>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <input type="checkbox" class="checkbox" name="" id="">
-                                                        </div>
-                                                        <div class="col-md-10">Initially Expand</div>
-                                                    </div>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                        <li>
-                                            <i class="fa fa-bars fa-config" aria-hidden="true"></i>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <!--/.container-fluid -->
-                            </nav>
+                    </li><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>All Missions</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="mkeon9d6" class="displayBox">
+                            </div>
                         </div>
-
-                    </li>
-                </ol>
+                    </li><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>Any%</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="wdmze42q" class="displayBox">
+                            </div>
+                        </div>
+                    </li><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>Any% Hoverless</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="xd1rxxrk" class="displayBox">
+                            </div>
+                        </div>
+                    </li>       </ol>
+                </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Misc.
+                    <span class="caret"></span>
+                </a>
+                <ol class="dropdown-menu"><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>Any% All Orbs</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="wkpj7vkr" class="displayBox">
+                            </div>
+                        </div>
+                    </li><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>Any% Hero Mode</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="vdo0jodp" class="displayBox">
+                            </div>
+                        </div>
+                    </li>       </ol>
+                </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Levels
+                    <span class="caret"></span>
+                </a>
+                <ol class="dropdown-menu"><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>Beat Time to Race Garage</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="ldypj3jd" class="displayBox">
+                        </div>
+                    </div>
+                </li><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>Blow up Strip Mine Eco Wells</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="nwl7n2p9" class="displayBox">
+                        </div>
+                    </div>
+                </li><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>Catch Scouts in Haven Forest</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="gdrqgy89" class="displayBox">
+                        </div>
+                    </div>
+                </li><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>Destroy Cargo in Port</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="ywe8nqqw" class="displayBox">
+                        </div>
+                    </div>
+                </li><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>Destroy Equipment at Dig Site</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="69z4x86w" class="displayBox">
+                        </div>
+                    </div>
+                </li><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>Erol Race</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="nwl7kg9v" class="displayBox">
+                        </div>
+                    </div>
+                </li><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>Highscores</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="nwlpqe9v" class="displayBox">
+                        </div>
+                    </div>
+                </li><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>Lifeseed Ghosttown</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="r9g27opd" class="displayBox">
+                        </div>
+                    </div>
+                </li><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>NYFE-Race Class 1</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="z98jv1wl" class="displayBox">
+                        </div>
+                    </div>
+                </li><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>NYFE-Race Class 1 Reverse</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="gdrqkk9z" class="displayBox">
+                        </div>
+                    </div>
+                </li><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>NYFE-Race Class 2</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="n9305r90" class="displayBox">
+                        </div>
+                    </div>
+                </li><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>NYFE-Race Class 2 Reverse</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="ldye77w3" class="displayBox">
+                        </div>
+                    </div>
+                </li><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>NYFE-Race Class 3</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="rw6vp697" class="displayBox">
+                        </div>
+                    </div>
+                </li><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>NYFE-Race Class 3 Reverse</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="rdn5j6dm" class="displayBox">
+                        </div>
+                    </div>
+                </li><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>Port Race</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="ywe8z4wl" class="displayBox">
+                        </div>
+                    </div>
+                </li>       </ol>
+                </li>
+            <li>
+                <i class="fa fa-bars fa-config" aria-hidden="true"></i>
+            </li>
+            </ul>
             </div>
+            </nav>
+            </div>
+            </li>
+            
+            <li class="ui-sortable-handle">
+                <div class="row">
+                    <nav class="navbar navbar-default game">
+                        <div class="container-fluid">
+                            <ul class="nav navbar-nav">
+                                <li>
+                                    <input type="text" value="Jak II Flashgame" class="gameTitleBox">
+                                </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Options
+                                    <span class="caret"></span>
+                                </a>
+                                <ol class="dropdown-menu ui-sortable sortOptions">
+                                    <li>
+                                        <div class="row optionRow">
+                                            <div class="col-md-8">
+                                                <p>Remove Game</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input type="checkbox" value="3692x0dl" class="displayBox">
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="row optionRow">
+                                            <div class="col-md-8">
+                                                <p>Initial Expand Game</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input type="checkbox" value="ok6qlo1g" class="expandBox">
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ol>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Categories
+                                    <span class="caret"></span>
+                                </a>
+                                <ol class="dropdown-menu"><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>Any%</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="5dwj1o0k" class="displayBox">
+                            </div>
+                        </div>
+                    </li><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>Any% Hero Mode</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="z27gv7o2" class="displayBox">
+                            </div>
+                        </div>
+                    </li>       </ol>
+                </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Misc.
+                    <span class="caret"></span>
+                </a>
+                <ol class="dropdown-menu">       </ol>
+                </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Levels
+                    <span class="caret"></span>
+                </a>
+                <ol class="dropdown-menu">       </ol>
+                </li>
+            <li>
+                <i class="fa fa-bars fa-config" aria-hidden="true"></i>
+            </li>
+            </ul>
+            </div>
+            </nav>
+            </div>
+            </li>
+            
+            <li class="ui-sortable-handle">
+                <div class="row">
+                    <nav class="navbar navbar-default game">
+                        <div class="container-fluid">
+                            <ul class="nav navbar-nav">
+                                <li>
+                                    <input type="text" value="Counter-Strike: Global Offensive" class="gameTitleBox">
+                                </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Options
+                                    <span class="caret"></span>
+                                </a>
+                                <ol class="dropdown-menu ui-sortable sortOptions">
+                                    <li>
+                                        <div class="row optionRow">
+                                            <div class="col-md-8">
+                                                <p>Remove Game</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input type="checkbox" value="ldemjl13" class="displayBox">
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="row optionRow">
+                                            <div class="col-md-8">
+                                                <p>Initial Expand Game</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input type="checkbox" value="ok6qlo1g" class="expandBox">
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ol>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Categories
+                                    <span class="caret"></span>
+                                </a>
+                                <ol class="dropdown-menu"><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>Gun Range</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="ndx8xljk" class="displayBox">
+                            </div>
+                        </div>
+                    </li><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>Weapons Course</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="rklg6mwd" class="displayBox">
+                            </div>
+                        </div>
+                    </li><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>Weapons Course (NG+)</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="z277x442" class="displayBox">
+                            </div>
+                        </div>
+                    </li><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>Weapons Course (No GR skip)</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="9kvxvl02" class="displayBox">
+                            </div>
+                        </div>
+                    </li>       </ol>
+                </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Misc.
+                    <span class="caret"></span>
+                </a>
+                <ol class="dropdown-menu">       </ol>
+                </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Levels
+                    <span class="caret"></span>
+                </a>
+                <ol class="dropdown-menu">       </ol>
+                </li>
+            <li>
+                <i class="fa fa-bars fa-config" aria-hidden="true"></i>
+            </li>
+            </ul>
+            </div>
+            </nav>
+            </div>
+            </li>
+            
+            <li class="ui-sortable-handle">
+                <div class="row">
+                    <nav class="navbar navbar-default game">
+                        <div class="container-fluid">
+                            <ul class="nav navbar-nav">
+                                <li>
+                                    <input type="text" value="Jak 3" class="gameTitleBox">
+                                </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Options
+                                    <span class="caret"></span>
+                                </a>
+                                <ol class="dropdown-menu ui-sortable sortOptions">
+                                    <li>
+                                        <div class="row optionRow">
+                                            <div class="col-md-8">
+                                                <p>Remove Game</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input type="checkbox" value="nj1nww1p" class="displayBox">
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="row optionRow">
+                                            <div class="col-md-8">
+                                                <p>Initial Expand Game</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input type="checkbox" value="ok6qlo1g" class="expandBox">
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ol>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Categories
+                                    <span class="caret"></span>
+                                </a>
+                                <ol class="dropdown-menu"><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>100%</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="zd30nndn" class="displayBox">
+                            </div>
+                        </div>
+                    </li><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>All Missions</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="xd1r98k8" class="displayBox">
+                            </div>
+                        </div>
+                    </li><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>Any%</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="9d8p1qkn" class="displayBox">
+                            </div>
+                        </div>
+                    </li><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>Any% Hero Mode</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="9kvp50kg" class="displayBox">
+                            </div>
+                        </div>
+                    </li><li>
+                        <div class="row optionRow">
+                            <div class="col-md-8">
+                                <p>Any% No OoB</p>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="checkbox" value="5dwj0n0k" class="displayBox">
+                            </div>
+                        </div>
+                    </li>       </ol>
+                </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Misc.
+                    <span class="caret"></span>
+                </a>
+                <ol class="dropdown-menu">       </ol>
+                </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Levels
+                    <span class="caret"></span>
+                </a>
+                <ol class="dropdown-menu"><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>Highscores</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="y9m2e1d5" class="displayBox">
+                        </div>
+                    </div>
+                </li><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>Racetrack Time Trial</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="kwjvyzwg" class="displayBox">
+                        </div>
+                    </div>
+                </li><li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>Wasteland Run</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" value="owo3kyw6" class="displayBox">
+                        </div>
+                    </div>
+                </li>       </ol>
+                </li>
+            <li>
+                <i class="fa fa-bars fa-config" aria-hidden="true"></i>
+            </li>
+            </ul>
+            </div>
+            </nav>
+            </div>
+            </li>
+            
+            </ol>
+                </div>
 
 
             <div class="row">

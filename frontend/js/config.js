@@ -1,27 +1,4 @@
 /// Config Page for Frontend
-$("ol.nav").sortable({
-    group: 'nav',
-    nested: false,
-    vertical: false,
-    exclude: '.divider-vertical',
-    onDragStart: function ($item, container, _super) {
-        $item.find('ol.dropdown-menu').sortable('disable');
-        _super($item, container);
-    },
-    onDrop: function ($item, container, _super) {
-        $item.find('ol.dropdown-menu').sortable('enable');
-        _super($item, container);
-    }
-});
-
-$("ol.dropdown-menu").sortable({
-    group: 'nav'
-});
-
-$("ol.gameList").sortable({
-
-});
-
 var authObject = null;
 var srcID = null;
 var srcName = null;
@@ -199,7 +176,8 @@ function getCategories(url, gameID) {
             if (category.type != "per-level") {
                 gameList[index].categories.push({
                     id: category.id,
-                    name: category.name
+                    name: category.name,
+                    isMisc: category.miscellaneous == true
                 })
             }
         }
@@ -249,14 +227,7 @@ function populateGameList(json) {
         ajaxCalls = []
         // Display The Games
         for (let game of gameList) {
-            addGameToList(game.id, game.name, '', '')
-            // Add Categories
-            $(`#game-${game.id}`).append(
-                `<ul id="sortableCategories-${game.id}" class="ui-sortable one-indent"></ul>`
-            )
-            for (let category of game.categories) {
-                addCategoryToGame(game.id, category, '')
-            }
+            addGameToList(game, '', '')
         }
         // Disable the spinner
         $('.spinnerWrapper').remove();
@@ -267,38 +238,149 @@ function populateGameList(json) {
     })
 }
 
-function addGameToList(gameID, gameName, removeBox, expandBox) {
-    $("#sortableGames").append(
-        `<li class="ui-state-default" id="game-${gameID}">
-            <div class="col-19-20">
-                Remove
-                <input type=checkbox value="${gameID}" class="displayBox" ${removeBox}>
-                Initally Expand
-                <input type="checkbox" value="ok6qlo1g" class="expandBox" ${expandBox}>
-                <input class="gameTitleBox" type="text" value="${gameName}">
-            </div>
-            <div class="col-1-20">
-                <i class="fa fa-bars" aria-hidden="true"></i>
-            </div>
-            <br class="clear">
-        </li>`
-    )
-}
+function addGameToList(game, removeBox, expandBox) {
 
-function addCategoryToGame(gameID, category, removeBox) {
-    $(`#sortableCategories-${gameID}`).append(
-        `<li class="ui-state-default" id="game-${gameID}">
-        <div class="col-19-20">
-            Remove
-            <input type=checkbox value="${category.id}" class="displayBox" ${removeBox}>
-            <span>${category.name}</span>
+    tempGameList = 
+        `<li class="ui-sortable-handle">
+            <div class="row">
+                <nav class="navbar navbar-default game">
+                    <div class="container-fluid">
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <input type="text" value="${game.name}" class="gameTitleBox">
+                            </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Options
+                                <span class="caret"></span>
+                            </a>
+                            <ol class="dropdown-menu ui-sortable">
+                                <li>
+                                    <div class="row optionRow">
+                                        <div class="col-md-8">
+                                            <p>Remove Game</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type=checkbox value="${game.id}" class="displayBox" ${removeBox}>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="row optionRow">
+                                        <div class="col-md-8">
+                                            <p>Initial Expand Game</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="checkbox" value="ok6qlo1g" class="expandBox" ${expandBox}>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ol>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Categories
+                                <span class="caret"></span>
+                            </a>
+                            <ol class="dropdown-menu">`
+    // Add Categories
+    for (let category of game.categories) {
+        if (category.isMisc == false) {
+            tempGameList += 
+                `<li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>${category.name}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type=checkbox value="${category.id}" class="displayBox" ${removeBox}>
+                        </div>
+                    </div>
+                </li>`
+        }
+    }
+    tempGameList +=
+        `       </ol>
+            </li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Misc.
+                <span class="caret"></span>
+            </a>
+            <ol class="dropdown-menu">`
+    // Add Miscellaneous Categories
+    for (let category of game.categories) {
+        // If they are toggled off, display that
+        if (category.isMisc) {
+            tempGameList += 
+                `<li>
+                    <div class="row optionRow">
+                        <div class="col-md-8">
+                            <p>${category.name}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <input type=checkbox value="${category.id}" class="displayBox" ${removeBox}>
+                        </div>
+                    </div>
+                </li>`
+        }
+    }
+    tempGameList += 
+        `       </ol>
+            </li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Levels
+                <span class="caret"></span>
+            </a>
+            <ol class="dropdown-menu">`
+    // Add Levels
+    for (let level of game.levels) {
+        // TODO if toggled off, display something
+        tempGameList += 
+            `<li>
+                <div class="row optionRow">
+                    <div class="col-md-8">
+                        <p>${level.name}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <input type=checkbox value="${level.id}" class="displayBox" ${removeBox}>
+                    </div>
+                </div>
+            </li>`
+    }
+    tempGameList +=
+        `       </ol>
+            </li>
+        <li>
+            <i class="fa fa-bars fa-config" aria-hidden="true"></i>
+        </li>
+        </ul>
         </div>
-        <div class="col-1-20">
-            <i class="fa fa-bars" aria-hidden="true"></i>
+        </nav>
         </div>
-        <br class="clear">
-    </li>`
-    )
+        </li>
+        </ol>
+        </div>`
+    $("#gameList").append(tempGameList)
+    $("ol.nav").sortable({
+        group: 'nav',
+        nested: false,
+        vertical: false,
+        exclude: '.divider-vertical',
+        onDragStart: function ($item, container, _super) {
+            $item.find('ol.dropdown-menu').sortable('disable');
+            _super($item, container);
+        },
+        onDrop: function ($item, container, _super) {
+            $item.find('ol.dropdown-menu').sortable('enable');
+            _super($item, container);
+        }
+    });
+    
+    $("ol.dropdown-menu").sortable({
+        group: 'nav'
+    });
+    
+    $("#gameList").sortable({
+    
+    });
 }
 
 function getGameList() {
