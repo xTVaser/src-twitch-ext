@@ -55,15 +55,8 @@ window.Twitch.ext.onAuthorized(function(auth) {
     });
 });
 
-function restorePreviousSettings(savedData) {
-
-    var settings = JSON.parse(savedData.settings)
-    var games = JSON.parse(savedData.games)
-    srcID = savedData.srcID;
-    srcName = savedData.srcName;
-
+function injectSettings(settings) {
     // Restore All Settings
-    //$('#panelTheme').val(settings.theme)
     $('#panelTitle').val(settings.title)
     $('#srcName').val(srcName)
     $('#panelTitleBackgroundType').val(settings.panelTitleBackgroundType)
@@ -128,6 +121,16 @@ function restorePreviousSettings(savedData) {
         $('#timeHeaderFontColor').val(settings.timeHeaderFontColor)
         $('#timeHeaderFont').val(settings.timeHeaderFont)
     }
+}
+
+function restorePreviousSettings(savedData) {
+
+    var settings = JSON.parse(savedData.settings)
+    var games = JSON.parse(savedData.games)
+    srcID = savedData.srcID;
+    srcName = savedData.srcName;
+
+    injectSettings(settings)
 
     // Repopulate Game List
     for (var i = 0; i < games.length; i++) {
@@ -597,32 +600,7 @@ function spawnGradientColorPicker(label1, label2, color1, color2) {
     )
 }
 
-$("#saveBtn").click(function() {
-
-    // Check to see if we can actually save or not
-    if (gameList == []) {
-        setError("ERROR: There are no Games Selected!")
-        $("#searchBtn").prop("disabled", false);
-        $("#searchBtn").attr('class', 'btn-primary');
-        $('.spinnerWrapper').remove();
-        return;
-    }
-    if (srcID == null) {
-        setError("ERROR: No Speedrun.com Name Choosen")
-        $("#searchBtn").prop("disabled", false);
-        $("#searchBtn").attr('class', 'btn-primary');
-        $('.spinnerWrapper').remove();
-        return;
-    }
-    if ($('#panelTitle').val() == "") {
-        setError("ERROR: No title given to panel!")
-        $("#searchBtn").prop("disabled", false);
-        $("#searchBtn").attr('class', 'btn-primary');
-        $('.spinnerWrapper').remove();
-        return;
-    }
-    $("#errorDialog").html('')
-
+function extractSettings() {
     settings = {}
     settings.theme = "stub" //$('#panelTheme').val()
     settings.title = $('#panelTitle').val()
@@ -696,6 +674,36 @@ $("#saveBtn").click(function() {
     settings.timeHeaderFontSize = $('#timeHeaderFontSize').val()
     settings.timeHeaderFontColor = $('#timeHeaderFontColor').val()
     settings.timeHeaderFont = $('#timeHeaderFont').val()
+    return settings
+}
+
+$("#saveBtn").click(function() {
+
+    // Check to see if we can actually save or not
+    if (gameList == []) {
+        setError("ERROR: There are no Games Selected!")
+        $("#searchBtn").prop("disabled", false);
+        $("#searchBtn").attr('class', 'btn-primary');
+        $('.spinnerWrapper').remove();
+        return;
+    }
+    if (srcID == null) {
+        setError("ERROR: No Speedrun.com Name Choosen")
+        $("#searchBtn").prop("disabled", false);
+        $("#searchBtn").attr('class', 'btn-primary');
+        $('.spinnerWrapper').remove();
+        return;
+    }
+    if ($('#panelTitle').val() == "") {
+        setError("ERROR: No title given to panel!")
+        $("#searchBtn").prop("disabled", false);
+        $("#searchBtn").attr('class', 'btn-primary');
+        $('.spinnerWrapper').remove();
+        return;
+    }
+    $("#errorDialog").html('')
+
+    settings = extractSettings()
 
     gamesToSend = []
     $('#gameList').find('.game').each(function() {
@@ -777,12 +785,31 @@ function sendResult(gamesToSend, settings) {
     });
 }
 
-function exportSettings() {
+document.getElementById('exportSettings').onclick = function(){
     var element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify({"text":"hello world"})));
-    element.setAttribute('download', "test.json");
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(extractSettings())));
+    element.setAttribute('download', "src-ext-backup-settings.json");
     element.style.display = 'none';
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
 }
+
+document.getElementById('importSettings').onchange = function(){
+    
+      var file = this.files[0];
+    
+      var reader = new FileReader();
+      reader.onload = function(progressEvent){
+        // Entire file
+        var jsonString = this.result;
+        try {
+            settings = JSON.parse(jsonString);
+            injectSettings(settings)
+        }
+        catch (e) {
+            setError("ERROR: Invalid/Outdated Settings File!")
+        }
+      };
+      reader.readAsText(file);
+    };
