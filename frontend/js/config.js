@@ -164,11 +164,11 @@ function restorePreviousSettings(savedData) {
                 isMisc: false
             })
         }
-        offset = (games[i].categories.length - games[i].miscCategoryNames.length) - 1
+        offset = (games[i].categories.length - games[i].miscCategoryNames.length)
         for (var j = 0; j < games[i].miscCategoryNames.length; j++) {
             categories.push({
                 name: games[i].miscCategoryNames[j],
-                id: games[i].categories[offset+i],
+                id: games[i].categories[offset+j],
                 isMisc: true
             })
         }
@@ -718,29 +718,44 @@ $("#saveBtn").click(function() {
             miscCategoryNames = []
             levels = []
             levelNames = []
-            // Categories
-            $(currentGame).find('.categoryList').find('input').each(function() {
-                categories.push($(this).val().trim())
+            $(currentGame).find('.categoryList').each(function() {
+                $(this).find('.optionRow').each(function() {
+                    name = ""
+                    $(this).find('p').each(function() {
+                        name = $(this).text().trim()
+                    })
+                    info = $(this).find('input')
+                    if (info.is(':checked')) {
+                        categories.push(info.val().trim())
+                        categoryNames.push(name)
+                    }
+                })
             })
-            // Category Names
-            $(currentGame).find('.categoryList').find('p').each(function() {
-                categoryNames.push($(this).text().trim())
+            $(currentGame).find('.miscList').each(function() {
+                $(this).find('.optionRow').each(function() {
+                    name = ""
+                    $(this).find('p').each(function() {
+                        name = $(this).text().trim()
+                    })
+                    info = $(this).find('input')
+                    if (info.is(':checked')) {
+                        categories.push(info.val().trim())
+                        miscCategoryNames.push(name)
+                    }
+                })
             })
-            // Misc Categories
-            $(currentGame).find('.miscList').find('input').each(function() {
-                categories.push($(this).val().trim())
-            })
-            // Misc Category Names
-            $(currentGame).find('.miscList').find('p').each(function() {
-                miscCategoryNames.push($(this).text().trim())
-            })
-            // ILs
-            $(currentGame).find('.levelList').find('input').each(function() {
-                levels.push($(this).val().trim())
-            })
-            // IL Names
-            $(currentGame).find('.levelList').find('p').each(function() {
-                levelNames.push($(this).text().trim())
+            $(currentGame).find('.levelList').each(function() {
+                $(this).find('.optionRow').each(function() {
+                    name = ""
+                    $(this).find('p').each(function() {
+                        name = $(this).text().trim()
+                    })
+                    info = $(this).find('input')
+                    if (info.is(':checked')) {
+                        levels.push(info.val().trim())
+                        levelNames.push(name)
+                    }
+                })
             })
             gamesToSend.push({
                 name: currentGame.find('.gameTitleBox').val().trim(),

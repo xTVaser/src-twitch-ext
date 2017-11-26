@@ -663,7 +663,7 @@ function sortLevels(expectedOrder, levels) {
     for (var i = 0; i < expectedOrder.length; i++) {
         // Look for that value in categories
         for (var j = 0; j < levels.length; j++) {
-            if (levels[j].isLevel && levels[j].categoryID == expectedOrder[i]) {
+            if (levels[j].isLevel && levels[j].levelID == expectedOrder[i]) {
                 ordered.push(levels[j])
             }
         }
