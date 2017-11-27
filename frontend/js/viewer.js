@@ -15,7 +15,11 @@ window.Twitch.ext.onAuthorized(function(auth) {
         return;
     }
     loaded = true
-
+    for (var i = 1; i <= 8; i++) {
+        var random_color = '#'+Math.floor(Math.random()*16777215).toString(16);
+        $(`div.spinner i:nth-child(${i})`).css('border-color', random_color);
+    }
+    
     $.ajax({
         type: "POST",
         url: "https://extension.xtvaser.xyz/fetch",
@@ -32,7 +36,7 @@ window.Twitch.ext.onAuthorized(function(auth) {
                 hidePBs = res.data.hidePBs
                 // First we will get all the runner's personal bests
                 $.ajax({
-                    url: "https://www.speedrun.com/api/v1/users/" + srcID + "/personal-bests",
+                    url: "https://www.speedrun.com/api/v1/users/" + srcID + "/personal-bests?embed=category.variables,level.variables",
                     dataType: "json",
                     success: function(data) {
                         getPersonalBests(data)
@@ -48,152 +52,115 @@ window.Twitch.ext.onAuthorized(function(auth) {
     });
 });
 
-var asyncLoop = function(o) {
-    var iter = -1
-    var length = o.length
-
-    var loop = function() {
-        iter++
-        if (iter == length) {
-            o.callback();
-            return;
-        }
-        o.functionToLoop(loop, iter)
-    }
-    loop();
-}
-
 function getPersonalBests(json) {
 
     personalBests = json.data
-    asyncLoop({
-        length: personalBests.length,
-        functionToLoop: function(loop, iter) {
-            // NOTE can get rank pb.place
-            run = personalBests[iter].run
-            // If this is one of the games that should be tracked
-            index = games.findIndex(x => x.id === run.game)
-            if (index > -1) {
-                // If this is the first game there, init the spot
-                if (pbList[run.game] == null) {
-                    pbList[run.game] = new Array()
-                }
-                pbList[run.game].push({
-                    gameId: run.game, // laziness, but with good intentions
-                    categoryID: run.category,
-                    categoryName: null,
-                    categoryLink: null,
-                    subcategoryID: null, // may not exist, will leave null if that is the case
-                    subcategoryVal: null, // may not exist, will leave null if that is the case
-                    levelID: run.level, // will be null if not a level
-                    variables: run.values, // We have no guarantee which variables are subcategories or not until we check
-                    pbTime: run.times.primary_t,
-                    pbLink: run.weblink,
-                    wrLink: null,
-                    wrTime: null,
-                    isMisc: false,
-                    isLevel: run.level != null,
-                    rank: personalBests[iter].place
-                })
+    for (var i = 0; i < personalBests.length; i++) {
+        run = personalBests[i].run
+        category = personalBests[i].category.data
+        level = personalBests[i].level.data
+        // If this is one of the games that should be tracked
+        index = games.findIndex(x => x.id === run.game)
+        if (index > -1) {
+            // If this is the first game there, init the spot
+            if (pbList[run.game] == null) {
+                pbList[run.game] = new Array()
             }
-            loop()
-        },
-        callback: function() {
-            // We will get the category link first then
-            getCategories()
+            // Get the potential subcategory
+            variables = null
+            if (run.level != null) {
+                variables = level.variables.data
+            }
+            else {
+                variables = category.variables.data
+            }
+            subcategoryID = null
+            subcategoryVal = null
+            subcategoryName = ""
+            for (var j = 0; j < variables.length; j++) {
+                if (variables[j]["is-subcategory"] == true &&
+                    variables[j].id in run.values) {
+                    
+                    // Then its the right subcategory, grab it's label and such
+                    subcategoryID = variables[j].id
+                    subcategoryVal = run.values[subcategoryID]
+
+                    // Find the value now with the subcategoryVal
+                    subcategoryName = variables[j].values.values[subcategoryVal].label
+                }
+            }
+            categoryName = ""
+            if (run.level != null) {
+                categoryName = level.name
+            }
+            else {
+                categoryName = category.name
+            }
+            pbList[run.game].push({
+                gameId: run.game, // laziness, but with good intentions
+                categoryID: run.category,
+                categoryName: categoryName,
+                categoryLink: category.weblink,
+                subcategoryName: subcategoryName,
+                subcategoryID: subcategoryID, // may not exist, will leave null if that is the case
+                subcategoryVal: subcategoryVal, // may not exist, will leave null if that is the case
+                levelID: run.level, // will be null if not a level
+                levelSubcategoryName: subcategoryName,
+                variables: run.values, // We have no guarantee which variables are subcategories or not until we check
+                pbTime: run.times.primary_t,
+                pbLink: run.weblink,
+                wrLink: null,
+                wrTime: null,
+                isMisc: category.miscellaneous,
+                isLevel: run.level != null,
+                rank: personalBests[i].place
+            })
         }
-    })
+    }
+    resolveSubcategoryNames()
 }
 
 var deferreds = []
-function getCategoryName(url, currentPBEntry) {
+function getLevelCategories(url, currentPBEntry) {
     deferreds.push($.getJSON(url, function(json) {
         category = json.data
-        if (currentPBEntry.isLevel) {
-            categories = category
-            for (var i = 0; i < categories.length; i++) {
-                if (categories[i].id == currentPBEntry.categoryID) {
-                    category = categories[i]
-                }
+        categories = category
+        for (var i = 0; i < categories.length; i++) {
+            if (categories[i].id == currentPBEntry.categoryID) {
+                category = categories[i]
             }
-            // if there is only one category, then we can omit the name
-            if (categories.length > 1) {
-                currentPBEntry.categoryName = ` - ${category.name}`
-            }
-            else {
-                currentPBEntry.categoryName = ""
-            }
-            currentPBEntry.categoryLink = category.weblink
-            currentPBEntry.isMisc = category.miscellaneous
         }
-        else {
-            currentPBEntry.categoryName = category.name
-            currentPBEntry.categoryLink = category.weblink
-            currentPBEntry.isMisc = category.miscellaneous
+        // if there is only one category, then we can omit the name
+        if (categories.length > 1) {
+            currentPBEntry.categoryName += " - " + currentPBEntry.subcategoryName
         }
+        // overwrite
+        currentPBEntry.categoryLink = category.weblink
+        currentPBEntry.isMisc = category.miscellaneous
     }))
 }
 
-function getCategories() {
+// NOTE: this is needed as we want to truncate the category from the name
+// if it wasnt, then this step could be avoided with the embed query
+function resolveSubcategoryNames() {
     gameIDs = Object.keys(pbList)
-    categoryAPILink = "https://www.speedrun.com/api/v1/categories/"
     for (var i = 0; i < gameIDs.length; i++) {
         for (var j = 0; j < pbList[gameIDs[i]].length; j++) {
             currentPBEntry = pbList[gameIDs[i]][j]
             if (currentPBEntry.isLevel) {
                 levelCategoryAPILink = `https://www.speedrun.com/api/v1/levels/${currentPBEntry.levelID}/categories`
-                getCategoryName(levelCategoryAPILink, currentPBEntry)
+                getLevelCategories(levelCategoryAPILink, currentPBEntry)
             }
             else {
-                getCategoryName(categoryAPILink + currentPBEntry.categoryID, currentPBEntry)
+                // just append the subcategory
+                currentPBEntry.categoryName += " - " + currentPBEntry.subcategoryName
             }
         }
     }
     // Then the variable link to fully construct the category link
     $.when.apply(null, deferreds).done(function() {
-        getSubcategories()
         deferreds = [] // clear ready for next group of calls
-    });
-}
-
-function examineVariables(url, currentPBEntry) {
-
-    deferreds.push($.getJSON(url, function(json) {
-        variables = json.data
-        for (var i = 0; i < variables.length; i++) {
-            if (variables[i]["is-subcategory"] == true &&
-                variables[i].id in currentPBEntry.variables) {
-                
-                // Then its the right subcategory, grab it's label and such
-                currentPBEntry.subcategoryID = variables[i].id
-                currentPBEntry.subcategoryVal = currentPBEntry.variables[currentPBEntry.subcategoryID]
-
-                // Find the value now with the subcategoryVal
-                currentPBEntry.categoryName += " - " + variables[i].values.values[currentPBEntry.subcategoryVal].label
-            }
-        }
-    }))
-}
-
-function getSubcategories() {
-    gameIDs = Object.keys(pbList)
-    variableAPILink = "https://www.speedrun.com/api/v1/categories/"
-    for (var i = 0; i < gameIDs.length; i++) {
-        for (var j = 0; j < pbList[gameIDs[i]].length; j++) {
-            currentPBEntry = pbList[gameIDs[i]][j]
-            if (currentPBEntry.isLevel) {
-                levelVariableAPILink = `https://www.speedrun.com/api/v1/levels/${currentPBEntry.levelID}/variables`
-                examineVariables(levelVariableAPILink, currentPBEntry)
-            }
-            else {
-                examineVariables(variableAPILink + currentPBEntry.categoryID + "/variables", currentPBEntry)
-            }
-        }
-    }
-    // Finally, get the WR's information
-    $.when.apply(null, deferreds).done(function() {
         getWorldRecords()
-        deferreds = [] // clear ready for next group of calls
     });
 }
 
@@ -230,36 +197,8 @@ function getWorldRecords() {
     }
     // Now we can finally render the contents of the panel
     $.when.apply(null, deferreds).done(function() {
-        getLevelNames()
         deferreds = [] // clear ready for next group of calls
-    });
-}
-
-function examineLevelEntry(url, currentPBEntry) {
-    deferreds.push($.getJSON(url, function(json) {
-        level = json.data
-        currentPBEntry.categoryName = level.name + currentPBEntry.categoryName
-    }))
-}
-
-function getLevelNames() {
-    gameIDs = Object.keys(pbList)
-    // format for api link
-    // ../levels/nwl7kg9v
-    for (var i = 0; i < gameIDs.length; i++) {
-        for (var j = 0; j < pbList[gameIDs[i]].length; j++) {
-            currentPBEntry = pbList[gameIDs[i]][j]
-            if (currentPBEntry.isLevel == true) {
-                // Construct API Request
-                requestURL = `https://www.speedrun.com/api/v1/levels/${currentPBEntry.levelID}`
-                examineLevelEntry(requestURL, currentPBEntry)
-            }
-        }
-    }
-    // Now we can finally render the contents of the panel
-    $.when.apply(null, deferreds).done(function() {
         renderPersonalBests()
-        deferreds = [] // clear ready for next group of calls
     });
 }
 
@@ -273,8 +212,6 @@ $(document).on('click', '.gameTitle', function(e) {
     }
     $('#pbRow' + id).slideToggle('fast');
 });
-
-
 
 /// Renders the Panel with the given settings
 function renderPersonalBests() {
@@ -585,8 +522,8 @@ function renderPersonalBests() {
     $(".categoryName, .pbTime, .wrTime").hover(
         function(e) {
             nonHoverColor = rgb2hex($(e.target).css("color"))
-            hoverColor = (parseInt(nonHoverColor.replace(/^#/, ''), 16) & 0xfefefe) >> 1;
-            $(e.target).css("color", `#${hoverColor.toString(16)}`)
+            hoverColor = ((parseInt(nonHoverColor.replace(/^#/, ''), 16) & 0xfefefe) >> 1).toString(16);
+            $(e.target).css("color", `#${("000000" + hoverColor).slice(-6)}`)
             e.target.name = nonHoverColor
         },
         function(e) {
@@ -607,7 +544,7 @@ function secondsToTimeStr(seconds) {
     conv_seconds = Math.round(seconds)
     minutes = parseInt(conv_seconds / 60)
     conv_seconds = ("0" + conv_seconds % 60).slice(-2);
-    hours = ("0" + parseInt(minutes / 60)).slice(-2);
+    hours = (parseInt(minutes / 60));
     minutes = ("0" + minutes % 60).slice(-2);
 
     // Handle milliseconds
@@ -624,11 +561,25 @@ function secondsToTimeStr(seconds) {
         }
         conv_seconds = Math.trunc(seconds)
         minutes = parseInt(conv_seconds / 60)
+        minutes = ("0" + minutes % 60).slice(-2);
         conv_seconds = ("0" + conv_seconds % 60).slice(-2);
+        if (minutes == "00") {
+            return `${conv_seconds}.${milliseconds}`
+        }
+        else if (parseInt(minutes) < 10) {
+            return `${parseInt(minutes)}:${conv_seconds}.${milliseconds}`
+        }
         return `${minutes}:${conv_seconds}.${milliseconds}`
     }
-    if (hours == "00")
+    if (hours == "00") {
+        if (parseInt(minutes) < 10) {
+            return `${parseInt(minutes)}:${conv_seconds}`
+        }
+        else if (minutes == "00") {
+            return `${conv_seconds}`
+        }
         return `${minutes}:${conv_seconds}`
+    }
     return `${hours}:${minutes}:${conv_seconds}`
 }
 
