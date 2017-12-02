@@ -807,13 +807,8 @@ function sendResult(gamesToSend, settings) {
 }
 
 document.getElementById('exportSettings').onclick = function(){
-    var element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(extractSettings())));
-    element.setAttribute('download', "src-ext-backup-settings.json");
-    element.style.display = 'none';
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+    var blob = new Blob([JSON.stringify(extractSettings())], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, "src-ext-backup-settings.json");
 }
 
 document.getElementById('importSettings').onchange = function(){
