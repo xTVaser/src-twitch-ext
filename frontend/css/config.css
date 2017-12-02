@@ -27,6 +27,9 @@ ul.config {
 #gamesHeader h3 {
     text-align: center;
 }
+#errorDialog h3 {
+    text-align: center;
+}
 
 h1.config {
     margin-bottom: 2em;

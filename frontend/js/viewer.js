@@ -588,6 +588,15 @@ function secondsToTimeStr(seconds) {
 
 function sortCategories(expectedOrder, categories) {
     ordered = []
+    // Backwards compatibility patch v0.3.0 -> 1.0.0
+    if (expectedOrder == undefined) {
+        for (var i = 0; i < categories.length; i++) {
+            if (categories[i].isLevel == false && categories[i].isMisc == false) {
+                ordered.push(categories[i])
+            }
+        }
+        return ordered
+    }
     for (var i = 0; i < expectedOrder.length; i++) {
         // Look for that value in categories
         for (var j = 0; j < categories.length; j++) {
@@ -601,6 +610,15 @@ function sortCategories(expectedOrder, categories) {
 
 function sortMiscCategories(expectedOrder, categories) {
     ordered = []
+    // Backwards compatibility patch v0.3.0 -> 1.0.0
+    if (expectedOrder == undefined) {
+        for (var i = 0; i < categories.length; i++) {
+            if (categories[i].isLevel == false && categories[i].isMisc == true) {
+                ordered.push(categories[i])
+            }
+        }
+        return ordered
+    }
     for (var i = 0; i < expectedOrder.length; i++) {
         // Look for that value in categories
         for (var j = 0; j < categories.length; j++) {
@@ -614,6 +632,15 @@ function sortMiscCategories(expectedOrder, categories) {
 
 function sortLevels(expectedOrder, levels) {
     ordered = []
+    // Backwards compatibility patch v0.3.0 -> 1.0.0
+    if (expectedOrder == undefined) {
+        for (var i = 0; i < levels.length; i++) {
+            if (levels[i].isLevel == true) {
+                ordered.push(levels[i])
+            }
+        }
+        return ordered
+    }
     for (var i = 0; i < expectedOrder.length; i++) {
         // Look for that value in categories
         for (var j = 0; j < levels.length; j++) {
