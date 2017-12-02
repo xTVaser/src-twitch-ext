@@ -578,6 +578,13 @@ $('#panelTitleBackgroundType').change(function() {
     }
 })
 
+$('#themeSelector').change(function() {
+    value = $('#themeSelector').val().trim()
+    if (value == 'default') {
+        injectSettings(defaultTheme)
+    }
+})
+
 function spawnSolidColorPicker(color1) {
     $('#colorPickerContainer').append(
         `<div>
