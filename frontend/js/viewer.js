@@ -131,8 +131,11 @@ function getLevelCategories(url, currentPBEntry) {
             }
         }
         // if there is only one category, then we can omit the name
-        if (categories.length > 1) {
-            currentPBEntry.categoryName += " - " + currentPBEntry.subcategoryName
+        if (categories.length > 1 && currentPBEntry.subcategoryName != "") {
+            currentPBEntry.categoryName += " - " + currentPBEntry.subcategoryName + " - " + category.name
+        }
+        else if (categories.length > 1 && currentPBEntry.subcategoryName == "") {
+            currentPBEntry.categoryName += " - " + category.name
         }
         // overwrite
         currentPBEntry.categoryLink = category.weblink
@@ -151,7 +154,7 @@ function resolveSubcategoryNames() {
                 levelCategoryAPILink = `https://www.speedrun.com/api/v1/levels/${currentPBEntry.levelID}/categories`
                 getLevelCategories(levelCategoryAPILink, currentPBEntry)
             }
-            else {
+            else if (currentPBEntry.subcategoryName != "") {
                 // just append the subcategory
                 currentPBEntry.categoryName += " - " + currentPBEntry.subcategoryName
             }
