@@ -15,8 +15,10 @@ const bodyParser = require("body-parser");
 const Datastore = require("@google-cloud/datastore");
 const twitch = require("./twitchlib");
 const lib = require("./lib");
+const ua = require('universal-analytics')
 var morgan = require("morgan");
 var striptags = require("striptags");
+var visitor = ua(process.env.ANALYTICS_ID);
 
 /// Simple object to represent channel object in database
 class Channel {
@@ -114,7 +116,8 @@ app.use(
 );
 
 app.options("/save", function(req, res) {
-  console.log("in fetch options");
+  console.log("Settings being Saved - Handshake");
+  visitor.pageview(req.path + "/options").send();
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization, X-Requested-With, x-extension-jwt"
@@ -128,6 +131,8 @@ app.options("/save", function(req, res) {
 });
 
 app.post("/save", function(req, res) {
+  console.log("Settings being Saved - Actually saving");
+  visitor.pageview(req.path).send();
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization, X-Requested-With",
@@ -178,7 +183,8 @@ app.post("/save", function(req, res) {
 });
 
 app.options("/fetch", function(req, res) {
-  console.log("in fetch options");
+  console.log("Fetching Info - Handshake");
+  visitor.pageview(req.path + "/options").send();
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization, X-Requested-With, x-extension-jwt"
@@ -192,7 +198,8 @@ app.options("/fetch", function(req, res) {
 });
 
 app.post("/fetch", function(req, res) {
-  console.log("in post");
+  console.log("Fetching Info - Channel being freshed.");
+  visitor.pageview(req.path).send();
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization, X-Requested-With, x-extension-jwt"
@@ -233,7 +240,8 @@ app.post("/fetch", function(req, res) {
 
 app.use((req, res, next) => {
   // try to remove these after
-  console.log("Got request", req.path, req.method);
+  console.log("Got generic request", req.path, req.method);
+  visitor.pageview(req.path).send();
   //res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With', 'x-extension-jwt');
   res.setHeader("Access-Control-Allow-Methods", "GET");
   //res.setHeader('Access-Control-Allow-Origin', '*');
