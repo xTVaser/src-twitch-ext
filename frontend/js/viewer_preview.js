@@ -46,7 +46,7 @@ function renderPreview(auth) {
                 hidePBs = res.data.hidePBs
                 // First we will get all the runner's personal bests
                 $.ajax({
-                    url: "https://www.speedrun.com/api/v1/users/" + srcID + "/personal-bests",
+                    url: "https://www.speedrun.com/api/v1/users/" + srcID + "/personal-bests?embed=category.variables,level.variables",
                     dataType: "json",
                     success: function(data) {
                         getPersonalBests(data)
@@ -62,122 +62,118 @@ function renderPreview(auth) {
     });
 }
 
-var asyncLoop = function(o) {
-    var iter = -1
-    var length = o.length
-
-    var loop = function() {
-        iter++
-        if (iter == length) {
-            o.callback();
-            return;
-        }
-        o.functionToLoop(loop, iter)
-    }
-    loop();
-}
-
 function getPersonalBests(json) {
-
+    
     personalBests = json.data
-    asyncLoop({
-        length: personalBests.length,
-        functionToLoop: function(loop, iter) {
-            // NOTE can get rank pb.place
-            run = personalBests[iter].run
-            // If this is one of the games that should be tracked
-            index = games.findIndex(x => x.id === run.game)
-            if (index > -1) {
-                // If this is the first game there, init the spot
-                if (pbList[run.game] == null) {
-                    pbList[run.game] = new Array()
-                }
-                pbList[run.game].push({
-                    gameId: run.game, // laziness, but with good intentions
-                    categoryID: run.category,
-                    categoryName: null,
-                    categoryLink: null,
-                    subcategoryID: null, // may not exist, will leave null if that is the case
-                    subcategoryVal: null, // may not exist, will leave null if that is the case
-                    levelID: run.level, // will be null if not a level
-                    variables: run.values, // We have no guarantee which variables are subcategories or not until we check
-                    pbTime: run.times.primary_t,
-                    pbLink: run.weblink,
-                    wrLink: null,
-                    wrTime: null,
-                    isMisc: false,
-                    isLevel: run.level != null,
-                    rank: personalBests[iter].place
-                })
+    for (var i = 0; i < personalBests.length; i++) {
+        run = personalBests[i].run
+        category = personalBests[i].category.data
+        level = personalBests[i].level.data
+        // If this is one of the games that should be tracked
+        index = games.findIndex(x => x.id === run.game)
+        if (index > -1) {
+            // If this is the first game there, init the spot
+            if (pbList[run.game] == null) {
+                pbList[run.game] = new Array()
             }
-            loop()
-        },
-        callback: function() {
-            // We will get the category link first then
-            getCategories()
+            // Get the potential subcategory
+            variables = null
+            if (run.level != null) {
+                variables = level.variables.data
+            }
+            else {
+                variables = category.variables.data
+            }
+            subcategoryID = null
+            subcategoryVal = null
+            subcategoryName = ""
+            for (var j = 0; j < variables.length; j++) {
+                if (variables[j]["is-subcategory"] == true &&
+                    variables[j].id in run.values) {
+                    
+                    // Then its the right subcategory, grab it's label and such
+                    subcategoryID = variables[j].id
+                    subcategoryVal = run.values[subcategoryID]
+
+                    // Find the value now with the subcategoryVal
+                    subcategoryName = variables[j].values.values[subcategoryVal].label
+                }
+            }
+            categoryName = ""
+            if (run.level != null) {
+                categoryName = level.name
+            }
+            else {
+                categoryName = category.name
+            }
+            pbList[run.game].push({
+                gameId: run.game, // laziness, but with good intentions
+                categoryID: run.category,
+                categoryName: categoryName,
+                categoryLink: category.weblink,
+                subcategoryName: subcategoryName,
+                subcategoryID: subcategoryID, // may not exist, will leave null if that is the case
+                subcategoryVal: subcategoryVal, // may not exist, will leave null if that is the case
+                levelID: run.level, // will be null if not a level
+                levelSubcategoryName: subcategoryName,
+                variables: run.values, // We have no guarantee which variables are subcategories or not until we check
+                pbTime: run.times.primary_t,
+                pbLink: run.weblink,
+                wrLink: null,
+                wrTime: null,
+                isMisc: category.miscellaneous,
+                isLevel: run.level != null,
+                rank: personalBests[i].place
+            })
         }
-    })
+    }
+    resolveSubcategoryNames()
 }
 
 var deferreds = []
-
-function getCategoryName(url, currentPBEntry) {
+function getLevelCategories(url, currentPBEntry) {
     deferreds.push($.getJSON(url, function(json) {
         category = json.data
-        currentPBEntry.categoryName = category.name
+        categories = category
+        for (var i = 0; i < categories.length; i++) {
+            if (categories[i].id == currentPBEntry.categoryID) {
+                category = categories[i]
+            }
+        }
+        // if there is only one category, then we can omit the name
+        if (categories.length > 1 && currentPBEntry.subcategoryName != "") {
+            currentPBEntry.categoryName += " - " + currentPBEntry.subcategoryName + " - " + category.name
+        }
+        else if (categories.length > 1 && currentPBEntry.subcategoryName == "") {
+            currentPBEntry.categoryName += " - " + category.name
+        }
+        // overwrite
         currentPBEntry.categoryLink = category.weblink
         currentPBEntry.isMisc = category.miscellaneous
     }))
 }
 
-function getCategories() {
+// NOTE: this is needed as we want to truncate the category from the name
+// if it wasnt, then this step could be avoided with the embed query
+function resolveSubcategoryNames() {
     gameIDs = Object.keys(pbList)
-    categoryAPILink = "https://www.speedrun.com/api/v1/categories/"
     for (var i = 0; i < gameIDs.length; i++) {
         for (var j = 0; j < pbList[gameIDs[i]].length; j++) {
             currentPBEntry = pbList[gameIDs[i]][j]
-            getCategoryName(categoryAPILink + currentPBEntry.categoryID, currentPBEntry)
+            if (currentPBEntry.isLevel) {
+                levelCategoryAPILink = `https://www.speedrun.com/api/v1/levels/${currentPBEntry.levelID}/categories`
+                getLevelCategories(levelCategoryAPILink, currentPBEntry)
+            }
+            else if (currentPBEntry.subcategoryName != "") {
+                // just append the subcategory
+                currentPBEntry.categoryName += " - " + currentPBEntry.subcategoryName
+            }
         }
     }
     // Then the variable link to fully construct the category link
     $.when.apply(null, deferreds).done(function() {
-        getSubcategories()
         deferreds = [] // clear ready for next group of calls
-    });
-}
-
-function examineVariables(url, currentPBEntry) {
-
-    deferreds.push($.getJSON(url, function(json) {
-        variables = json.data
-        for (var i = 0; i < variables.length; i++) {
-            if (variables[i]["is-subcategory"] == true &&
-                variables[i].id in currentPBEntry.variables) {
-
-                // Then its the right subcategory, grab it's label and such
-                currentPBEntry.subcategoryID = variables[i].id
-                currentPBEntry.subcategoryVal = currentPBEntry.variables[currentPBEntry.subcategoryID]
-
-                // Find the value now with the subcategoryVal
-                currentPBEntry.categoryName += " - " + variables[i].values.values[currentPBEntry.subcategoryVal].label
-            }
-        }
-    }))
-}
-
-function getSubcategories() {
-    gameIDs = Object.keys(pbList)
-    variableAPILink = "https://www.speedrun.com/api/v1/categories/"
-    for (var i = 0; i < gameIDs.length; i++) {
-        for (var j = 0; j < pbList[gameIDs[i]].length; j++) {
-            currentPBEntry = pbList[gameIDs[i]][j]
-            examineVariables(variableAPILink + currentPBEntry.categoryID + "/variables", currentPBEntry)
-        }
-    }
-    // Finally, get the WR's information
-    $.when.apply(null, deferreds).done(function() {
         getWorldRecords()
-        deferreds = [] // clear ready for next group of calls
     });
 }
 
@@ -185,7 +181,7 @@ function examineWorldRecordEntry(url, currentPBEntry) {
     deferreds.push($.getJSON(url, function(json) {
         wr = json.data
         // Guaranteed to a be wr as we only check categories that streamer has done
-        // a run of, which means there is atleast one (theres)
+        // a run of, which means there is atleast one run (theres)
         currentPBEntry.wrLink = wr.runs[0].run.weblink
         currentPBEntry.wrTime = wr.runs[0].run.times.primary_t
     }))
@@ -199,68 +195,36 @@ function getWorldRecords() {
         for (var j = 0; j < pbList[gameIDs[i]].length; j++) {
             currentPBEntry = pbList[gameIDs[i]][j]
             // Construct API Request
-            requestURL = `https://www.speedrun.com/api/v1/leaderboards/${currentPBEntry.gameId}/category/${currentPBEntry.categoryID}?top=1`
+            requestURL = ""
+            if (currentPBEntry.isLevel) {
+                requestURL = `https://www.speedrun.com/api/v1/leaderboards/${currentPBEntry.gameId}/level/${currentPBEntry.levelID}/${currentPBEntry.categoryID}?top=1`
+            }
+            else {
+                requestURL = `https://www.speedrun.com/api/v1/leaderboards/${currentPBEntry.gameId}/category/${currentPBEntry.categoryID}?top=1`
+            }
             if (currentPBEntry.subcategoryID != null) {
                 requestURL += `&var-${currentPBEntry.subcategoryID}=${currentPBEntry.subcategoryVal}`
             }
-            if (currentPBEntry.isLevel == false) {
-                examineWorldRecordEntry(requestURL, currentPBEntry)
-            }
+            examineWorldRecordEntry(requestURL, currentPBEntry)
         }
     }
     // Now we can finally render the contents of the panel
     $.when.apply(null, deferreds).done(function() {
-        getLevelInfo()
         deferreds = [] // clear ready for next group of calls
-    });
-}
-
-function examineLevelEntry(url, currentPBEntry) {
-    deferreds.push($.getJSON(url, function(json) {
-        level = json.data
-        currentPBEntry.categoryName = level.name
-        currentPBEntry.categoryLink = level.weblink
-    }))
-}
-
-function examineLevelWorldRecord(url, currentPBEntry) {
-    deferreds.push($.getJSON(url, function(json) {
-        wr = json.data
-        currentPBEntry.wrLink = wr.runs[0].run.weblink
-        currentPBEntry.wrTime = wr.runs[0].run.times.primary_t
-    }))
-}
-
-function getLevelInfo() {
-    gameIDs = Object.keys(pbList)
-    // format for api link
-    // ../levels/nwl7kg9v
-    for (var i = 0; i < gameIDs.length; i++) {
-        for (var j = 0; j < pbList[gameIDs[i]].length; j++) {
-            currentPBEntry = pbList[gameIDs[i]][j]
-            if (currentPBEntry.isLevel == true) {
-                // Construct API Request
-                requestURL = `https://www.speedrun.com/api/v1/levels/${currentPBEntry.levelID}`
-                examineLevelEntry(requestURL, currentPBEntry)
-                // Get the Level WR as well
-                requestURL = `https://www.speedrun.com/api/v1/leaderboards/${currentPBEntry.gameId}/level/${currentPBEntry.levelID}/${currentPBEntry.categoryID}`
-                examineLevelWorldRecord(requestURL, currentPBEntry)
-            }
-        }
-    }
-    // Now we can finally render the contents of the panel
-    $.when.apply(null, deferreds).done(function() {
         renderPersonalBests()
-        deferreds = [] // clear ready for next group of calls
     });
 }
 
 $(document).on('click', '.gameTitle', function(e) {
     id = e.currentTarget.id.substring(1)
+    if($("#pbRow" + id).is(":hidden")) {
+        $('#pbRowStatus' + id).html('<i class="fa fa-minus-square-o fa-2x" aria-hidden="true"></i>')
+    }
+    else {
+        $('#pbRowStatus' + id).html('<i class="fa fa-plus-square-o fa-2x" aria-hidden="true"></i>')
+    }
     $('#pbRow' + id).slideToggle('fast');
 });
-
-
 
 /// Renders the Panel with the given settings
 function renderPersonalBests() {
@@ -273,24 +237,38 @@ function renderPersonalBests() {
 
     // Add the Title
     $(".titleContainer").append(
-        `<div class="row center">
+        `<div class="row center" id="titleContainerRow">
             <h1 id="viewerPanelTitle">${settings.title}</h1>
         </div>`
     )
 
     // Add the Headers
-    $(".titleContainer").append(
-        `<div class="row" id="headers">
-            <div class="col-6-10">
-                <h3>Category</h3></div>
-            <div class="col-2-10 center">
-                <h3>PB</h3></div>
-            <div class="col-2-10 center">
-                <h3>WR</h3>
+    if (settings.hideWR) {
+        $(".titleContainer").append(
+            `<div class="row" id="headers">
+                <div class="col-8-10 titleHeaders">
+                    <h3>Category</h3></div>
+                <div class="col-2-10 center titleHeaders">
+                    <h3>PB</h3></div>
             </div>
-        </div>
-        <br class="clear" />`
-    )
+            <br class="clear" />`
+        )
+    }
+    else {
+        $(".titleContainer").append(
+            `<div class="row" id="headers">
+                <div class="col-6-10 titleHeaders">
+                    <h3>Category</h3></div>
+                <div class="col-2-10 center titleHeaders">
+                    <h3>PB</h3></div>
+                <div class="col-2-10 center titleHeaders">
+                    <h3>WR</h3>
+                </div>
+            </div>
+            <br class="clear" />`
+        )
+    }
+    
 
     // Adding Games and PBs
     // Loop through every Game
@@ -303,7 +281,7 @@ function renderPersonalBests() {
                 <div class="col-8-10">
                     <h2>${gameName}</h2>
                 </div>
-                <div class="col-2-10 center">
+                <div class="col-2-10 center" id="pbRowStatus${i}">
                     <i class="fa fa-plus-square-o fa-2x" aria-hidden="true"></i>
                 </div>
                 <br class="clear" />
@@ -320,42 +298,48 @@ function renderPersonalBests() {
                 <div class="pbRow outlineText" id="pbRow${i}" style="display: ${displayPBs};">
                     <ul>`
 
-        // Sort the Games by their names
-        currentGame.sort(dynamicSort("categoryName"))
         // Get all the Personal Bests now
-        var anyLevels = false
-        var anyMiscs = false
-        for (var j = 0; j < currentGame.length; j++) {
-
-            pb = currentGame[j]
-            // Skip misc
-            if ((settings.miscShow == false || settings.miscSep == true) && pb.isMisc == true) {
-                anyMiscs = true
-                continue
+        // Normal Categories
+        sortedCategories = sortCategories(games[i].categories, currentGame)
+        for (var j = 0; j < sortedCategories.length; j++) {
+            pb = sortedCategories[j]
+            // TODO this can be pulled out into func
+            if (settings.hideWR) {
+                pbHTML +=
+                    `<li>
+                    <div class="col-8-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                    <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                </li>`
             }
-            // Skip ils
-            if ((settings.ilShow == false || settings.ilSep == true) && pb.isLevel == true) {
-                anyLevels = true
-                continue
+            else {
+                pbHTML +=
+                    `<li>
+                    <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                    <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                    <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
+                </li>`
             }
-
-            pbHTML +=
-                `<li>
-                <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
-                <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
-                <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
-            </li>`
         }
-        // If we wanted to seperate runs, print misc > ils now
-        if (settings.miscShow == true && settings.miscSep == true && anyMiscs == true) {
+        // Misc Categories, if desired
+        sortedMiscCategories = sortMiscCategories(games[i].categories, currentGame)
+        if (settings.miscShow && settings.miscSep && sortedMiscCategories.length > 0) {
             pbHTML +=
                 `<li>
                 <div><p class="timeHeader">Miscellaneous Categories</div>
             </li>`
-            for (var j = 0; j < currentGame.length; j++) {
-                pb = currentGame[j]
-                // Only mess with misc categories
-                if (pb.isMisc == true) {
+        }
+        if (settings.miscShow && sortedMiscCategories.length > 0) {
+            for (var j = 0; j < sortedMiscCategories.length; j++) {
+                pb = sortedMiscCategories[j]
+                // TODO this can be pulled out into func
+                if (settings.hideWR) {
+                    pbHTML +=
+                        `<li>
+                        <div class="col-8-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                        <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                    </li>`
+                }
+                else {
                     pbHTML +=
                         `<li>
                         <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
@@ -365,16 +349,26 @@ function renderPersonalBests() {
                 }
             }
         }
-
-        if (settings.ilShow == true && settings.ilSep == true && anyLevels == true) {
+        // ILs, if desired
+        sortedLevels = sortLevels(games[i].levels, currentGame)
+        if (settings.ilShow && settings.ilSep && sortedLevels.length > 0) {
             pbHTML +=
                 `<li>
                 <div><p class="timeHeader">Individual Levels</div>
             </li>`
-            for (var j = 0; j < currentGame.length; j++) {
-                pb = currentGame[j]
-                // Only mess with misc categories
-                if (pb.isLevel == true) {
+        }
+        if (settings.ilShow && sortedLevels.length > 0) {
+            for (var j = 0; j < sortedLevels.length; j++) {
+                pb = sortedLevels[j]
+                // TODO this can be pulled out into func
+                if (settings.hideWR) {
+                    pbHTML +=
+                        `<li>
+                        <div class="col-8-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
+                        <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
+                    </li>`
+                }
+                else {
                     pbHTML +=
                         `<li>
                         <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
@@ -542,8 +536,8 @@ function renderPersonalBests() {
     $(".categoryName, .pbTime, .wrTime").hover(
         function(e) {
             nonHoverColor = rgb2hex($(e.target).css("color"))
-            hoverColor = (parseInt(nonHoverColor.replace(/^#/, ''), 16) & 0xfefefe) >> 1;
-            $(e.target).css("color", `#${hoverColor.toString(16)}`)
+            hoverColor = ((parseInt(nonHoverColor.replace(/^#/, ''), 16) & 0xfefefe) >> 1).toString(16);
+            $(e.target).css("color", `#${("000000" + hoverColor).slice(-6)}`)
             e.target.name = nonHoverColor
         },
         function(e) {
@@ -561,26 +555,83 @@ function rgb2hex(rgb) {
 }
 
 function secondsToTimeStr(seconds) {
-    // Truncate off milliseconds
-    // TODO modify output to truncate hours / get rid of hours
-    // so that we dont have to sacrifice space to display milliseconds
-    seconds = Math.round(seconds)
-
-    minutes = parseInt(seconds / 60)
-    seconds = ("0" + seconds % 60).slice(-2);
-    hours = ("0" + parseInt(minutes / 60)).slice(-2);
+    conv_seconds = Math.round(seconds)
+    minutes = parseInt(conv_seconds / 60)
+    conv_seconds = ("0" + conv_seconds % 60).slice(-2);
+    hours = (parseInt(minutes / 60));
     minutes = ("0" + minutes % 60).slice(-2);
-    return `${hours}:${minutes}:${seconds}`
+
+    // Handle milliseconds
+    if (hours == "00" && seconds.toString().includes(".")) {
+        milliseconds = seconds.toString().split(".")[1]
+        // Milliseconds only to 2 significant digits
+        if (milliseconds.length > 2) {
+            keep = milliseconds.substring(0, 2)
+            round = milliseconds.substring(2)
+            milliseconds = Math.round(parseFloat(`${keep}.${round}`).toString())
+        }
+        if (milliseconds.length == 1) {
+            milliseconds += "0"
+        }
+        conv_seconds = Math.trunc(seconds)
+        minutes = parseInt(conv_seconds / 60)
+        minutes = ("0" + minutes % 60).slice(-2);
+        conv_seconds = ("0" + conv_seconds % 60).slice(-2);
+        if (minutes == "00") {
+            return `${conv_seconds}.${milliseconds}`
+        }
+        else if (parseInt(minutes) < 10) {
+            return `${parseInt(minutes)}:${conv_seconds}.${milliseconds}`
+        }
+        return `${minutes}:${conv_seconds}.${milliseconds}`
+    }
+    if (hours == "00") {
+        if (parseInt(minutes) < 10) {
+            return `${parseInt(minutes)}:${conv_seconds}`
+        }
+        else if (minutes == "00") {
+            return `${conv_seconds}`
+        }
+        return `${minutes}:${conv_seconds}`
+    }
+    return `${hours}:${minutes}:${conv_seconds}`
 }
 
-function dynamicSort(property) {
-    var sortOrder = 1;
-    if (property[0] === "-") {
-        sortOrder = -1;
-        property = property.substr(1);
+function sortCategories(expectedOrder, categories) {
+    ordered = []
+    for (var i = 0; i < expectedOrder.length; i++) {
+        // Look for that value in categories
+        for (var j = 0; j < categories.length; j++) {
+            if (categories[j].isMisc == false && categories[j].categoryID == expectedOrder[i]) {
+                ordered.push(categories[j])
+            }
+        }
     }
-    return function(a, b) {
-        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
-        return result * sortOrder;
+    return ordered
+}
+
+function sortMiscCategories(expectedOrder, categories) {
+    ordered = []
+    for (var i = 0; i < expectedOrder.length; i++) {
+        // Look for that value in categories
+        for (var j = 0; j < categories.length; j++) {
+            if (categories[j].isMisc && categories[j].categoryID == expectedOrder[i]) {
+                ordered.push(categories[j])
+            }
+        }
     }
+    return ordered
+}
+
+function sortLevels(expectedOrder, levels) {
+    ordered = []
+    for (var i = 0; i < expectedOrder.length; i++) {
+        // Look for that value in categories
+        for (var j = 0; j < levels.length; j++) {
+            if (levels[j].isLevel && levels[j].levelID == expectedOrder[i]) {
+                ordered.push(levels[j])
+            }
+        }
+    }
+    return ordered
 }

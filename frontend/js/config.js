@@ -5,7 +5,7 @@ var srcName = null;
 
 window.Twitch.ext.onAuthorized(function(auth) {
     authObject = auth;
-    // TODO reenable renderPreview(authObject)
+    renderPreview(authObject)
     // console.log('The JWT that will be passed to the EBS is', authObject.token);
     // console.log('The channel ID is', authObject.channelId);
     $('#saveBtn').prop("disabled", true)
@@ -255,7 +255,6 @@ function populateGameList(json) {
     }
 
     // Get the names for all the games we added
-    // TODO remove sort in viewer.js
     for (let game of gameList) {
         getGameName(`https://www.speedrun.com/api/v1/games/${game.id}`, game.id)
         getCategories(`https://www.speedrun.com/api/v1/games/${game.id}/categories?orderby=name&max=200`, game.id)

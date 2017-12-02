@@ -3,7 +3,7 @@ body {
     background: #fff;
 }
 
-.container {
+.bootstrap.container {
     padding: 10px;
 }
 
@@ -22,6 +22,10 @@ li.ui-state-default {
 
 ul.config {
     list-style-type: none;
+}
+
+#gamesHeader h3 {
+    text-align: center;
 }
 
 h1.config {
