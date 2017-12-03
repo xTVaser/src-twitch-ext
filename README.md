@@ -3,6 +3,11 @@
 Shows up-to-date PBs and WRs for the games you do runs in via speedrun.com
 
 ## Example 
+### Config Setup
+![Config Recording](/screenshots/ConfigRecording.gif)
+
+### Panel on Profile
+![Panel Recording](/screenshots/PanelRecording.gif)
 
 ## Features
 
