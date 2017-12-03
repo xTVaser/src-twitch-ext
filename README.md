@@ -2,13 +2,6 @@
 
 Shows up-to-date PBs and WRs for the games you do runs in via speedrun.com
 
-## Example 
-### Config Setup
-![Config Recording](/screenshots/ConfigRecording.gif)
-
-### Panel on Profile
-![Panel Recording](/screenshots/PanelRecording.gif)
-
 ## Features
 
 * Very minimal setup time, only Speedrun.com name and a panel title are required to get started
@@ -22,3 +15,12 @@ Shows up-to-date PBs and WRs for the games you do runs in via speedrun.com
 * WR Time rainbow color cycling
 * Links to speedrun.com categories / run pages
 * Preview window on configuration page
+
+## Example 
+### Config Setup
+![Config Recording](/screenshots/ConfigRecording.gif)
+
+### Panel on Profile
+![Panel Recording](/screenshots/PanelRecording.gif)
+
+
