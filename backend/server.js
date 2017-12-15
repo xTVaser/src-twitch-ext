@@ -116,8 +116,12 @@ app.use(
 );
 
 app.options("/save", function(req, res) {
-  console.log("Settings being Saved - Handshake");
-  visitor.pageview(req.path + "/options").send();
+  var params = {
+    ec: "Configuration",
+    ea: "Pre-flight Handshake",
+    geoid: req.get("CF-IPCountry")
+  }
+  visitor.event(params).send();
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization, X-Requested-With, x-extension-jwt"
@@ -131,8 +135,6 @@ app.options("/save", function(req, res) {
 });
 
 app.post("/save", function(req, res) {
-  console.log("Settings being Saved - Actually saving");
-  visitor.pageview(req.path).send();
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization, X-Requested-With",
@@ -146,6 +148,13 @@ app.post("/save", function(req, res) {
   };
 
   var token = twitch.verifyToken(req.header("x-extension-jwt"));
+  var params = {
+    ec: "Configuration",
+    ea: "Saving Settings",
+    el: token.channel_id,
+    geoid: req.get("CF-IPCountry")
+  }
+  visitor.event(params).send();
   // If not the broadcaster, cant do any of this
   // or if any errors happened during verifying token
   if (token == null || token.role != "broadcaster") {
@@ -172,7 +181,6 @@ app.post("/save", function(req, res) {
     .upsert(chan)
     .then(() => {
       res.send(JSON.stringify(response));
-      console.log(response);
     })
     .catch(err => {
       response.status = 501;
@@ -183,8 +191,12 @@ app.post("/save", function(req, res) {
 });
 
 app.options("/fetch", function(req, res) {
-  console.log("Fetching Info - Handshake");
-  visitor.pageview(req.path + "/options").send();
+  var params = {
+    ec: "Panel",
+    ea: "Pre-flight Handshake",
+    geoid: req.get("CF-IPCountry")
+  }
+  visitor.event(params).send();
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization, X-Requested-With, x-extension-jwt"
@@ -198,8 +210,6 @@ app.options("/fetch", function(req, res) {
 });
 
 app.post("/fetch", function(req, res) {
-  console.log("Fetching Info - Channel being freshed.");
-  visitor.pageview(req.path).send();
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization, X-Requested-With, x-extension-jwt"
@@ -213,6 +223,13 @@ app.post("/fetch", function(req, res) {
   };
 
   var token = twitch.verifyToken(req.header("x-extension-jwt"));
+  var params = {
+    ec: "Panel",
+    ea: "Channel View",
+    el: token.channel_id,
+    geoid: req.get("CF-IPCountry")
+  }
+  visitor.event(params).send();
   // if any errors happened during verifying token
   if (token == null) {
     response.status = 500;
@@ -240,8 +257,13 @@ app.post("/fetch", function(req, res) {
 
 app.use((req, res, next) => {
   // try to remove these after
-  console.log("Got generic request", req.path, req.method);
-  visitor.pageview(req.path).send();
+  var params = {
+    ec: "Accessed Non-Extension Page",
+    ea: req.path,
+    el: req.get("CF-Connecting-IP"),
+    geoid: req.get("CF-IPCountry")
+  }
+  visitor.event(params).send();
   //res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With', 'x-extension-jwt');
   res.setHeader("Access-Control-Allow-Methods", "GET");
   //res.setHeader('Access-Control-Allow-Origin', '*');
