@@ -35,19 +35,6 @@ body {
 	}
 }
 
-.pbWrapper::-webkit-scrollbar {
-    width: 0.5em;
-}
-
-.pbWrapper::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-}
-
-.pbWrapper::-webkit-scrollbar-thumb {
-    background-color: #232323;
-    outline: 1px solid slategrey;
-}
-
 .spinnerError {
     margin-top: 25px;
 }

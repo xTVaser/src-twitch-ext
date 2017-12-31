@@ -7,6 +7,14 @@ var srcID
 
 var pbList = new Array()
 
+// TODO give options for changing scrollbar colors / size
+$(".pbWrapper").niceScroll({
+    cursorwidth: "5px",
+    cursorborder: "1px solid transparent",
+    cursoropacitymax: 1,
+    autohidemode: "leave"
+});
+
 window.Twitch.ext.onAuthorized(function(auth) {
 
     // console.log('The JWT that will be passed to the EBS is', auth.token);
@@ -214,6 +222,7 @@ $(document).on('click', '.gameTitle', function(e) {
         $('#pbRowStatus' + id).html('<i class="fa fa-plus-square-o fa-2x" aria-hidden="true"></i>')
     }
     $('#pbRow' + id).slideToggle('fast');
+    ps.update();
 });
 
 /// Renders the Panel with the given settings
@@ -533,6 +542,7 @@ function renderPersonalBests() {
             $(e.target).css("color", e.target.name)
             e.target.name = ""
         });
+    ps.update();
 }
 
 function rgb2hex(rgb) {

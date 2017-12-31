@@ -119,6 +119,7 @@ app.options("/save", function(req, res) {
   var params = {
     ec: "Configuration",
     ea: "Pre-flight Handshake",
+    el: "Pre-flight",
     geoid: req.get("CF-IPCountry")
   }
   visitor.event(params).send();
@@ -194,6 +195,7 @@ app.options("/fetch", function(req, res) {
   var params = {
     ec: "Panel",
     ea: "Pre-flight Handshake",
+    el: "Pre-flight",
     geoid: req.get("CF-IPCountry")
   }
   visitor.event(params).send();
