@@ -7,14 +7,6 @@ var srcID
 
 var pbList = new Array()
 
-// TODO give options for changing scrollbar colors / size
-$(".pbWrapper").niceScroll({
-    cursorwidth: "5px",
-    cursorborder: "1px solid transparent",
-    cursoropacitymax: 1,
-    autohidemode: "leave"
-});
-
 window.Twitch.ext.onAuthorized(function(auth) {
 
     // console.log('The JWT that will be passed to the EBS is', auth.token);
@@ -221,8 +213,9 @@ $(document).on('click', '.gameTitle', function(e) {
     else {
         $('#pbRowStatus' + id).html('<i class="fa fa-plus-square-o fa-2x" aria-hidden="true"></i>')
     }
-    $('#pbRow' + id).slideToggle('fast');
-    ps.update();
+    $('#pbRow' + id).slideToggle('fast', function(){
+        $(".pbWrapper").getNiceScroll().resize()
+    });
 });
 
 /// Renders the Panel with the given settings
@@ -274,6 +267,12 @@ function renderPersonalBests() {
     for (var i = 0; i < games.length; i++) {
         currentGame = pbList[games[i].id]
         gameName = games[i].name
+        displayPBs = "none"
+        initialIcon = "fa-plus-square-o"
+        if (games[i].shouldExpand == true) {
+            displayPBs = "block"
+            initialIcon = "fa-minus-square-o"
+        }
         // Add Game Name / Collapsable button
         $(".pbWrapper").append(
             `<div class="gameTitle outlineText" id="g${i}">
@@ -281,16 +280,13 @@ function renderPersonalBests() {
                     <h2>${gameName}</h2>
                 </div>
                 <div class="col-2-10 center" id="pbRowStatus${i}">
-                    <i class="fa fa-plus-square-o fa-2x" aria-hidden="true"></i>
+                    <i class="fa ${initialIcon} fa-2x" aria-hidden="true"></i>
                 </div>
                 <br class="clear" />
             </div>
             <div class="fancyStripeBlue"></div>`
         )
-        displayPBs = "none"
-        if (games[i].shouldExpand == true) {
-            displayPBs = "block"
-        }
+        
         pbHTML =
             `<div class="pbContainer">
             <div class="row">
@@ -542,7 +538,17 @@ function renderPersonalBests() {
             $(e.target).css("color", e.target.name)
             e.target.name = ""
         });
-    ps.update();
+    
+    // TODO give options for changing scrollbar colors / size
+    $(".pbWrapper").niceScroll({
+        cursorwidth: "5px",
+        cursorborder: "1px solid transparent",
+        cursoropacitymax: 1,
+        autohidemode: "leave",
+        nativeparentscrolling: false,
+        iframeautoresize: true,
+        enableobserver: true
+    });
 }
 
 function rgb2hex(rgb) {
