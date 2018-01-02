@@ -114,6 +114,10 @@ body {
     font-weight: 700;
 }
 
+.titleContainer a {
+    text-decoration: none;
+}
+
 h2 {
     font-size: 1em;
 }

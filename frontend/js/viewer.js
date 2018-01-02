@@ -4,6 +4,7 @@ var loaded = false
 var games
 var settings
 var srcID
+var srcName
 
 var pbList = new Array()
 
@@ -33,6 +34,7 @@ window.Twitch.ext.onAuthorized(function(auth) {
                 games = JSON.parse(res.data.games)
                 settings = JSON.parse(res.data.settings)
                 srcID = res.data.srcID
+                srcName = res.data.srcName
                 hidePBs = res.data.hidePBs
                 // First we will get all the runner's personal bests
                 $.ajax({
@@ -230,7 +232,9 @@ function renderPersonalBests() {
     // Add the Title
     $(".titleContainer").append(
         `<div class="row center" id="titleContainerRow">
-            <h1 id="viewerPanelTitle">${settings.title}</h1>
+            <a href="http://www.speedrun.com/user/${srcName}" target="_blank" id="titleLink">
+              <h1 id="viewerPanelTitle">${settings.title}</h1>
+            </a>
         </div>`
     )
 
@@ -525,7 +529,7 @@ function renderPersonalBests() {
     $(".timeHeader").css("font-family", settings.timeHeaderFont)
 
     // Hover colors for links, progammatically darker
-    $(".categoryName, .pbTime, .wrTime").hover(
+    $(".categoryName, .pbTime, .wrTime, #titleLink").hover(
         function(e) {
             nonHoverColor = rgb2hex($(e.target).css("color"))
             hoverColor = ((parseInt(nonHoverColor.replace(/^#/, ''), 16) & 0xfefefe) >> 1).toString(16);
