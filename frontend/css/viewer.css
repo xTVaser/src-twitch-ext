@@ -12,6 +12,9 @@ body {
     /* having these set to a fixed number can hurt relative positioning */
 }
 
+.headerRow {
+    text-align: center;
+}
 .timeHeader {
     color: #fff;
     font-size: 0.93em;
@@ -66,7 +69,7 @@ body {
 
 .fa-2x {
     font-size: 1em;
-    margin-top: 10%;
+    line-height: 1.5em;
 }
 
 .fancyStripeGreen {
@@ -78,6 +81,7 @@ body {
 .fancyStripeBlue {
     height: 5px;
     margin-bottom: 5px;
+    margin-top: 5px;
     background: linear-gradient(0deg, #101010, #205f6b);
     background-color: blue;
 }
@@ -124,8 +128,6 @@ h2 {
     box-sizing: border-box;
     padding-right: 10px;
     padding-left: 10px;
-    padding-top: 5px;
-    margin-bottom: 1em;
     background-position: center top;
 }
 

@@ -283,13 +283,11 @@ function renderPersonalBests() {
                     <i class="fa ${initialIcon} fa-2x" aria-hidden="true"></i>
                 </div>
                 <br class="clear" />
-            </div>
-            <div class="fancyStripeBlue"></div>`
+            </div>`
         )
         
         pbHTML =
             `<div class="pbContainer">
-            <div class="row">
                 <div class="pbRow outlineText" id="pbRow${i}" style="display: ${displayPBs};">
                     <ul>`
 
@@ -320,7 +318,7 @@ function renderPersonalBests() {
         if (settings.miscShow && settings.miscSep && sortedMiscCategories.length > 0) {
             pbHTML +=
                 `<li>
-                <div><p class="timeHeader">Miscellaneous Categories</div>
+                <div class="headerRow"><p class="timeHeader">Miscellaneous Categories</div>
             </li>`
         }
         if (settings.miscShow && sortedMiscCategories.length > 0) {
@@ -349,7 +347,7 @@ function renderPersonalBests() {
         if (settings.ilShow && settings.ilSep && sortedLevels.length > 0) {
             pbHTML +=
                 `<li>
-                <div><p class="timeHeader">Individual Levels</div>
+                <div class="headerRow"><p class="timeHeader">Individual Levels</div>
             </li>`
         }
         if (settings.ilShow && sortedLevels.length > 0) {
@@ -374,7 +372,7 @@ function renderPersonalBests() {
             }
         }
 
-        pbHTML += `</ul></div></div></div>`
+        pbHTML += `</ul></div></div><div class="fancyStripeBlue"></div>`
 
         // Add to the panel
         $(".pbWrapper").append(pbHTML)
