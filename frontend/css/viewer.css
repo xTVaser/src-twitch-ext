@@ -48,10 +48,6 @@ body {
     margin-bottom: 0px;
 }
 
-#viewerPanelTitle {
-    height: 100%;
-}
-
 #headers {
     height:25%; 
     margin-bottom: 0px;
@@ -125,6 +121,8 @@ h2 {
 .gameTitle {
     padding-left: 10px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
 }
 
 .pbContainer {

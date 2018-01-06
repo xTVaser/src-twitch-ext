@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/common.css">
-    <link rel="stylesheet" href="css/font-awesome.css">
+    <link rel="stylesheet" href="css/third-party/fa-svg-with-js.css">
+    <script defer src="js/third-party/fontawesome/fontawesome-all.js"></script>
     <link rel="stylesheet" href="css/jquery-ui.css">
     <link rel="stylesheet" href="css/vividspinner.css">
     <link rel="stylesheet" href="css/viewer_preview.css">
@@ -18,21 +19,22 @@
 <body>
     <div class="container">
         <div class="row text-center">
-            <p>Current Version - 1.0.0
-                <a href="https://github.com/xTVaser/src-twitch-ext/releases/tag/v1.0.0">Click Here to See Latest Release Notes</a>
+            <p>Current Version - 1.1.0
+                <a href="https://github.com/xTVaser/src-twitch-ext/releases/tag/v1.1.0">Click Here to See Latest Release Notes</a>
             </p>
         </div>
         <div class="row text-center">
             <p>
-                <b>---> Major changes done to the configuration page, click Find Games again, and resave your settings to update!
+                <b>---> Major changes done to the configuration page, styling the panel is now mostly done by interacting with
+                    a mock-up of the panel!
                     <---</b>
             </p>
-            <p>This will not break existing settings, or people viewing your profile, but it will break the new features on
-                this page!</p>
             <p>To use this extension, enter a title for the panel, your Speedrun.com Name and click "Find Games", then click
                 "Save"
             </p>
-            <p><i>All the other configuration options are optional and just for customization purposes.</i></p>
+            <p>
+                <i>All the other configuration options are optional and just for customization purposes.</i>
+            </p>
         </div>
         <br>
         <div class="col-md-6">
@@ -55,7 +57,10 @@
             </div>
             <div class="row config">
                 <div class="col-md-6">
-                    <b>Export Style Settings <a href="https://github.com/xTVaser/src-twitch-ext/issues/36">(Will not work on Firefox)</a></b><br>
+                    <b>Export Style Settings
+                        <a href="https://github.com/xTVaser/src-twitch-ext/issues/36">(Will not work on Firefox)</a>
+                    </b>
+                    <br>
                     <button id="exportSettings">Download</button>
                 </div>
                 <div class="col-md-6">
@@ -74,6 +79,37 @@
                             <option value="default">Default</option>
                         </select>
                     </div>
+                </div>
+            </div>
+            <div class="row config">
+                <div class="col-md-4">
+                    <h3 class="config">Hide World Record Column</h3>
+                </div>
+                <div class="col-md-8">
+                    <input type="checkbox" id="hideWR">
+                </div>
+            </div>
+            <div class="row config">
+                <div class="col-md-4">
+                    <h3 class="config">WR Time Rainbow Cycling</h3>
+                </div>
+                <div class="col-md-8">
+                    <input type="checkbox" id="wrRainbow">
+                </div>
+            </div>
+            <div class="row config">
+                <div class="col-md-4">
+                    <h3 class="config">Style Options</h3>
+                    <p style="text-align:left;">
+                        (Click on the Element/Edit button to Modify it's Settings
+                    </p>
+                </div>
+                <div class="col-md-8">
+                    <div>
+                        <object width="318" height="500" type="text/html" data="viewer_test.html"></object>
+                        <p>Q</p>
+                    </div>
+
                 </div>
             </div>
             <div class="row config">
@@ -100,7 +136,6 @@
                 <div class="col-md-8">
                     <input type="color" value="#101010" id="panelBackgroundColor">
                 </div>
-
             </div>
             <div class="row config">
                 <div class="col-md-4">
@@ -109,7 +144,6 @@
                 <div class="col-md-8">
                     <input type="color" value="#008000" id="panelTitleDividerColor">
                 </div>
-
             </div>
             <div class="row config">
                 <div class="col-md-4">
@@ -118,26 +152,8 @@
                 <div class="col-md-8">
                     <input type="color" value="#205f6b" id="gameTitleDividerColor">
                 </div>
-
             </div>
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">Hide World Record Column</h3>
-                </div>
-                <div class="col-md-8">
-                    <input type="checkbox" id="hideWR">
-                </div>
 
-            </div>
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">WR Time Rainbow Cycling</h3>
-                </div>
-                <div class="col-md-8">
-                    <input type="checkbox" id="wrRainbow">
-                </div>
-
-            </div>
             <div class="row config">
                 <div class="col-md-4">
                     <h3 class="config">Miscellaneous Run Options</h3>
@@ -446,7 +462,7 @@
                 </ol>
             </div>
 
-            <div class="row">
+            <div class="row text-center">
                 <h3 class="config">Preview Window (Will Update on "Save" Button Presses, May not be a perfect one-to-one with profile page!)</h3>
                 <div id="previewHolder">
                     <div class="frameWrapper">

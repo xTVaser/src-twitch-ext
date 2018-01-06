@@ -210,10 +210,10 @@ function getWorldRecords() {
 $(document).on('click', '.gameTitle', function(e) {
     id = e.currentTarget.id.substring(1)
     if($("#pbRow" + id).is(":hidden")) {
-        $('#pbRowStatus' + id).html('<i class="fa fa-minus-square-o fa-2x" aria-hidden="true"></i>')
+        $('#pbRowStatus' + id).html('<i class="far fa-minus-square fa-2x" aria-hidden="true"></i>')
     }
     else {
-        $('#pbRowStatus' + id).html('<i class="fa fa-plus-square-o fa-2x" aria-hidden="true"></i>')
+        $('#pbRowStatus' + id).html('<i class="far fa-plus-square fa-2x" aria-hidden="true"></i>')
     }
     $('#pbRow' + id).slideToggle('fast', function(){
         $(".pbWrapper").getNiceScroll().resize()
@@ -272,10 +272,10 @@ function renderPersonalBests() {
         currentGame = pbList[games[i].id]
         gameName = games[i].name
         displayPBs = "none"
-        initialIcon = "fa-plus-square-o"
+        initialIcon = "far fa-plus-square"
         if (games[i].shouldExpand == true) {
             displayPBs = "block"
-            initialIcon = "fa-minus-square-o"
+            initialIcon = "far fa-minus-square"
         }
         // Add Game Name / Collapsable button
         $(".pbWrapper").append(
@@ -284,7 +284,7 @@ function renderPersonalBests() {
                     <h2>${gameName}</h2>
                 </div>
                 <div class="col-2-10 center" id="pbRowStatus${i}">
-                    <i class="fa ${initialIcon} fa-2x" aria-hidden="true"></i>
+                    <i class="${initialIcon} fa-2x" aria-hidden="true"></i>
                 </div>
                 <br class="clear" />
             </div>`
