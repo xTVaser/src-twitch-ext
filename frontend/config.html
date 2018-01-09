@@ -125,26 +125,34 @@
                                 <i class="fas fa-edit"></i>
                             </a>
                             <!-- Title Divider Settings -->
-                            <a class="edit-button" style="top:90px; left:170px" rel="clickover" data-original-title="Panel Title Divider Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                            <a class="edit-button" style="top:90px; left:170px" rel="clickover" data-original-title="Panel Title Divider Settings" data-html="true"
+                                data-content="<div class='row center popoverOptions'>
                                 Height 
                                 <input id='panelTitleDividerHeight'type='number' min='0' max='15' value='5'>
+                                Extra Bottom Margin
+                                <input id='panelTitleDividerBottomMargin'  type='number' min='0' max='10' value='0'>
                                 <input id='panelTitleDividerColor' type='color' value='#008000'></div>">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <!-- Game Divider Settings -->
-                            <a class="edit-button" style="top:240px; left:170px" rel="clickover" data-original-title="Game Divider Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                            <a class="edit-button" style="top:240px; left:170px" rel="clickover" data-original-title="Game Divider Settings" data-html="true"
+                                data-content="<div class='row center popoverOptions'>
                                 Height 
                                 <input id='gameDividerHeight'  type='number' min='0' max='15' value='5'>
+                                Extra Bottom Margin
+                                <input id='gameDividerBottomMargin'  type='number' min='0' max='10' value='0'>
                                 <input id='gameDividerColor' type='color' value='#205f6b'></div>">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <!-- Panel Background Settings -->
-                            <a class="edit-button" style="bottom:150px; left:170px" rel="clickover" data-original-title="Panel Background Settings" data-html="true" data-content="<div class='row center popoverOptions'> 
+                            <a class="edit-button" style="bottom:150px; left:170px" rel="clickover" data-original-title="Panel Background Settings" data-html="true"
+                                data-content="<div class='row center popoverOptions'> 
                                 <input id='panelBackgroundColor' type='color' value='#101010'></div>">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <!-- Scrollbar Settings -->
-                            <a class="edit-button" style="bottom:150px; left:310px" rel="clickover" data-original-title="Scollbar Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                            <a class="edit-button" style="bottom:150px; left:310px" rel="clickover" data-original-title="Scollbar Settings" data-html="true"
+                                data-content="<div class='row center popoverOptions'>
                                 Width
                                 <input id='scrollbarWidth'type='number' min='0' max='5' value='5'> 
                                 Opacity
@@ -241,7 +249,10 @@
                                                         <button id='gameCategoryFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
                                                         <button id='gameCategoryFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
                                                         <input  id='gameCategoryFontColor' type='color' value='#FFFFFF'></input>
+                                                        Font Size
                                                         <input  id='gameCategoryFontSize' type='number' min='1' max='64' value='14'>
+                                                        Extra Bottom Margin
+                                                        <input  id='gameCategoryBottomMargin' type='number' min='0' max='10' value='0'>
                                                         </div>">
                                                         <a class="categoryName" style="font-size: 14px; color: rgb(241, 238, 203); font-family: &quot;Roboto Condensed&quot;, sans-serif;">
                                                             Category Name
@@ -257,7 +268,7 @@
                                                         <input  id='pbFontSize' type='number' min='1' max='64' value='15'>
                                                         </div>">
                                                         <a class="pbTime" target="_blank" style="font-size: 15px; color: rgb(249, 0, 0); font-family: &quot;Roboto Condensed&quot;, sans-serif;"
-                                                        name="">00:00:00</a>
+                                                            name="">00:00:00</a>
                                                     </div>
                                                 </div>
                                                 <div class="col-2-10 rightAlign">
@@ -281,7 +292,10 @@
                                                     <button id='miscHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
                                                     <button id='miscHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
                                                     <input  id='miscHeaderFontColor' type='color' value='#FFFFFF'></input>
+                                                    Font Size
                                                     <input  id='miscHeaderFontSize' type='number' min='1' max='64' value='15'>
+                                                    Extra Bottom Margin
+                                                    <input  id='miscHeaderBottomMargin' type='number' min='0' max='10' value='0'>
                                                     <button id='miscShow' type='button' class='btn btn-primary btn-pressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Show</button>
                                                     <button id='miscSep' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Separate</button>
                                                     </div>">
@@ -291,15 +305,14 @@
                                         </li>
                                         <li>
                                             <div class="col-6-10 truncate">
-                                                <a class="categoryName"target="_blank" title="Any% All Orbs - Original"
-                                                    style="font-size: 14px; color: rgb(241, 238, 203); font-family: &quot;Roboto Condensed&quot;, sans-serif;">--</a>
+                                                <a class="categoryName" target="_blank" title="Any% All Orbs - Original" style="font-size: 14px; color: rgb(241, 238, 203); font-family: &quot;Roboto Condensed&quot;, sans-serif;">--</a>
                                             </div>
                                             <div class="col-2-10 rightAlign">
-                                                <a class="pbTime"target="_blank" style="font-size: 15px; color: rgb(249, 0, 0); font-family: &quot;Roboto Condensed&quot;, sans-serif;"
+                                                <a class="pbTime" target="_blank" style="font-size: 15px; color: rgb(249, 0, 0); font-family: &quot;Roboto Condensed&quot;, sans-serif;"
                                                     name="">--</a>
                                             </div>
                                             <div class="col-2-10 rightAlign">
-                                                <a class="wrTime"target="_blank" style="font-size: 15px; font-family: &quot;Roboto Condensed&quot;, sans-serif; color: rgb(243, 226, 33);"
+                                                <a class="wrTime" target="_blank" style="font-size: 15px; font-family: &quot;Roboto Condensed&quot;, sans-serif; color: rgb(243, 226, 33);"
                                                     name="">--</a>
                                             </div>
                                         </li>
@@ -311,7 +324,10 @@
                                                     <button id='ilHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
                                                     <button id='ilHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
                                                     <input  id='ilHeaderFontColor' type='color' value='#FFFFFF'></input>
+                                                    Font Size
                                                     <input  id='ilHeaderFontSize' type='number' min='1' max='64' value='15'>
+                                                    Extra Bottom Margin
+                                                    <input  id='ilHeaderBottomMargin' type='number' min='0' max='10' value='0'>
                                                     <button id='ilShow' type='button' class='btn btn-primary btn-pressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Show</button>
                                                     <button id='ilSep' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Separate</button>
                                                     </div>">
@@ -321,8 +337,7 @@
                                         </li>
                                         <li>
                                             <div class="col-6-10 truncate">
-                                                <a class="categoryName" target="_blank" title="Blow up Strip Mine Eco Wells"
-                                                    style="font-size: 14px; color: rgb(241, 238, 203); font-family: &quot;Roboto Condensed&quot;, sans-serif;"
+                                                <a class="categoryName" target="_blank" title="Blow up Strip Mine Eco Wells" style="font-size: 14px; color: rgb(241, 238, 203); font-family: &quot;Roboto Condensed&quot;, sans-serif;"
                                                     name="">--</a>
                                             </div>
                                             <div class="col-2-10 rightAlign">
@@ -472,7 +487,7 @@
                     <h3 class="config">Misc/IL Header Font Options</h3>
                 </div>
                 <div class="col-md-8">
-                    
+
                     <div>
                         <label for="timeHeaderFont">Font Family</label>
                         <select name="timeHeaderFont" id="timeHeaderFont">
