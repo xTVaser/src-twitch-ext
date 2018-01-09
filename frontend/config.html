@@ -127,21 +127,29 @@
                             <!-- Title Divider Settings -->
                             <a class="edit-button" style="top:90px; left:170px" rel="clickover" data-original-title="Panel Title Divider Settings" data-html="true" data-content="<div class='row center popoverOptions'>
                                 Height 
-                                <input id='panelTitleDividerHeight' class='fontSize' type='number' min='0' max='15' value='5'>
+                                <input id='panelTitleDividerHeight'type='number' min='0' max='15' value='5'>
                                 <input id='panelTitleDividerColor' type='color' value='#008000'></div>">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <!-- Game Divider Settings -->
                             <a class="edit-button" style="top:240px; left:170px" rel="clickover" data-original-title="Game Divider Settings" data-html="true" data-content="<div class='row center popoverOptions'>
                                 Height 
-                                <input id='gameDividerHeight' class='fontSize' type='number' min='0' max='15' value='5'>
+                                <input id='gameDividerHeight'  type='number' min='0' max='15' value='5'>
                                 <input id='gameDividerColor' type='color' value='#205f6b'></div>">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <!-- Panel Background Settings -->
-                            <a class="edit-button" style="bottom:150px; left:170px" rel="clickover" data-original-title="Panel Background Settings" data-html="true" data-content="<div class='row center popoverOptions'>
-                                Height 
+                            <a class="edit-button" style="bottom:150px; left:170px" rel="clickover" data-original-title="Panel Background Settings" data-html="true" data-content="<div class='row center popoverOptions'> 
                                 <input id='panelBackgroundColor' type='color' value='#101010'></div>">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <!-- Scrollbar Settings -->
+                            <a class="edit-button" style="bottom:150px; left:310px" rel="clickover" data-original-title="Scollbar Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                Width
+                                <input id='scrollbarWidth'type='number' min='0' max='5' value='5'> 
+                                Opacity
+                                <input id='scrollbarOpacity'type='number' min='0' max='100' value='100'> 
+                                <input id='scrollbarColor' type='color' value='#424242'></div>">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <div class="row center" id="titleContainerRow">
@@ -150,7 +158,7 @@
                                     <button id='panelTitleFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
                                     <button id='panelTitleFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
                                     <input  id='panelTitleFontColor' type='color' value='#FFFFFF'></input>
-                                    <input  id='panelTitleFontSize' class='fontSize' type='number' min='1' max='64' value='30'>
+                                    <input  id='panelTitleFontSize' type='number' min='1' max='64' value='30'>
                                     <input  id='panelTitleShadow' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Text Shadow</a>
                                 </div>">
                                     <h1 id="viewerPanelTitle" style="font-weight: 400; font-size: 30px; color: rgb(255, 255, 255); font-family: &quot;Roboto Condensed&quot;, sans-serif;">
@@ -166,29 +174,29 @@
                                         <button id='categoryHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
                                         <button id='categoryHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
                                         <input  id='categoryHeaderFontColor' type='color' value='#FFFFFF'></input>
-                                        <input  id='categoryHeaderFontSize' class='fontSize' type='number' min='1' max='64' value='15'>
+                                        <input  id='categoryHeaderFontSize' type='number' min='1' max='64' value='15'>
                                     </div>">
                                         <h3>Category</h3>
                                     </a>
                                 </div>
                                 <!-- Personal Best Header Settings -->
                                 <div class="col-2-10 center titleHeaders">
-                                    <a class="edit-button-not-abs" rel="clickover" data-original-title="Category Header Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                    <a class="edit-button-not-abs" rel="clickover" data-original-title="PB Header Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
                                         <button id='pbHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
                                         <button id='pbHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
                                         <input  id='pbHeaderFontColor' type='color' value='#FFFFFF'></input>
-                                        <input  id='pbHeaderFontSize' class='fontSize' type='number' min='1' max='64' value='15'>
+                                        <input  id='pbHeaderFontSize' type='number' min='1' max='64' value='15'>
                                         </div>">
                                         <h3>PB</h3>
                                     </a>
                                 </div>
                                 <!-- WR Header Settings -->
                                 <div class="col-2-10 center titleHeaders">
-                                    <a class="edit-button-not-abs" rel="clickover" data-original-title="Category Header Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                    <a class="edit-button-not-abs" rel="clickover" data-original-title="WR Header Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
                                         <button id='wrHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
                                         <button id='wrHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
                                         <input  id='wrHeaderFontColor' type='color' value='#FFFFFF'></input>
-                                        <input  id='wrHeaderFontSize' class='fontSize' type='number' min='1' max='64' value='15'>
+                                        <input  id='wrHeaderFontSize' type='number' min='1' max='64' value='15'>
                                         <button id='hideWR' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Hide WR Column</button>
                                         <button id='wrRainbow' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Rainbow Cycling Colors</button>
                                         </div>">
@@ -207,7 +215,7 @@
                                         <button id='gameTitleFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
                                         <button id='gameTitleFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
                                         <input  id='gameTitleFontColor' type='color' value='#FFFFFF'></input>
-                                        <input  id='gameTitleFontSize' class='fontSize' type='number' min='1' max='64' value='19'>
+                                        <input  id='gameTitleFontSize' type='number' min='1' max='64' value='19'>
                                         </div>">
                                         <h2>Game Title</h2>
                                     </a>
@@ -233,7 +241,7 @@
                                                         <button id='gameCategoryFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
                                                         <button id='gameCategoryFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
                                                         <input  id='gameCategoryFontColor' type='color' value='#FFFFFF'></input>
-                                                        <input  id='gameCategoryFontSize' class='fontSize' type='number' min='1' max='64' value='14'>
+                                                        <input  id='gameCategoryFontSize' type='number' min='1' max='64' value='14'>
                                                         </div>">
                                                         <a class="categoryName" style="font-size: 14px; color: rgb(241, 238, 203); font-family: &quot;Roboto Condensed&quot;, sans-serif;">
                                                             Category Name
@@ -246,7 +254,7 @@
                                                         <button id='pbFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
                                                         <button id='pbFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
                                                         <input  id='pbFontColor' type='color' value='#FFFFFF'></input>
-                                                        <input  id='pbFontSize' class='fontSize' type='number' min='1' max='64' value='15'>
+                                                        <input  id='pbFontSize' type='number' min='1' max='64' value='15'>
                                                         </div>">
                                                         <a class="pbTime" target="_blank" style="font-size: 15px; color: rgb(249, 0, 0); font-family: &quot;Roboto Condensed&quot;, sans-serif;"
                                                         name="">00:00:00</a>
@@ -258,7 +266,7 @@
                                                         <button id='wrFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
                                                         <button id='wrFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
                                                         <input  id='wrFontColor' type='color' value='#FFFFFF'></input>
-                                                        <input  id='wrFontSize' class='fontSize' type='number' min='1' max='64' value='15'>
+                                                        <input  id='wrFontSize' type='number' min='1' max='64' value='15'>
                                                         </div>">
                                                         <a class="wrTime" target="_blank" style="font-size: 15px; font-family: &quot;Roboto Condensed&quot;, sans-serif; color: rgb(243, 226, 33);"
                                                             name="">00:00:00</a>
@@ -273,7 +281,7 @@
                                                     <button id='miscHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
                                                     <button id='miscHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
                                                     <input  id='miscHeaderFontColor' type='color' value='#FFFFFF'></input>
-                                                    <input  id='miscHeaderFontSize' class='fontSize' type='number' min='1' max='64' value='15'>
+                                                    <input  id='miscHeaderFontSize' type='number' min='1' max='64' value='15'>
                                                     <button id='miscShow' type='button' class='btn btn-primary btn-pressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Show</button>
                                                     <button id='miscSep' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Separate</button>
                                                     </div>">
@@ -303,7 +311,7 @@
                                                     <button id='ilHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
                                                     <button id='ilHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
                                                     <input  id='ilHeaderFontColor' type='color' value='#FFFFFF'></input>
-                                                    <input  id='ilHeaderFontSize' class='fontSize' type='number' min='1' max='64' value='15'>
+                                                    <input  id='ilHeaderFontSize' type='number' min='1' max='64' value='15'>
                                                     <button id='ilShow' type='button' class='btn btn-primary btn-pressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Show</button>
                                                     <button id='ilSep' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Separate</button>
                                                     </div>">
