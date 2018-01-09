@@ -14,6 +14,22 @@
     <link rel="stylesheet" href="css/viewer_preview.css">
     <link rel="stylesheet" href="css/config.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700" rel="stylesheet">
+    <style>
+        .edit-button {
+            position: absolute;
+            stroke: black;
+            stroke-width: 1em;
+            cursor: pointer;
+            color: white;
+        }
+
+        .edit-button-not-abs {
+            stroke: black;
+            stroke-width: 1em;
+            cursor: pointer;
+            color: white;
+        }
+    </style>
 </head>
 
 <body>
@@ -83,136 +99,246 @@
             </div>
             <div class="row config">
                 <div class="col-md-4">
-                    <h3 class="config">Hide World Record Column</h3>
-                </div>
-                <div class="col-md-8">
-                    <input type="checkbox" id="hideWR">
-                </div>
-            </div>
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">WR Time Rainbow Cycling</h3>
-                </div>
-                <div class="col-md-8">
-                    <input type="checkbox" id="wrRainbow">
-                </div>
-            </div>
-            <div class="row config">
-                <div class="col-md-4">
                     <h3 class="config">Style Options</h3>
                     <p style="text-align:left;">
-                        (Click on the Element/Edit button to Modify it's Settings
+                        (Click on the Element/Edit button to modify related settings)
                     </p>
                 </div>
                 <div class="col-md-8">
-                    <div>
-                        <object width="318" height="500" type="text/html" data="viewer_test.html"></object>
-                        <p>Q</p>
+                    <div class="frameWrapper">
+                        <div class="titleContainer outlineText" style="display: block; height: 100px;">
+                            <!-- Panel Title Background Settings -->
+                            <!-- TODO Currently Broken -->
+                            <a class="edit-button" rel="clickover" data-original-title="Title Background Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                Height <input id='panelTitleHeight' type='number' min='80' max='150' value='100'>
+                                <div>
+                                    <select id='panelTitleBackgroundType' name='theme'>
+                                        <option value='image' selected>Built-in Image</option>
+                                        <option value='solid'>Solid Color</option>
+                                        <option value='vGradient'>Vertical Gradient</option>
+                                        <option value='hGradient'>Horizontal Gradient</option>
+                                    </select>
+                                </div>
+                                <div id='colorPickerContainer'>
+                                </div>
+                            </div>">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <!-- Title Divider Settings -->
+                            <a class="edit-button" style="top:90px; left:170px" rel="clickover" data-original-title="Panel Title Divider Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                Height 
+                                <input id='panelTitleDividerHeight' class='fontSize' type='number' min='0' max='15' value='5'>
+                                <input id='panelTitleDividerColor' type='color' value='#008000'></div>">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <!-- Game Divider Settings -->
+                            <a class="edit-button" style="top:240px; left:170px" rel="clickover" data-original-title="Game Divider Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                Height 
+                                <input id='gameDividerHeight' class='fontSize' type='number' min='0' max='15' value='5'>
+                                <input id='gameDividerColor' type='color' value='#205f6b'></div>">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <!-- Panel Background Settings -->
+                            <a class="edit-button" style="bottom:150px; left:170px" rel="clickover" data-original-title="Panel Background Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                Height 
+                                <input id='panelBackgroundColor' type='color' value='#101010'></div>">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <div class="row center" id="titleContainerRow">
+                                <!-- Panel Title Settings -->
+                                <a class="edit-button-not-abs" rel="clickover" data-original-title="Title Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                    <button id='panelTitleFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
+                                    <button id='panelTitleFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
+                                    <input  id='panelTitleFontColor' type='color' value='#FFFFFF'></input>
+                                    <input  id='panelTitleFontSize' class='fontSize' type='number' min='1' max='64' value='30'>
+                                    <input  id='panelTitleShadow' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Text Shadow</a>
+                                </div>">
+                                    <h1 id="viewerPanelTitle" style="font-weight: 400; font-size: 30px; color: rgb(255, 255, 255); font-family: &quot;Roboto Condensed&quot;, sans-serif;">
+                                        Panel Title
+                                    </h1>
+                                </a>
+                            </div>
+                            <!-- TODO, backwards compatibility check for headers -->
+                            <div class="row" id="headers" style="font-weight: 400; font-size: 15px; color: rgb(255, 255, 255); font-family: &quot;Roboto Condensed&quot;, sans-serif;">
+                                <!-- Category Header Settings -->
+                                <div class="col-6-10 titleHeaders">
+                                    <a class="edit-button-not-abs" rel="clickover" data-original-title="Category Header Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                        <button id='categoryHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
+                                        <button id='categoryHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
+                                        <input  id='categoryHeaderFontColor' type='color' value='#FFFFFF'></input>
+                                        <input  id='categoryHeaderFontSize' class='fontSize' type='number' min='1' max='64' value='15'>
+                                    </div>">
+                                        <h3>Category</h3>
+                                    </a>
+                                </div>
+                                <!-- Personal Best Header Settings -->
+                                <div class="col-2-10 center titleHeaders">
+                                    <a class="edit-button-not-abs" rel="clickover" data-original-title="Category Header Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                        <button id='pbHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
+                                        <button id='pbHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
+                                        <input  id='pbHeaderFontColor' type='color' value='#FFFFFF'></input>
+                                        <input  id='pbHeaderFontSize' class='fontSize' type='number' min='1' max='64' value='15'>
+                                        </div>">
+                                        <h3>PB</h3>
+                                    </a>
+                                </div>
+                                <!-- WR Header Settings -->
+                                <div class="col-2-10 center titleHeaders">
+                                    <a class="edit-button-not-abs" rel="clickover" data-original-title="Category Header Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                        <button id='wrHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
+                                        <button id='wrHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
+                                        <input  id='wrHeaderFontColor' type='color' value='#FFFFFF'></input>
+                                        <input  id='wrHeaderFontSize' class='fontSize' type='number' min='1' max='64' value='15'>
+                                        <button id='hideWR' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Hide WR Column</button>
+                                        <button id='wrRainbow' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Rainbow Cycling Colors</button>
+                                        </div>">
+                                        <h3>WR</h3>
+                                    </a>
+                                </div>
+                            </div>
+                            <br class="clear">
+                        </div>
+                        <div class="fancyStripeGreen" style="display: block; background: rgba(0, 0, 0, 0) linear-gradient(rgb(0, 128, 0), rgb(16, 16, 16)) repeat scroll 0% 0%;"></div>
+                        <div class="pbWrapper" style="display: block; height: 392px; overflow: hidden;" tabindex="1">
+                            <div class="mockupGameTitle outlineText" id="g0" style="font-size: 19px; color: rgb(255, 255, 255); font-family: &quot;Roboto Condensed&quot;, sans-serif;">
+                                <div class="col-8-10">
+                                    <!-- Game Title Settings -->
+                                    <a class="edit-button-not-abs" rel="clickover" data-original-title="Game Title Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                        <button id='gameTitleFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
+                                        <button id='gameTitleFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
+                                        <input  id='gameTitleFontColor' type='color' value='#FFFFFF'></input>
+                                        <input  id='gameTitleFontSize' class='fontSize' type='number' min='1' max='64' value='19'>
+                                        </div>">
+                                        <h2>Game Title</h2>
+                                    </a>
+                                </div>
+                                <div class="col-2-10 center" id="pbRowStatus0">
+                                    <!-- Expand Icon Settings -->
+                                    <a class="edit-button-not-abs" rel="clickover" data-original-title="Expand / Contract Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                        <input  id='gameTitleFontColor' type='color' value='#FFFFFF'></input>
+                                        </div>">
+                                        <i class="far fa-minus-square fa-2x" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                                <br class="clear">
+                            </div>
+                            <div class="pbContainer">
+                                <div class="pbRow outlineText" id="pbRow0" style="display: block;">
+                                    <ul>
+                                        <div>
+                                            <li>
+                                                <div class="col-6-10 truncate">
+                                                    <!-- Category Name Settings -->
+                                                    <div class="edit-button-not-abs" rel="clickover" data-original-title="Category Name Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                                        <button id='gameCategoryFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
+                                                        <button id='gameCategoryFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
+                                                        <input  id='gameCategoryFontColor' type='color' value='#FFFFFF'></input>
+                                                        <input  id='gameCategoryFontSize' class='fontSize' type='number' min='1' max='64' value='14'>
+                                                        </div>">
+                                                        <a class="categoryName" style="font-size: 14px; color: rgb(241, 238, 203); font-family: &quot;Roboto Condensed&quot;, sans-serif;">
+                                                            Category Name
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-2-10 rightAlign">
+                                                    <!-- PB Time Settings -->
+                                                    <div class="edit-button-not-abs" rel="clickover" data-original-title="PB Time Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                                        <button id='pbFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
+                                                        <button id='pbFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
+                                                        <input  id='pbFontColor' type='color' value='#FFFFFF'></input>
+                                                        <input  id='pbFontSize' class='fontSize' type='number' min='1' max='64' value='15'>
+                                                        </div>">
+                                                        <a class="pbTime" target="_blank" style="font-size: 15px; color: rgb(249, 0, 0); font-family: &quot;Roboto Condensed&quot;, sans-serif;"
+                                                        name="">00:00:00</a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-2-10 rightAlign">
+                                                    <!-- WR Time Settings -->
+                                                    <div class="edit-button-not-abs" rel="clickover" data-original-title="WR Time Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                                        <button id='wrFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
+                                                        <button id='wrFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
+                                                        <input  id='wrFontColor' type='color' value='#FFFFFF'></input>
+                                                        <input  id='wrFontSize' class='fontSize' type='number' min='1' max='64' value='15'>
+                                                        </div>">
+                                                        <a class="wrTime" target="_blank" style="font-size: 15px; font-family: &quot;Roboto Condensed&quot;, sans-serif; color: rgb(243, 226, 33);"
+                                                            name="">00:00:00</a>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </div>
+                                        <li>
+                                            <div class="headerRow">
+                                                <!-- Misc Header Settings -->
+                                                <a class="edit-button-not-abs" rel="clickover" data-original-title="Misc Category Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                                    <button id='miscHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
+                                                    <button id='miscHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
+                                                    <input  id='miscHeaderFontColor' type='color' value='#FFFFFF'></input>
+                                                    <input  id='miscHeaderFontSize' class='fontSize' type='number' min='1' max='64' value='15'>
+                                                    <button id='miscShow' type='button' class='btn btn-primary btn-pressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Show</button>
+                                                    <button id='miscSep' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Separate</button>
+                                                    </div>">
+                                                    <p class="timeHeader" style="font-size: 15px; color: rgb(255, 255, 255); font-family: &quot;Roboto Condensed&quot;, sans-serif;">Miscellaneous Categories</p>
+                                                </a>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="col-6-10 truncate">
+                                                <a class="categoryName"target="_blank" title="Any% All Orbs - Original"
+                                                    style="font-size: 14px; color: rgb(241, 238, 203); font-family: &quot;Roboto Condensed&quot;, sans-serif;">--</a>
+                                            </div>
+                                            <div class="col-2-10 rightAlign">
+                                                <a class="pbTime"target="_blank" style="font-size: 15px; color: rgb(249, 0, 0); font-family: &quot;Roboto Condensed&quot;, sans-serif;"
+                                                    name="">--</a>
+                                            </div>
+                                            <div class="col-2-10 rightAlign">
+                                                <a class="wrTime"target="_blank" style="font-size: 15px; font-family: &quot;Roboto Condensed&quot;, sans-serif; color: rgb(243, 226, 33);"
+                                                    name="">--</a>
+                                            </div>
+                                        </li>
+
+                                        <li>
+                                            <div class="headerRow">
+                                                <!-- IL Header Settings -->
+                                                <a class="edit-button-not-abs" rel="clickover" data-original-title="IL Header Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
+                                                    <button id='ilHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
+                                                    <button id='ilHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
+                                                    <input  id='ilHeaderFontColor' type='color' value='#FFFFFF'></input>
+                                                    <input  id='ilHeaderFontSize' class='fontSize' type='number' min='1' max='64' value='15'>
+                                                    <button id='ilShow' type='button' class='btn btn-primary btn-pressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Show</button>
+                                                    <button id='ilSep' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Separate</button>
+                                                    </div>">
+                                                    <p class="timeHeader" style="font-size: 15px; color: rgb(255, 255, 255); font-family: &quot;Roboto Condensed&quot;, sans-serif;">Individual Levels</p>
+                                                </a>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="col-6-10 truncate">
+                                                <a class="categoryName" target="_blank" title="Blow up Strip Mine Eco Wells"
+                                                    style="font-size: 14px; color: rgb(241, 238, 203); font-family: &quot;Roboto Condensed&quot;, sans-serif;"
+                                                    name="">--</a>
+                                            </div>
+                                            <div class="col-2-10 rightAlign">
+                                                <a class="pbTime" target="_blank" style="font-size: 15px; color: rgb(249, 0, 0); font-family: &quot;Roboto Condensed&quot;, sans-serif;">--</a>
+                                            </div>
+                                            <div class="col-2-10 rightAlign">
+                                                <a class="wrTime" target="_blank" style="font-size: 15px; font-family: &quot;Roboto Condensed&quot;, sans-serif;">--</a>
+                                            </div>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="fancyStripeBlue" style="background: rgba(0, 0, 0, 0) linear-gradient(0deg, rgb(16, 16, 16), rgb(32, 95, 107)) repeat scroll 0% 0%;"></div>
+                        </div>
                     </div>
-
                 </div>
-            </div>
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">Panel Title Background</h3>
-                </div>
-                <div class="col-md-8" id="titleBackgroundOptions">
-                    <div>
-                        <select name="theme" id="panelTitleBackgroundType">
-                            <option value="image" selected>Built-in Image</option>
-                            <option value="solid">Solid Color</option>
-                            <option value="vGradient">Vertical Gradient</option>
-                            <option value="hGradient">Horizontal Gradient</option>
-                        </select>
-                    </div>
-                    <div id="colorPickerContainer">
-                    </div>
-                </div>
-            </div>
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">Panel Background Color</h3>
-                </div>
-                <div class="col-md-8">
-                    <input type="color" value="#101010" id="panelBackgroundColor">
-                </div>
-            </div>
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">Panel Title Divider Color</h3>
-                </div>
-                <div class="col-md-8">
-                    <input type="color" value="#008000" id="panelTitleDividerColor">
-                </div>
-            </div>
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">Game Title Divider Color</h3>
-                </div>
-                <div class="col-md-8">
-                    <input type="color" value="#205f6b" id="gameTitleDividerColor">
-                </div>
-            </div>
-
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">Miscellaneous Run Options</h3>
-                </div>
-                <div class="col-md-8">
-                    <input type="checkbox" id="miscShow" checked>Show
-                    <input type="checkbox" id="miscSep">Separate
-                </div>
-
-            </div>
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">Individual Level Options</h3>
-                </div>
-                <div class="col-md-8">
-                    <input type="checkbox" id="ilShow" checked>Show
-                    <input type="checkbox" id="ilSep">Separate
-                </div>
-
-            </div>
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">Panel Title Shadow</h3>
-                </div>
-                <div class="col-md-8">
-                    <input type="checkbox" id="titleShadow">
-                </div>
-
-            </div>
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">Panel Title Height</h3>
-                </div>
-                <div class="col-md-8">
-                    <input type="number" min="80" max="150" value="100" id="panelTitleHeight">
-                </div>
-
+                <!-- end of mock-up style panel -->
             </div>
             <div class="row config">
                 <div class="col-md-4">
                     <h3 class="config">Panel Title Font Options</h3>
                 </div>
                 <div class="col-md-8">
-                    <div>
-                        <label for="panelTitleFontBold">Bold</label>
-                        <input type="checkbox" id="panelTitleFontBold">
-                    </div>
-                    <div>
-                        <label for="panelTitleFontItalic">Italic</label>
-                        <input type="checkbox" id="panelTitleFontItalic">
-                    </div>
-                    <div>
-                        <label for="panelTitleFontSize">Size</label>
-                        <input class="fontSize" type="number" min="1" max="64" value="30" id="panelTitleFontSize">
-                    </div>
-                    <div>
-                        <label for "panelTitleFontColor">Color</label>
-                        <input type="color" value="#FFFFFF" id="panelTitleFontColor">
-                    </div>
                     <div>
                         <label for="titleFont">Font Family</label>
                         <select name="titleFont" id="panelTitleFont">
@@ -239,22 +365,6 @@
                 </div>
                 <div class="col-md-8">
                     <div>
-                        <label for="panelHeaderFontBold">Bold</label>
-                        <input type="checkbox" id="panelHeaderFontBold">
-                    </div>
-                    <div>
-                        <label for="panelHeaderFontItalic">Italic</label>
-                        <input type="checkbox" id="panelHeaderFontItalic">
-                    </div>
-                    <div>
-                        <label for="panelHeaderFontSize">Size</label>
-                        <input class="fontSize" type="number" min="1" max="64" value="15" id="panelHeaderFontSize">
-                    </div>
-                    <div>
-                        <label for "panelHeaderFontColor">Color</label>
-                        <input type="color" value="#FFFFFF" id="panelHeaderFontColor">
-                    </div>
-                    <div>
                         <label for="panelHeaderFont">Font Family</label>
                         <select name="panelHeaderFont" id="panelHeaderFont">
                             <option value="'Roboto Condensed', sans-serif" selected>Roboto Condensed</option>
@@ -279,22 +389,6 @@
                     <h3 class="config">Game Title Font Options</h3>
                 </div>
                 <div class="col-md-8">
-                    <div>
-                        <label for="gameTitleFontBold">Bold</label>
-                        <input type="checkbox" id="gameTitleFontBold">
-                    </div>
-                    <div>
-                        <label for="gameTitleFontItalic">Italic</label>
-                        <input type="checkbox" id="gameTitleFontItalic">
-                    </div>
-                    <div>
-                        <label for="gameTitleFontSize">Size</label>
-                        <input class="fontSize" type="number" min="1" max="64" value="19" id="gameTitleFontSize">
-                    </div>
-                    <div>
-                        <label for "gameTitleFontColor">Color</label>
-                        <input type="color" value="#FFFFFF" id="gameTitleFontColor">
-                    </div>
                     <div>
                         <label for="gameTitleFont">Font Family</label>
                         <select name="gameTitleFont" id="gameTitleFont">
@@ -321,22 +415,6 @@
                 </div>
                 <div class="col-md-8">
                     <div>
-                        <label for="gameCategoryFontBold">Bold</label>
-                        <input type="checkbox" id="gameCategoryFontBold">
-                    </div>
-                    <div>
-                        <label for="gameCategoryFontItalic">Italic</label>
-                        <input type="checkbox" id="gameCategoryFontItalic">
-                    </div>
-                    <div>
-                        <label for="gameCategoryFontSize">Size</label>
-                        <input class="fontSize" type="number" min="1" max="64" value="14" id="gameCategoryFontSize">
-                    </div>
-                    <div>
-                        <label for "gameCategoryFontColor">Color</label>
-                        <input type="color" value="#f1eecb" id="gameCategoryFontColor">
-                    </div>
-                    <div>
                         <label for="gameCategoryFont">Font Family</label>
                         <select name="gameCategoryFont" id="gameCategoryFont">
                             <option value="'Roboto Condensed', sans-serif" selected>Roboto Condensed</option>
@@ -362,22 +440,6 @@
                 </div>
                 <div class="col-md-8">
                     <div>
-                        <label for="pbFontBold">Bold</label>
-                        <input type="checkbox" id="pbFontBold">
-                    </div>
-                    <div>
-                        <label for="pbFontItalic">Italic</label>
-                        <input type="checkbox" id="pbFontItalic">
-                    </div>
-                    <div>
-                        <label for="pbFontSize">Size</label>
-                        <input class="fontSize" type="number" min="1" max="64" value="15" id="pbFontSize">
-                    </div>
-                    <div>
-                        <label for "pbFontColor">Color</label>
-                        <input type="color" value="#FFFFFF" id="pbFontColor">
-                    </div>
-                    <div>
                         <label for="pbFont">Font Family</label>
                         <select name="pbFont" id="pbFont">
                             <option value="'Roboto Condensed', sans-serif" selected>Roboto Condensed</option>
@@ -402,22 +464,7 @@
                     <h3 class="config">Misc/IL Header Font Options</h3>
                 </div>
                 <div class="col-md-8">
-                    <div>
-                        <label for="timeHeaderFontBold">Bold</label>
-                        <input type="checkbox" id="timeHeaderFontBold">
-                    </div>
-                    <div>
-                        <label for="timeHeaderFontItalic">Italic</label>
-                        <input type="checkbox" id="timeHeaderFontItalic">
-                    </div>
-                    <div>
-                        <label for="timeHeaderbFontSize">Size</label>
-                        <input class="fontSize" type="number" min="1" max="64" value="15" id="timeHeaderFontSize">
-                    </div>
-                    <div>
-                        <label for "timeHeaderFontColor">Color</label>
-                        <input type="color" value="#FFFFFF" id="timeHeaderFontColor">
-                    </div>
+                    
                     <div>
                         <label for="timeHeaderFont">Font Family</label>
                         <select name="timeHeaderFont" id="timeHeaderFont">
@@ -486,7 +533,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- Scripts at Bottom of Page -->
@@ -494,11 +540,13 @@
     <script src="js/jquery.js"></script>
     <script src="js/jquery-ui.js"></script>
     <script src="js/bootstrap.js"></script>
+    <script src="js/third-party/bootstrap-clickover/bootstrapx-clickover.js"></script>
     <script src="js/spinner.js"></script>
     <script src="js/themes.js"></script>
     <script src="js/config.js"></script>
     <script src="js/FileSaver.js"></script>
     <script src="js/viewer_preview.js"></script>
+    <script src="js/style_mockup.js"></script>
 </body>
 
 </html>

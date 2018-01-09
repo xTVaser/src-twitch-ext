@@ -9,15 +9,24 @@
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/viewer.css">
     <link rel="stylesheet" href="css/vividspinner.css">
+    <style>
+        .edit-button {
+            position: absolute;
+            stroke: black;
+            stroke-width: 1em;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body style="background-color: rgb(16, 16, 16);">
     <div class="frameWrapper">
         <div class="titleContainer outlineText" style="display: block; height: 100px;">
+            <a href="#" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover" class="edit-button">
+                <i class="fas fa-edit edit-button"></i>
+            </a>
             <div class="row center" id="titleContainerRow">
-                <a href="http://www.google.com" target="_blank">
-                    <h1 id="viewerPanelTitle" style="font-weight: 400; font-size: 30px; color: rgb(255, 255, 255); font-family: &quot;Roboto Condensed&quot;, sans-serif;">Personal Bests</h1>
-                </a>
+                <h1 id="viewerPanelTitle" style="font-weight: 400; font-size: 30px; color: rgb(255, 255, 255); font-family: &quot;Roboto Condensed&quot;, sans-serif;">Personal Bests</h1>
             </div>
             <div class="row" id="headers" style="font-weight: 400; font-size: 15px; color: rgb(255, 255, 255); font-family: &quot;Roboto Condensed&quot;, sans-serif;">
                 <div class="col-6-10 titleHeaders">
@@ -59,7 +68,7 @@
                                     name="">4:03:50</a>
                             </div>
                         </li>
-                        
+
                         <li>
                             <div class="headerRow">
                                 <p class="timeHeader" style="font-size: 15px; color: rgb(255, 255, 255); font-family: &quot;Roboto Condensed&quot;, sans-serif;">Miscellaneous Categories</p>
@@ -79,7 +88,7 @@
                                     name="">2:18:34</a>
                             </div>
                         </li>
-                        
+
                         <li>
                             <div class="headerRow">
                                 <p class="timeHeader" style="font-size: 15px; color: rgb(255, 255, 255); font-family: &quot;Roboto Condensed&quot;, sans-serif;">Individual Levels</p>
@@ -98,7 +107,7 @@
                                 <a class="wrTime" href="https://www.speedrun.com/run/y97lggrm" target="_blank" style="font-size: 15px; font-family: &quot;Roboto Condensed&quot;, sans-serif;">46.80</a>
                             </div>
                         </li>
-        
+
                     </ul>
                 </div>
             </div>
@@ -151,9 +160,11 @@
 
     <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
     <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.js"></script>
     <script src="js/third-party/jquery.nicescroll.js"></script>
     <script src="js/viewer.js"></script>
     <script src="js/spinner.js"></script>
+    <script src="js/style_mockup.js"></script>
 
 </body>
 

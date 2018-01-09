@@ -31,6 +31,8 @@ ul.config {
     text-align: center;
 }
 
+
+
 h1.config {
     margin-bottom: 2em;
 }
@@ -121,4 +123,18 @@ section.spinnerWrapper {
     padding: 15px 32px;
     text-align: center;
     text-decoration: none;
+}
+
+.popover-title {
+    color: black;
+}
+
+.popoverOptions * {
+    margin: 5px;
+    color: black;
+}
+
+.popoverOptions button {
+    padding: 6px 12px;
+    display: inline-block;
 }
