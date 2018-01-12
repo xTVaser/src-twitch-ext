@@ -149,6 +149,7 @@ section.spinnerWrapper {
     position: absolute;
     cursor: pointer;
     color: white;
+    z-index: 1000;
 }
 
 .edit-button-not-abs {
@@ -175,4 +176,13 @@ section.spinnerWrapper {
 
 .dropdown a:hover {
     text-decoration: underline;
+}
+
+.slider.slider-horizontal {
+    margin-left: 1.5em;
+    margin-right: 1.5em;
+}
+
+.slider-selection {
+    background-image: linear-gradient(to bottom, #286090 0%, #286090 100%);
 }
