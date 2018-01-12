@@ -5,31 +5,17 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="css/bootstrap.css">
+
+    <link rel="stylesheet" href="css/third-party/fontawesome/fa-svg-with-js.css">
+    <link rel="stylesheet" href="css/third-party/bootstrap/bootstrap.css">
+    <link rel="stylesheet" href="css/third-party/jquery/jquery-ui.css">
+    <link rel="stylesheet" href="css/third-party/spinner/vividspinner.css">
+
     <link rel="stylesheet" href="css/common.css">
-    <link rel="stylesheet" href="css/third-party/fa-svg-with-js.css">
-    <script defer src="js/third-party/fontawesome/fontawesome-all.js"></script>
-    <link rel="stylesheet" href="css/jquery-ui.css">
-    <link rel="stylesheet" href="css/vividspinner.css">
     <link rel="stylesheet" href="css/viewer_preview.css">
     <link rel="stylesheet" href="css/config.css">
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700" rel="stylesheet">
-    <style>
-        .edit-button {
-            position: absolute;
-            stroke: black;
-            stroke-width: 1em;
-            cursor: pointer;
-            color: white;
-        }
 
-        .edit-button-not-abs {
-            stroke: black;
-            stroke-width: 1em;
-            cursor: pointer;
-            color: white;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700" rel="stylesheet">
 </head>
 
 <body>
@@ -105,214 +91,470 @@
                     </p>
                 </div>
                 <div class="col-md-8">
-                    <div class="frameWrapper">
+                    <div class="frameWrapper" style="overflow:visible;">
                         <div class="titleContainer outlineText" style="display: block; height: 100px;">
                             <!-- Panel Title Background Settings -->
-                            <!-- TODO Currently Broken -->
-                            <a class="edit-button" rel="clickover" data-original-title="Title Background Settings" data-html="true" data-content="<div class='row center popoverOptions'>
-                                Height <input id='panelTitleHeight' type='number' min='80' max='150' value='100'>
-                                <div>
-                                    <select id='panelTitleBackgroundType' name='theme'>
-                                        <option value='image' selected>Built-in Image</option>
-                                        <option value='solid'>Solid Color</option>
-                                        <option value='vGradient'>Vertical Gradient</option>
-                                        <option value='hGradient'>Horizontal Gradient</option>
-                                    </select>
-                                </div>
-                                <div id='colorPickerContainer'>
-                                </div>
-                            </div>">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <!-- Title Divider Settings -->
-                            <a class="edit-button" style="top:90px; left:170px" rel="clickover" data-original-title="Panel Title Divider Settings" data-html="true"
-                                data-content="<div class='row center popoverOptions'>
-                                Height 
-                                <input id='panelTitleDividerHeight'type='number' min='0' max='15' value='5'>
-                                Extra Bottom Margin
-                                <input id='panelTitleDividerBottomMargin'  type='number' min='0' max='10' value='0'>
-                                <input id='panelTitleDividerColor' type='color' value='#008000'></div>">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <!-- Game Divider Settings -->
-                            <a class="edit-button" style="top:240px; left:170px" rel="clickover" data-original-title="Game Divider Settings" data-html="true"
-                                data-content="<div class='row center popoverOptions'>
-                                Height 
-                                <input id='gameDividerHeight'  type='number' min='0' max='15' value='5'>
-                                Extra Bottom Margin
-                                <input id='gameDividerBottomMargin'  type='number' min='0' max='10' value='0'>
-                                <input id='gameDividerColor' type='color' value='#205f6b'></div>">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <!-- Panel Background Settings -->
-                            <a class="edit-button" style="bottom:150px; left:170px" rel="clickover" data-original-title="Panel Background Settings" data-html="true"
-                                data-content="<div class='row center popoverOptions'> 
-                                <input id='panelBackgroundColor' type='color' value='#101010'></div>">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <!-- Scrollbar Settings -->
-                            <a class="edit-button" style="bottom:150px; left:310px" rel="clickover" data-original-title="Scollbar Settings" data-html="true"
-                                data-content="<div class='row center popoverOptions'>
-                                Width
-                                <input id='scrollbarWidth'type='number' min='0' max='5' value='5'> 
-                                Opacity
-                                <input id='scrollbarOpacity'type='number' min='0' max='100' value='100'> 
-                                <input id='scrollbarColor' type='color' value='#424242'></div>">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <div class="row center" id="titleContainerRow">
-                                <!-- Panel Title Settings -->
-                                <a class="edit-button-not-abs" rel="clickover" data-original-title="Title Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
-                                    <button id='panelTitleFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
-                                    <button id='panelTitleFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
-                                    <input  id='panelTitleFontColor' type='color' value='#FFFFFF'></input>
-                                    <input  id='panelTitleFontSize' type='number' min='1' max='64' value='30'>
-                                    <input  id='panelTitleShadow' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Text Shadow</a>
-                                </div>">
-                                    <h1 id="viewerPanelTitle" style="font-weight: 400; font-size: 30px; color: rgb(255, 255, 255); font-family: &quot;Roboto Condensed&quot;, sans-serif;">
-                                        Panel Title
-                                    </h1>
+                            <div class="dropdown">
+                                <a class="edit-button dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fas fa-edit"></i>
                                 </a>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-header">Title Background Settings</li>
+                                    <li>
+                                        Height
+                                        <br>
+                                        <input id='panelTitleHeight' type='number' min='80' max='150' value='100'>
+                                    </li>
+                                    <li>
+                                        Style
+                                        <br>
+                                        <select id='panelTitleBackgroundType' name='theme'>
+                                            <option value='image' selected>Built-in Image</option>
+                                            <option value='solid'>Solid Color</option>
+                                            <option value='vGradient'>Vertical Gradient</option>
+                                            <option value='hGradient'>Horizontal Gradient</option>
+                                        </select>
+                                    </li>
+                                    <li>
+                                        <div id='colorPickerContainer'>
+                                        </div>
+                                    </li>
+                                </ul>
                             </div>
-                            <!-- TODO, backwards compatibility check for headers -->
-                            <div class="row" id="headers" style="font-weight: 400; font-size: 15px; color: rgb(255, 255, 255); font-family: &quot;Roboto Condensed&quot;, sans-serif;">
-                                <!-- Category Header Settings -->
-                                <div class="col-6-10 titleHeaders">
-                                    <a class="edit-button-not-abs" rel="clickover" data-original-title="Category Header Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
-                                        <button id='categoryHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
-                                        <button id='categoryHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
-                                        <input  id='categoryHeaderFontColor' type='color' value='#FFFFFF'></input>
-                                        <input  id='categoryHeaderFontSize' type='number' min='1' max='64' value='15'>
-                                    </div>">
-                                        <h3>Category</h3>
+                            <!-- Title Divider Settings -->
+                            <div class="dropdown">
+                                <a class="edit-button dropdown-toggle" style="left:145px; top:80px;" data-toggle="dropdown">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <ul class="dropdown-menu" style="left:20%; top: 100px">
+                                    <li class="dropdown-header">Panel Title Divider Settings</li>
+                                    <li>
+                                        Height
+                                        <br>
+                                        <input id='panelTitleDividerHeight' type='number' min='0' max='15' value='5'>
+                                    </li>
+                                    <li>
+                                        Extra Bottom Margin
+                                        <br>
+                                        <input id='panelTitleDividerBottomMargin' type='number' min='0' max='10' value='0'>
+                                    </li>
+                                    <li>
+                                        Color
+                                        <br>
+                                        <input id='panelTitleDividerColor' type='color' value='#008000'>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- Game Divider Settings -->
+                            <div class="dropdown">
+                                <a class="edit-button dropdown-toggle" style="left:145px; top:230px;" data-toggle="dropdown">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <ul class="dropdown-menu" style="left:20%; top: 250px;">
+                                    <li class="dropdown-header">Game Divider Settings</li>
+                                    <li>
+                                        Height
+                                        <br>
+                                        <input id='gameDividerHeight' type='number' min='0' max='15' value='5'>
+                                    </li>
+                                    <li>
+                                        Extra Bottom Margin
+                                        <br>
+                                        <input id='gameDividerBottomMargin' type='number' min='0' max='10' value='0'>
+                                    </li>
+                                    <li>
+                                        Color
+                                        <br>
+                                        <input id='gameDividerColor' type='color' value='#205f6b'>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- Panel Background Settings -->
+                            <div class="dropdown">
+                                <a class="edit-button dropdown-toggle" style="left:145px; top:320px;" data-toggle="dropdown">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <ul class="dropdown-menu" style="left:20%; top: 350px;">
+                                    <li class="dropdown-header">Panel Background Settings</li>
+                                    <li>
+                                        Color
+                                        <br>
+                                        <input id='panelBackgroundColor' type='color' value='#101010'>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- Scrollbar Settings -->
+                            <div class="dropdown">
+                                <a class="edit-button dropdown-toggle" style="top:320px; left:290px" data-toggle="dropdown">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <ul class="dropdown-menu" style="top:225px; left:125px;">
+                                    <li class="dropdown-header">Scollbar Settings</li>
+                                    <li>
+                                        Width
+                                        <br>
+                                        <input id='scrollbarWidth' type='number' min='0' max='5' value='5'>
+                                    </li>
+                                    <li>
+                                        Opacity
+                                        <br>
+                                        <input id='scrollbarOpacity' type='number' min='0' max='100' value='100'>
+                                    </li>
+                                    <li>
+                                        Color
+                                        <br>
+                                        <input id='scrollbarColor' type='color' value='#424242'>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="row center" id="titleContainerRow" style="overflow:visible;">
+                                <!-- Panel Title Settings -->
+                                <div class="dropdown">
+                                    <a class="edit-button-not-abs dropdown-toggle" data-toggle="dropdown">
+                                        <h1 id="viewerPanelTitle" style="font-weight: 400; font-size: 30px; color: rgb(255, 255, 255); font-family: 'Roboto Condensed', sans-serif;">
+                                            Panel Title
+                                        </h1>
                                     </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="dropdown-header">Title Font Settings</li>
+                                        <li>
+                                            <button id='panelTitleFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                autocomplete='off'>
+                                                <i class='fas fa-bold'></i>
+                                            </button>
+                                            <button id='panelTitleFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                autocomplete='off'>
+                                                <i class='fas fa-italic'></i>
+                                            </button>
+                                        </li>
+                                        <li>
+                                            Size
+                                            <br>
+                                            <input id='panelTitleFontSize' type='number' min='1' max='64' value='30'>
+                                        </li>
+                                        <li>
+                                            Color
+                                            <br>
+                                            <input id='panelTitleFontColor' type='color' value='#FFFFFF'></input>
+                                        </li>
+                                        <li>
+                                            <button id='panelTitleShadow' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                autocomplete='off'>Text Shadow</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row" id="headers" style="font-weight: 400; font-size: 15px; color: rgb(255, 255, 255); font-family: 'Roboto Condensed', sans-serif;">
+                                <div class="col-6-10 titleHeaders">
+                                    <!-- Category Header Settings -->
+                                    <div class="dropdown">
+                                        <a class="edit-button-not-abs dropdown-toggle" data-toggle="dropdown">
+                                            <h3>Category</h3>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li class="dropdown-header">Category Header Font Settings</li>
+                                            <li>
+                                                <button id='categoryHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                    autocomplete='off'>
+                                                    <i class='fas fa-bold'></i>
+                                                </button>
+                                                <button id='categoryHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                    autocomplete='off'>
+                                                    <i class='fas fa-italic'></i>
+                                                </button>
+                                            </li>
+                                            <li>
+                                                Size
+                                                <br>
+                                                <input id='categoryHeaderFontSize' type='number' min='1' max='64' value='15'>
+                                            </li>
+                                            <li>
+                                                Color
+                                                <br>
+                                                <input id='categoryHeaderFontColor' type='color' value='#FFFFFF'></input>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                                 <!-- Personal Best Header Settings -->
                                 <div class="col-2-10 center titleHeaders">
-                                    <a class="edit-button-not-abs" rel="clickover" data-original-title="PB Header Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
-                                        <button id='pbHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
-                                        <button id='pbHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
-                                        <input  id='pbHeaderFontColor' type='color' value='#FFFFFF'></input>
-                                        <input  id='pbHeaderFontSize' type='number' min='1' max='64' value='15'>
-                                        </div>">
-                                        <h3>PB</h3>
-                                    </a>
+                                    <div class="dropdown">
+                                        <a class="edit-button-not-abs dropdown-toggle" data-toggle="dropdown">
+                                            <h3>PB</h3>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li class="dropdown-header">PB Header Font Settings</li>
+                                            <li>
+                                                <button id='pbHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                    autocomplete='off'>
+                                                    <i class='fas fa-bold'></i>
+                                                </button>
+                                                <button id='pbHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                    autocomplete='off'>
+                                                    <i class='fas fa-italic'></i>
+                                                </button>
+                                            </li>
+                                            <li>
+                                                Size
+                                                <br>
+                                                <input id='pbHeaderFontSize' type='number' min='1' max='64' value='15'>
+                                            </li>
+                                            <li>
+                                                Color
+                                                <br>
+                                                <input id='pbHeaderFontColor' type='color' value='#FFFFFF'></input>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                                 <!-- WR Header Settings -->
                                 <div class="col-2-10 center titleHeaders">
-                                    <a class="edit-button-not-abs" rel="clickover" data-original-title="WR Header Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
-                                        <button id='wrHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
-                                        <button id='wrHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
-                                        <input  id='wrHeaderFontColor' type='color' value='#FFFFFF'></input>
-                                        <input  id='wrHeaderFontSize' type='number' min='1' max='64' value='15'>
-                                        <button id='hideWR' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Hide WR Column</button>
-                                        <button id='wrRainbow' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Rainbow Cycling Colors</button>
-                                        </div>">
-                                        <h3>WR</h3>
-                                    </a>
+                                    <div class="dropdown">
+                                        <a class="edit-button-not-abs dropdown-toggle" data-toggle="dropdown">
+                                            <h3>WR</h3>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li class="dropdown-header">WR Header Font Settings</li>
+                                            <li>
+                                                <button id='wrHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                    autocomplete='off'>
+                                                    <i class='fas fa-bold'></i>
+                                                </button>
+                                                <button id='wrHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                    autocomplete='off'>
+                                                    <i class='fas fa-italic'></i>
+                                                </button>
+                                            </li>
+                                            <li>
+                                                Size
+                                                <br>
+                                                <input id='wrHeaderFontSize' type='number' min='1' max='64' value='15'>
+                                            </li>
+                                            <li>
+                                                Color
+                                                <br>
+                                                <input id='wrHeaderFontColor' type='color' value='#FFFFFF'></input>
+                                            </li>
+                                            <li>
+                                                <button id='hideWR' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Hide WR Column</button>
+                                                <button id='wrRainbow' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Rainbow Cycling Colors</button>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                             <br class="clear">
                         </div>
                         <div class="fancyStripeGreen" style="display: block; background: rgba(0, 0, 0, 0) linear-gradient(rgb(0, 128, 0), rgb(16, 16, 16)) repeat scroll 0% 0%;"></div>
-                        <div class="pbWrapper" style="display: block; height: 392px; overflow: hidden;" tabindex="1">
-                            <div class="mockupGameTitle outlineText" id="g0" style="font-size: 19px; color: rgb(255, 255, 255); font-family: &quot;Roboto Condensed&quot;, sans-serif;">
+                        <div class="pbWrapper" style="display: block; height: 392px; overflow: visible;" tabindex="1">
+                            <div class="mockupGameTitle outlineText" id="g0" style="font-size: 19px; color: rgb(255, 255, 255); font-family: 'Roboto Condensed', sans-serif;">
                                 <div class="col-8-10">
                                     <!-- Game Title Settings -->
-                                    <a class="edit-button-not-abs" rel="clickover" data-original-title="Game Title Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
-                                        <button id='gameTitleFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
-                                        <button id='gameTitleFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
-                                        <input  id='gameTitleFontColor' type='color' value='#FFFFFF'></input>
-                                        <input  id='gameTitleFontSize' type='number' min='1' max='64' value='19'>
-                                        </div>">
-                                        <h2>Game Title</h2>
-                                    </a>
+                                    <div class="dropdown">
+                                        <a class="edit-button-not-abs dropdown-toggle" data-toggle="dropdown">
+                                            <h2>Game Title</h2>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li class="dropdown-header">Game Title Font Settings</li>
+                                            <li>
+                                                <button id='gameTitleFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                    autocomplete='off'>
+                                                    <i class='fas fa-bold'></i>
+                                                </button>
+                                                <button id='gameTitleFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                    autocomplete='off'>
+                                                    <i class='fas fa-italic'></i>
+                                                </button>
+                                            </li>
+                                            <li>
+                                                Size
+                                                <br>
+                                                <input id='gameTitleFontSize' type='number' min='1' max='64' value='19'>
+                                            </li>
+                                            <li>
+                                                Color
+                                                <br>
+                                                <input id='gameTitleFontColor' type='color' value='#FFFFFF'></input>
+                                            </li>
+                                            <li>
+                                                <button id='hideWR' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Hide WR Column</button>
+                                                <button id='wrRainbow' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Rainbow Cycling Colors</button>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                                 <div class="col-2-10 center" id="pbRowStatus0">
                                     <!-- Expand Icon Settings -->
-                                    <a class="edit-button-not-abs" rel="clickover" data-original-title="Expand / Contract Settings" data-html="true" data-content="<div class='row center popoverOptions'>
-                                        <input  id='gameTitleFontColor' type='color' value='#FFFFFF'></input>
-                                        </div>">
-                                        <i class="far fa-minus-square fa-2x" aria-hidden="true"></i>
-                                    </a>
+                                    <div class="dropdown">
+                                        <a class="edit-button-not-abs dropdown-toggle" data-toggle="dropdown">
+                                            <i class="far fa-minus-square fa-2x" aria-hidden="true"></i>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li class="dropdown-header">Expand / Contract Settings</li>
+                                            <li>
+                                                Color
+                                                <br>
+                                                <input id='gameTitleFontColor' type='color' value='#FFFFFF'></input>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                                 <br class="clear">
                             </div>
                             <div class="pbContainer">
                                 <div class="pbRow outlineText" id="pbRow0" style="display: block;">
-                                    <ul>
+                                    <ul style="overflow:visible;">
                                         <div>
                                             <li>
-                                                <div class="col-6-10 truncate">
+                                                <div class="col-6-10 truncate" style="overflow:visible;">
                                                     <!-- Category Name Settings -->
-                                                    <div class="edit-button-not-abs" rel="clickover" data-original-title="Category Name Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
-                                                        <button id='gameCategoryFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
-                                                        <button id='gameCategoryFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
-                                                        <input  id='gameCategoryFontColor' type='color' value='#FFFFFF'></input>
-                                                        Font Size
-                                                        <input  id='gameCategoryFontSize' type='number' min='1' max='64' value='14'>
-                                                        Extra Bottom Margin
-                                                        <input  id='gameCategoryBottomMargin' type='number' min='0' max='10' value='0'>
-                                                        </div>">
-                                                        <a class="categoryName" style="font-size: 14px; color: rgb(241, 238, 203); font-family: &quot;Roboto Condensed&quot;, sans-serif;">
+                                                    <div class="dropdown">
+                                                        <a class="categoryName edit-button-not-abs dropdown-toggle" data-toggle="dropdown" style="font-size: 14px; color: rgb(241, 238, 203); font-family: 'Roboto Condensed', sans-serif;">
                                                             Category Name
                                                         </a>
+                                                        <ul class="dropdown-menu">
+                                                            <li class="dropdown-header">Category Name Font Settings</li>
+                                                            <li>
+                                                                <button id='gameCategoryFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                                    autocomplete='off'>
+                                                                    <i class='fas fa-bold'></i>
+                                                                </button>
+                                                                <button id='gameCategoryFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                                    autocomplete='off'>
+                                                                    <i class='fas fa-italic'></i>
+                                                                </button>
+                                                            </li>
+                                                            <li>
+                                                                Size
+                                                                <br>
+                                                                <input id='gameCategoryFontSize' type='number' min='1' max='64' value='14'>
+                                                            </li>
+                                                            <li>
+                                                                Color
+                                                                <br>
+                                                                <input id='gameCategoryFontColor' type='color' value='#FFFFFF'></input>
+                                                            </li>
+                                                            <li>
+                                                                Extra Bottom Margin
+                                                                <input id='gameCategoryBottomMargin' type='number' min='0' max='10' value='0'>
+                                                            </li>
+                                                        </ul>
                                                     </div>
                                                 </div>
                                                 <div class="col-2-10 rightAlign">
                                                     <!-- PB Time Settings -->
-                                                    <div class="edit-button-not-abs" rel="clickover" data-original-title="PB Time Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
-                                                        <button id='pbFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
-                                                        <button id='pbFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
-                                                        <input  id='pbFontColor' type='color' value='#FFFFFF'></input>
-                                                        <input  id='pbFontSize' type='number' min='1' max='64' value='15'>
-                                                        </div>">
-                                                        <a class="pbTime" target="_blank" style="font-size: 15px; color: rgb(249, 0, 0); font-family: &quot;Roboto Condensed&quot;, sans-serif;"
-                                                            name="">00:00:00</a>
+                                                    <div class="dropdown">
+                                                        <a class="pbTime edit-button-not-abs dropdown-toggle" data-toggle="dropdown" style="font-size: 15px; color: rgb(249, 0, 0); font-family: 'Roboto Condensed', sans-serif;">
+                                                            00:00:00
+                                                        </a>
+                                                        <ul class="dropdown-menu">
+                                                            <li class="dropdown-header">PB Time Font Settings</li>
+                                                            <li>
+                                                                <button id='pbFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>
+                                                                    <i class='fas fa-bold'></i>
+                                                                </button>
+                                                                <button id='pbFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>
+                                                                    <i class='fas fa-italic'></i>
+                                                                </button>
+
+                                                            </li>
+                                                            <li>
+                                                                Size
+                                                                <br>
+                                                                <input id='pbFontSize' type='number' min='1' max='64' value='15'>
+                                                            </li>
+                                                            <li>
+                                                                Color
+                                                                <br>
+                                                                <input id='pbFontColor' type='color' value='#FFFFFF'></input>
+                                                            </li>
+                                                        </ul>
                                                     </div>
                                                 </div>
                                                 <div class="col-2-10 rightAlign">
                                                     <!-- WR Time Settings -->
-                                                    <div class="edit-button-not-abs" rel="clickover" data-original-title="WR Time Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
-                                                        <button id='wrFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
-                                                        <button id='wrFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
-                                                        <input  id='wrFontColor' type='color' value='#FFFFFF'></input>
-                                                        <input  id='wrFontSize' type='number' min='1' max='64' value='15'>
-                                                        </div>">
-                                                        <a class="wrTime" target="_blank" style="font-size: 15px; font-family: &quot;Roboto Condensed&quot;, sans-serif; color: rgb(243, 226, 33);"
-                                                            name="">00:00:00</a>
+                                                    <div class="dropdown">
+                                                        <a class="wrTime edit-button-not-abs dropdown-toggle" data-toggle="dropdown" style="font-size: 15px; font-family: 'Roboto Condensed', sans-serif; color: rgb(243, 226, 33);">
+                                                            00:00:00
+                                                        </a>
+                                                        <ul class="dropdown-menu">
+                                                            <li class="dropdown-header">WR Time Font Settings</li>
+                                                            <li>
+                                                                <button id='wrFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>
+                                                                    <i class='fas fa-bold'></i>
+                                                                </button>
+                                                                <button id='wrFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>
+                                                                    <i class='fas fa-italic'></i>
+                                                                </button>
+                                                            </li>
+                                                            <li>
+                                                                Size
+                                                                <br>
+                                                                <input id='wrFontSize' type='number' min='1' max='64' value='15'>
+                                                            </li>
+                                                            <li>
+                                                                Color
+                                                                <br>
+                                                                <input id='wrFontColor' type='color' value='#FFFFFF'></input>
+                                                            </li>
+                                                        </ul>
                                                     </div>
                                                 </div>
+                                                <br class="clear"> <!-- TODO not in actual code, should maybe fix this? -->
                                             </li>
                                         </div>
                                         <li>
                                             <div class="headerRow">
                                                 <!-- Misc Header Settings -->
-                                                <a class="edit-button-not-abs" rel="clickover" data-original-title="Misc Category Settings" data-html="true" data-content="<div class='row center popoverOptions'>
-                                                    <button id='miscHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
-                                                    <button id='miscHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
-                                                    <input  id='miscHeaderFontColor' type='color' value='#FFFFFF'></input>
-                                                    Font Size
-                                                    <input  id='miscHeaderFontSize' type='number' min='1' max='64' value='15'>
-                                                    Extra Bottom Margin
-                                                    <input  id='miscHeaderBottomMargin' type='number' min='0' max='10' value='0'>
-                                                    <button id='miscShow' type='button' class='btn btn-primary btn-pressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Show</button>
-                                                    <button id='miscSep' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Separate</button>
-                                                    </div>">
-                                                    <p class="timeHeader" style="font-size: 15px; color: rgb(255, 255, 255); font-family: &quot;Roboto Condensed&quot;, sans-serif;">Miscellaneous Categories</p>
-                                                </a>
+                                                <div class="dropdown">
+                                                    <a class="edit-button-not-abs dropdown-toggle" data-toggle="dropdown" style="font-size: 15px; font-family: 'Roboto Condensed', sans-serif; color: rgb(243, 226, 33);">
+                                                        <p class="timeHeader" style="font-size: 15px; color: rgb(255, 255, 255); font-family: 'Roboto Condensed', sans-serif;">Miscellaneous Categories</p>
+                                                    </a>
+                                                    <ul class="dropdown-menu">
+                                                        <li class="dropdown-header">Misc Category Settings</li>
+                                                        <li>
+                                                            <button id='miscHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                                autocomplete='off'>
+                                                                <i class='fas fa-bold'></i>
+                                                            </button>
+                                                            <button id='miscHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                                autocomplete='off'>
+                                                                <i class='fas fa-italic'></i>
+                                                            </button>
+                                                        </li>
+                                                        <li>
+                                                            Size
+                                                            <br>
+                                                            <input id='miscHeaderFontSize' type='number' min='1' max='64' value='15'>
+                                                        </li>
+                                                        <li>
+                                                            Color
+                                                            <br>
+                                                            <input id='miscHeaderFontColor' type='color' value='#FFFFFF'></input>
+                                                        </li>
+                                                        <li>
+                                                            Extra Bottom Margin
+                                                            <br>
+                                                            <input id='miscHeaderBottomMargin' type='number' min='0' max='10' value='0'>
+                                                        </li>
+                                                        <li>
+                                                            <button id='miscShow' type='button' class='btn btn-primary btn-pressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Show</button>
+                                                            <button id='miscSep' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Separate</button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </li>
                                         <li>
                                             <div class="col-6-10 truncate">
-                                                <a class="categoryName" target="_blank" title="Any% All Orbs - Original" style="font-size: 14px; color: rgb(241, 238, 203); font-family: &quot;Roboto Condensed&quot;, sans-serif;">--</a>
+                                                <a class="categoryName" target="_blank" title="Any% All Orbs - Original" style="font-size: 14px; color: rgb(241, 238, 203); font-family: 'Roboto Condensed', sans-serif;">--</a>
                                             </div>
                                             <div class="col-2-10 rightAlign">
-                                                <a class="pbTime" target="_blank" style="font-size: 15px; color: rgb(249, 0, 0); font-family: &quot;Roboto Condensed&quot;, sans-serif;"
+                                                <a class="pbTime" target="_blank" style="font-size: 15px; color: rgb(249, 0, 0); font-family: 'Roboto Condensed', sans-serif;"
                                                     name="">--</a>
                                             </div>
                                             <div class="col-2-10 rightAlign">
-                                                <a class="wrTime" target="_blank" style="font-size: 15px; font-family: &quot;Roboto Condensed&quot;, sans-serif; color: rgb(243, 226, 33);"
+                                                <a class="wrTime" target="_blank" style="font-size: 15px; font-family: 'Roboto Condensed', sans-serif; color: rgb(243, 226, 33);"
                                                     name="">--</a>
                                             </div>
                                         </li>
@@ -320,37 +562,62 @@
                                         <li>
                                             <div class="headerRow">
                                                 <!-- IL Header Settings -->
-                                                <a class="edit-button-not-abs" rel="clickover" data-original-title="IL Header Font Settings" data-html="true" data-content="<div class='row center popoverOptions'>
-                                                    <button id='ilHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-bold'></i></button>
-                                                    <button id='ilHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'><i class='fas fa-italic'></i></button>
-                                                    <input  id='ilHeaderFontColor' type='color' value='#FFFFFF'></input>
-                                                    Font Size
-                                                    <input  id='ilHeaderFontSize' type='number' min='1' max='64' value='15'>
-                                                    Extra Bottom Margin
-                                                    <input  id='ilHeaderBottomMargin' type='number' min='0' max='10' value='0'>
-                                                    <button id='ilShow' type='button' class='btn btn-primary btn-pressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Show</button>
-                                                    <button id='ilSep' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Separate</button>
-                                                    </div>">
-                                                    <p class="timeHeader" style="font-size: 15px; color: rgb(255, 255, 255); font-family: &quot;Roboto Condensed&quot;, sans-serif;">Individual Levels</p>
-                                                </a>
+                                                <div class="dropdown">
+                                                    <a class="edit-button-not-abs dropdown-toggle" data-toggle="dropdown" style="font-size: 15px; font-family: 'Roboto Condensed', sans-serif; color: rgb(243, 226, 33);">
+                                                        <p class="timeHeader" style="font-size: 15px; color: rgb(255, 255, 255); font-family: 'Roboto Condensed', sans-serif;">Individual Levels</p>
+                                                    </a>
+                                                    <ul class="dropdown-menu">
+                                                        <li class="dropdown-header">IL Header Font Settings</li>
+                                                        <li>
+                                                            <button id='ilHeaderFontBold' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                                autocomplete='off'>
+                                                                <i class='fas fa-bold'></i>
+                                                            </button>
+                                                            <button id='ilHeaderFontItalic' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false'
+                                                                autocomplete='off'>
+                                                                <i class='fas fa-italic'></i>
+                                                            </button>
+                                                        </li>
+                                                        <li>
+                                                            Size
+                                                            <br>
+                                                            <input id='ilHeaderFontSize' type='number' min='1' max='64' value='15'>
+                                                        </li>
+                                                        <li>
+                                                            Color
+                                                            <br>
+                                                            <input id='ilHeaderFontColor' type='color' value='#FFFFFF'></input>
+                                                        </li>
+                                                        <li>
+                                                            Extra Bottom Margin
+                                                            <br>
+                                                            <input id='ilHeaderBottomMargin' type='number' min='0' max='10' value='0'>
+                                                        </li>
+                                                        <li>
+                                                            <button id='ilShow' type='button' class='btn btn-primary btn-pressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Show</button>
+                                                            <button id='ilSep' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Separate</button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </li>
                                         <li>
                                             <div class="col-6-10 truncate">
-                                                <a class="categoryName" target="_blank" title="Blow up Strip Mine Eco Wells" style="font-size: 14px; color: rgb(241, 238, 203); font-family: &quot;Roboto Condensed&quot;, sans-serif;"
+                                                <a class="categoryName" target="_blank" title="Blow up Strip Mine Eco Wells" style="font-size: 14px; color: rgb(241, 238, 203); font-family: 'Roboto Condensed', sans-serif;"
                                                     name="">--</a>
                                             </div>
                                             <div class="col-2-10 rightAlign">
-                                                <a class="pbTime" target="_blank" style="font-size: 15px; color: rgb(249, 0, 0); font-family: &quot;Roboto Condensed&quot;, sans-serif;">--</a>
+                                                <a class="pbTime" target="_blank" style="font-size: 15px; color: rgb(249, 0, 0); font-family: 'Roboto Condensed', sans-serif;">--</a>
                                             </div>
                                             <div class="col-2-10 rightAlign">
-                                                <a class="wrTime" target="_blank" style="font-size: 15px; font-family: &quot;Roboto Condensed&quot;, sans-serif;">--</a>
+                                                <a class="wrTime" target="_blank" style="font-size: 15px; font-family: 'Roboto Condensed', sans-serif;">--</a>
                                             </div>
                                         </li>
 
                                     </ul>
                                 </div>
                             </div>
+                            <br>
                             <div class="fancyStripeBlue" style="background: rgba(0, 0, 0, 0) linear-gradient(0deg, rgb(16, 16, 16), rgb(32, 95, 107)) repeat scroll 0% 0%;"></div>
                         </div>
                     </div>
@@ -560,14 +827,16 @@
 
     <!-- Scripts at Bottom of Page -->
     <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
-    <script src="js/jquery.js"></script>
-    <script src="js/jquery-ui.js"></script>
-    <script src="js/bootstrap.js"></script>
-    <script src="js/third-party/bootstrap-clickover/bootstrapx-clickover.js"></script>
+
+    <script src="js/third-party/jquery/jquery.js"></script>
+    <script src="js/third-party/jquery/jquery-ui.js"></script>
+    <script src="js/third-party/bootstrap/bootstrap.js"></script>
+    <script src="js/third-party/fontawesome/fontawesome-all.js"></script>
+    <script src="js/third-party/filesaver/filesaver.js"></script>
+
     <script src="js/spinner.js"></script>
     <script src="js/themes.js"></script>
     <script src="js/config.js"></script>
-    <script src="js/FileSaver.js"></script>
     <script src="js/viewer_preview.js"></script>
     <script src="js/style_mockup.js"></script>
 </body>
