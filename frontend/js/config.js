@@ -287,7 +287,7 @@ function addGameToList(game, removeBox, expandBox) {
             <div class="row">
                 <nav class="navbar navbar-default game">
                     <div class="container-fluid">
-                        <ul class="nav navbar-nav">
+                        <ul class="nav navbar-nav gameOptionContainer">
                             <li>
                                 <input type="text" value="${game.name}" class="gameTitleBox">
                             </li>
@@ -301,7 +301,7 @@ function addGameToList(game, removeBox, expandBox) {
                                         <div class="col-md-8">
                                             <p>Remove Game</p>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 selectionContainer">
                                             <input type=checkbox value="${game.id}" class="displayBox" ${removeBox}>
                                         </div>
                                     </div>
@@ -309,9 +309,9 @@ function addGameToList(game, removeBox, expandBox) {
                                 <li>
                                     <div class="row optionRow">
                                         <div class="col-md-8">
-                                            <p>Initial Expand Game</p>
+                                            <p>Initially Expand Game</p>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 selectionContainer">
                                             <input type="checkbox" class="expandBox" ${expandBox}>
                                         </div>
                                     </div>
@@ -343,7 +343,7 @@ function addGameToList(game, removeBox, expandBox) {
                         <div class="col-md-8">
                             <p>${category.name}</p>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4 selectionContainer">
                             <input type=checkbox value="${category.id}" checked>
                         </div>
                     </div>
@@ -383,7 +383,7 @@ function addGameToList(game, removeBox, expandBox) {
                         <div class="col-md-8">
                             <p>${category.name}</p>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4 selectionContainer">
                             <input type=checkbox value="${category.id}" checked>
                         </div>
                     </div>
@@ -439,7 +439,7 @@ function addGameToList(game, removeBox, expandBox) {
                     <div class="col-md-8">
                         <p>${level.name}</p>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 selectionContainer">
                         <input type=checkbox value="${level.id}" checked>
                     </div>
                 </div>
@@ -448,8 +448,8 @@ function addGameToList(game, removeBox, expandBox) {
     tempGameList +=
         `       </ol>
             </li>
-        <li>
-            <i class="fa fa-bars fa-config" aria-hidden="true"></i>
+        <li class="fa-config">
+            <i class="fas fa-bars" aria-hidden="true"></i>
         </li>
         </ul>
         </div>

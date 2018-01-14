@@ -93,13 +93,13 @@
                 </div>
                 <div class="col-md-8">
                     <div class="frameWrapper" style="overflow:visible;">
-                        <div class="titleContainer outlineText" style="display: block; height: 100px;">
+                        <div id="mockupTitleContainer" style="display: block; height: 100px;">
                             <!-- Panel Title Background Settings -->
                             <div class="dropdown">
                                 <a class="edit-button dropdown-toggle" data-toggle="dropdown">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <ul class="dropdown-menu">
+                                <ul class="dropdown-menu" style="top:25px;">
                                     <li class="dropdown-header">Title Background Settings</li>
                                     <li>
                                         Height
@@ -148,7 +148,7 @@
                             </div>
                             <!-- Game Divider Settings -->
                             <div class="dropdown">
-                                <a class="edit-button dropdown-toggle" style="left:145px; top:230px;" data-toggle="dropdown">
+                                <a class="edit-button dropdown-toggle" style="left:145px; top:225px;" data-toggle="dropdown">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <ul class="dropdown-menu" style="left:20%; top: 250px;">
@@ -189,7 +189,7 @@
                                 <a class="edit-button dropdown-toggle" style="top:320px; left:290px" data-toggle="dropdown">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <ul class="dropdown-menu" style="top:225px; left:125px;">
+                                <ul class="dropdown-menu" style="top:225px;">
                                     <li class="dropdown-header">Scollbar Settings</li>
                                     <li>
                                         Width
@@ -212,7 +212,7 @@
                                 <!-- Panel Title Settings -->
                                 <div class="dropdown">
                                     <a class="edit-button-not-abs dropdown-toggle" data-toggle="dropdown">
-                                        <h1 id="viewerPanelTitle" style="font-weight: 400; font-size: 30px; color: rgb(255, 255, 255); font-family: 'Roboto Condensed', sans-serif;">
+                                        <h1 style="font-weight: 400; font-size: 30px; color: rgb(255, 255, 255); font-family: 'Roboto Condensed', sans-serif; text-align: center;">
                                             Panel Title
                                         </h1>
                                     </a>
@@ -245,7 +245,7 @@
                                     </ul>
                                 </div>
                             </div>
-                            <div class="row" id="headers" style="font-weight: 400; font-size: 15px; color: rgb(255, 255, 255); font-family: 'Roboto Condensed', sans-serif;">
+                            <div class="row" style="font-weight: 400; font-size: 15px; color: rgb(255, 255, 255); font-family: 'Roboto Condensed', sans-serif;">
                                 <div class="col-6-10 titleHeaders">
                                     <!-- Category Header Settings -->
                                     <div class="dropdown">
@@ -347,7 +347,7 @@
                             <br class="clear">
                         </div>
                         <div class="fancyStripeGreen" style="display: block; background: rgba(0, 0, 0, 0) linear-gradient(rgb(0, 128, 0), rgb(16, 16, 16)) repeat scroll 0% 0%;"></div>
-                        <div class="pbWrapper" style="display: block; height: 392px; overflow: visible;" tabindex="1">
+                        <div style="display: block; height: 392px; overflow: visible;" tabindex="1">
                             <div class="mockupGameTitle outlineText" id="g0" style="font-size: 19px; color: rgb(255, 255, 255); font-family: 'Roboto Condensed', sans-serif;">
                                 <div class="col-8-10">
                                     <!-- Game Title Settings -->
@@ -540,7 +540,7 @@
                                                             <input id="miscHeaderBottomMargin" type="text" data-provide="slider" data-slider-min="1" data-slider-max="10" data-slider-value="0">
                                                         </li>
                                                         <li>
-                                                            <button id='miscShow' type='button' class='btn btn-primary btn-pressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Show</button>
+                                                            <button id='miscShow' type='button' class='btn btn-primary btn-pressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Enable</button>
                                                             <button id='miscSep' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Separate</button>
                                                         </li>
                                                     </ul>
@@ -596,7 +596,7 @@
                                                             <input id="ilHeaderBottomMargin" type="text" data-provide="slider" data-slider-min="0" data-slider-max="10" data-slider-value="0">
                                                         </li>
                                                         <li>
-                                                            <button id='ilShow' type='button' class='btn btn-primary btn-pressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Show</button>
+                                                            <button id='ilShow' type='button' class='btn btn-primary btn-pressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Enable</button>
                                                             <button id='ilSep' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Separate</button>
                                                         </li>
                                                     </ul>

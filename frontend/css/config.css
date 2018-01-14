@@ -121,8 +121,20 @@ section.spinnerWrapper {
     text-decoration: none;
 }
 
+.gameOptionContainer {
+    overflow: visible;
+}
+
+.selectionContainer {
+    /* nothing */
+}
+
 .popover-title {
     color: black;
+}
+
+.dropdown-menu {
+    z-index: 2000;
 }
 
 .dropdown-menu * {
@@ -155,11 +167,17 @@ section.spinnerWrapper {
 .edit-button-not-abs {
     cursor: pointer;
     color: white;
+    z-index: 1000;
+}
+
+.edit-button-not-abs:hover {
+    text-decoration: underline;
 }
 
 .dropdown-menu button {
     display: inline-block;
     padding: 6px 12px;
+    margin-bottom: 5px;
 }
 
 .dropdown-menu button {
@@ -185,4 +203,16 @@ section.spinnerWrapper {
 
 .slider-selection {
     background-image: linear-gradient(to bottom, #286090 0%, #286090 100%);
+}
+
+#mockupTitleContainer {
+    display: block;
+    box-sizing: border-box;
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    height: 100px;
+    background: radial-gradient( rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6)), url('../img/DarkTheme.png');
+    background-position: center top;
+    font-weight: 700;
 }
