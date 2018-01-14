@@ -1,10 +1,16 @@
 /// Config Page for Frontend
+var loaded = false;
+
 var authObject = null;
 var srcID = null;
 var srcName = null;
 
 window.Twitch.ext.onAuthorized(function(auth) {
     authObject = auth;
+    if (loaded == true) {
+        return;
+    }
+    loaded = true
     renderPreview(authObject)
     // console.log('The JWT that will be passed to the EBS is', authObject.token);
     // console.log('The channel ID is', authObject.channelId);
