@@ -382,7 +382,12 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 
 			// Check options.rtl
 			if (this.options.rtl === 'auto') {
-				this.options.rtl = window.getComputedStyle(this.element).direction === 'rtl';
+				if (window.getComputedStyle(this.element) != null) {
+					this.options.rtl = window.getComputedStyle(this.element).direction === 'rtl';
+				} else {
+					// fix for Firefox bug - https://bugzilla.mozilla.org/show_bug.cgi?id=548397
+					this.options.rtl = this.element.style.direction === 'rtl';
+				}
 			}
 
 			/*
