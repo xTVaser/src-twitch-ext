@@ -608,27 +608,9 @@ function spawnGradientColorPicker(label1, label2, color1, color2) {
 
 function extractSettings() {
     settings = {}
-    settings.theme = "stub" //$('#panelTheme').val()
     settings.title = $('#panelTitle').val()
-    // panel title background
-    settings.panelTitleDivColor = $('#panelTitleDividerColor').val()
-    settings.gameTitleDivColor = $('#gameTitleDividerColor').val()
-    // panel background color
-    settings.panelBackgroundColor = $('#panelBackgroundColor').val()
-    // wr cycling
-    settings.wrRainbow = $('#wrRainbow').is(':checked')
-    // hide WR Column
-    settings.hideWR = $('#hideWR').is(':checked')
-    // misc settings
-    settings.miscShow = $('#miscShow').is(':checked')
-    settings.miscSep = $('#miscSep').is(':checked')
-    // il settings
-    settings.ilShow = $('#ilShow').is(':checked')
-    settings.ilSep = $('#ilSep').is(':checked')
-    // panel title shadow
-    settings.panelTitleShadow = $('#titleShadow').is(':checked')
-    // height of panel title
-    settings.panelTitleHeight = $('#panelTitleHeight').val()
+    // Panel Title Background Settings
+    settings.panelTitleHeight = $('#panelTitleHeight').bootstrapSlider('getValue')
     titleBackgroundType = $('#panelTitleBackgroundType').val().trim()
     if (titleBackgroundType == 'solid') {
         settings.panelTitleBackgroundType = 'solid'
@@ -644,42 +626,114 @@ function extractSettings() {
     } else {
         settings.panelTitleBackgroundType = 'image'
     }
-    // Panel Title Font
-    settings.panelTitleFontBold = $('#panelTitleFontBold').is(':checked')
-    settings.panelTitleFontItalic = $('#panelTitleFontItalic').is(':checked')
-    settings.panelTitleFontSize = $('#panelTitleFontSize').val()
+    
+    // Panel Title Settings
+    settings.panelTitleFontBold = $('#panelTitleFontBold').hasClass('active')
+    settings.panelTitleFontItalic = $('#panelTitleFontItalic').hasClass('active')
+    settings.panelTitleFontSize = $('#panelTitleFontSize').bootstrapSlider('getValue')
     settings.panelTitleFontColor = $('#panelTitleFontColor').val()
     settings.panelTitleFont = $('#panelTitleFont').val()
-    // Panel Header Font
-    settings.panelHeaderFontBold = $('#panelHeaderFontBold').is(':checked')
-    settings.panelHeaderFontItalic = $('#panelHeaderFontItalic').is(':checked')
-    settings.panelHeaderFontSize = $('#panelHeaderFontSize').val()
-    settings.panelHeaderFontColor = $('#panelHeaderFontColor').val()
-    settings.panelHeaderFont = $('#panelHeaderFont').val()
-    // Game Title Font
-    settings.gameTitleFontBold = $('#gameTitleFontBold').is(':checked')
-    settings.gameTitleFontItalic = $('#gameTitleFontItalic').is(':checked')
-    settings.gameTitleFontSize = $('#gameTitleFontSize').val()
+    settings.panelTitleShadow = $('#titleShadow').hasClass('active')
+
+    // Category Header Settings
+    // TODO deprecation for #panelHeaderFontX
+    // those values will be the default for these if none exists
+    settings.categoryHeaderFontBold = $('#categoryHeaderFontBold').hasClass('active')
+    settings.categoryHeaderFontItalic = $('#categoryHeaderFontItalic').hasClass('active')
+    settings.categoryHeaderFontSize = $('#categoryHeaderFontSize').bootstrapSlider('getValue')
+    settings.categoryHeaderFontColor = $('#categoryHeaderFontColor').val()
+
+    // Personal Best Header Settings
+    settings.pbHeaderFontBold = $('#pbHeaderFontBold').hasClass('active')
+    settings.pbHeaderFontItalic = $('#pbHeaderFontItalic').hasClass('active')
+    settings.pbHeaderFontSize = $('#pbHeaderFontSize').bootstrapSlider('getValue')
+    settings.pbHeaderFontColor = $('#pbHeaderFontColor').val()
+
+    // World Record Header Settings
+    settings.wrHeaderFontBold = $('#wrHeaderFontBold').hasClass('active')
+    settings.wrHeaderFontItalic = $('#wrHeaderFontItalic').hasClass('active')
+    settings.wrHeaderFontSize = $('#wrHeaderFontSize').bootstrapSlider('getValue')
+    settings.wrHeaderFontColor = $('#wrHeaderFontColor').val()
+    settings.hideWR = $('#hideWR').hasClass('active')
+    settings.wrRainbow = $('#wrRainbow').hasClass('active')
+
+    // Panel Title Divider Settings
+    // TODO new settings here
+    settings.panelTitleDivHeight = $('#panelTitleDividerHeight').bootstrapSlider('getValue')
+    settings.panelTitleDivColor = $('#panelTitleDividerColor').val()
+    settings.panelTitleDivBottomMargin = $('#panelTitleDividerBottomMargin').bootstrapSlider('getValue')
+
+    // Game Title Settings
+    settings.gameTitleFontBold = $('#gameTitleFontBold').hasClass('active')
+    settings.gameTitleFontItalic = $('#gameTitleFontItalic').hasClass('active')
+    settings.gameTitleFontSize = $('#gameTitleFontSize').bootstrapSlider('getValue')
     settings.gameTitleFontColor = $('#gameTitleFontColor').val()
     settings.gameTitleFont = $('#gameTitleFont').val()
-    // Game Category Font
-    settings.gameCategoryFontBold = $('#gameCategoryFontBold').is(':checked')
-    settings.gameCategoryFontItalic = $('#gameCategoryFontItalic').is(':checked')
-    settings.gameCategoryFontSize = $('#gameCategoryFontSize').val()
+
+    // Expand / Collapse Icon Settings
+    // TODO new
+    settings.expandContractColor = $('#expandContractColor').val()
+
+    // Category Name Settings
+    // TODO has a new option with margin
+    settings.gameCategoryFontBold = $('#gameCategoryFontBold').hasClass('active')
+    settings.gameCategoryFontItalic = $('#gameCategoryFontItalic').hasClass('active')
+    settings.gameCategoryFontSize = $('#gameCategoryFontSize').bootstrapSlider('getValue')
     settings.gameCategoryFontColor = $('#gameCategoryFontColor').val()
     settings.gameCategoryFont = $('#gameCategoryFont').val()
-    // WR/PB Info Font
-    settings.pbFontBold = $('#pbFontBold').is(':checked')
-    settings.pbFontItalic = $('#pbFontItalic').is(':checked')
-    settings.pbFontSize = $('#pbFontSize').val()
+    settings.gameCategoryBottomMargin = $('#gameCategoryBottomMargin').bootstrapSlider('getValue')
+
+    // Personal Best Time Settings
+    settings.pbFontBold = $('#pbFontBold').hasClass('active')
+    settings.pbFontItalic = $('#pbFontItalic').hasClass('active')
+    settings.pbFontSize = $('#pbFontSize').bootstrapSlider('getValue')
     settings.pbFontColor = $('#pbFontColor').val()
     settings.pbFont = $('#pbFont').val()
-    // Time Header Font
-    settings.timeHeaderFontBold = $('#timeHeaderFontBold').is(':checked')
-    settings.timeHeaderFontItalic = $('#timeHeaderFontItalic').is(':checked')
-    settings.timeHeaderFontSize = $('#timeHeaderFontSize').val()
-    settings.timeHeaderFontColor = $('#timeHeaderFontColor').val()
-    settings.timeHeaderFont = $('#timeHeaderFont').val()
+
+    // World Record Time Settings
+    // TODO these are new, use pb options as default if not present
+    settings.wrFontBold = $('#wrFontBold').hasClass('active')
+    settings.wrFontItalic = $('#wrFontItalic').hasClass('active')
+    settings.wrFontSize = $('#wrFontSize').bootstrapSlider('getValue')
+    settings.wrFontColor = $('#wrFontColor').val()
+    // TODO disabled for now because was never present before , dealing with fonts afterwords settings.wrFont = $('#wrFont').val()
+
+    // Miscellaneous Header Settings
+    // TODO deprecation, used to use just timeHeader for everything
+    settings.miscHeaderFontBold = $('#miscHeaderFontBold').hasClass('active')
+    settings.miscHeaderFontItalic = $('#miscHeaderFontItalic').hasClass('active')
+    settings.miscHeaderFontSize = $('#miscHeaderFontSize').bootstrapSlider('getValue')
+    settings.miscHeaderFontColor = $('#miscHeaderFontColor').val()
+    settings.miscHeaderBottomMargin = $('#miscHeaderBottomMargin').bootstrapSlider('getValue')
+    settings.miscShow = $('#miscShow').hasClass('active')
+    settings.miscSep = $('#miscSep').hasClass('active')
+
+    // Individual Level Header Settings
+    // TODO deprecation for the same reason as above
+    settings.ilHeaderFontBold = $('#ilHeaderFontBold').hasClass('active')
+    settings.ilHeaderFontItalic = $('#ilHeaderFontItalic').hasClass('active')
+    settings.ilHeaderFontSize = $('#ilHeaderFontSize').bootstrapSlider('getValue')
+    settings.ilHeaderFontColor = $('#ilHeaderFontColor').val()
+    settings.ilHeaderBottomMargin = $('#ilHeaderBottomMargin').bootstrapSlider('getValue')
+    settings.ilShow = $('#ilShow').hasClass('active')
+    settings.ilSep = $('#ilSep').hasClass('active')
+
+    // Game Divider Settings
+    // TODO new settings here
+    settings.gameDivHeight = $('#gameDividerHeight').bootstrapSlider('getValue')
+    settings.gameDivColor = $('#gameDividerColor').val()
+    settings.gameDivBottomMargin = $('#gameDividerBottomMargin').bootstrapSlider('getValue')
+
+    // Panel Background Settings
+    settings.panelBackgroundColor = $('#panelBackgroundColor').val()
+
+    // Scrollbar Settings
+    // TODO new settings
+    settings.scrollbarWidth = $('#scrollbarWidth').bootstrapSlider('getValue')
+    settings.scrollbarOpacity = $('#scrollbarOpacity').bootstrapSlider('getValue')
+    settings.scrollbarColor = $('#scrollbarColor').val()
+
+    // Finished
     return settings
 }
 

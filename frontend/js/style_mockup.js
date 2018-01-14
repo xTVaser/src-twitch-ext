@@ -7,6 +7,6 @@ $(document).on('click', 'div .dropdown-menu', function (e) {
 setInterval(getTheValue, 500);
 function getTheValue() {
 
-    var mySlider = $("#panelTitleHeight").bootstrapSlider();
-    console.log(mySlider.bootstrapSlider('getValue'))
+    var element = $('#panelTitleFontBold')
+    console.log(element.hasClass('active'))
 }
