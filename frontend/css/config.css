@@ -216,3 +216,17 @@ section.spinnerWrapper {
     background-position: center top;
     font-weight: 700;
 }
+
+.mockTitleDivider {
+    height: 5px;
+    background: linear-gradient(180deg, #101010, green, #101010);
+    background-color: green;
+}
+
+.mockGameDivider {
+    height: 5px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    background: linear-gradient(0deg, #101010, #205f6b);
+    background-color: blue;
+}
