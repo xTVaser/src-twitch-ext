@@ -5,17 +5,17 @@ body {
     font-family: 'Roboto Condensed', sans-serif;
     font-size: 15px;
     line-height: 1.42857143;
-    /* lol what? */
     color: #fff;
     height: 100%;
     width: 100%;
-    /* having these set to a fixed number can hurt relative positioning */
+    overflow: hidden;
 }
 
 .headerRow {
     text-align: center;
 }
-.timeHeader {
+
+.miscHeader, .ilHeader {
     color: #fff;
     font-size: 0.93em;
 }
@@ -51,6 +51,7 @@ body {
 #headers {
     height:25%; 
     margin-bottom: 0px;
+    overflow: hidden;
 }
 
 #titleHeaders {
@@ -68,13 +69,13 @@ body {
     line-height: 1.5em;
 }
 
-.fancyStripeGreen {
+.panelTitleDivider {
     height: 5px;
     background: linear-gradient(180deg, #101010, green, #101010);
     background-color: green;
 }
 
-.fancyStripeBlue {
+.gameDivider {
     height: 5px;
     margin-bottom: 5px;
     margin-top: 5px;

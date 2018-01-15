@@ -1,5 +1,4 @@
 defaultTheme = {
-    "theme":"stub",
     "title":"A very very very very very long title",
     "panelTitleDivColor":"#008000",
     "gameTitleDivColor":"#205f6b",
@@ -40,4 +39,5 @@ defaultTheme = {
     "timeHeaderFontItalic":false,
     "timeHeaderFontSize":"15",
     "timeHeaderFontColor":"#ffffff",
-    "timeHeaderFont":"'Roboto Condensed', sans-serif"}
+    "timeHeaderFont":"'Roboto Condensed', sans-serif"
+}

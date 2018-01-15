@@ -226,7 +226,7 @@ function renderPersonalBests() {
     // Disable the spinner
     $('.spinnerWrapper').remove();
     $('.titleContainer').css("display", "block")
-    $('.fancyStripeGreen').css("display", "block")
+    $('.panelTitleDiv').css("display", "block")
     $('.pbWrapper').css("display", "block")
 
     // Add the Title
@@ -242,9 +242,9 @@ function renderPersonalBests() {
     if (settings.hideWR) {
         $(".titleContainer").append(
             `<div class="row" id="headers">
-                <div class="col-8-10 titleHeaders">
+                <div class="col-8-10 titleHeaders" id="categoryHeader">
                     <h3>Category</h3></div>
-                <div class="col-2-10 center titleHeaders">
+                <div class="col-2-10 center titleHeaders" id="pbHeader">
                     <h3>PB</h3></div>
             </div>
             <br class="clear" />`
@@ -253,11 +253,11 @@ function renderPersonalBests() {
     else {
         $(".titleContainer").append(
             `<div class="row" id="headers">
-                <div class="col-6-10 titleHeaders">
+                <div class="col-6-10 titleHeaders" id="categoryHeader">
                     <h3>Category</h3></div>
-                <div class="col-2-10 center titleHeaders">
+                <div class="col-2-10 center titleHeaders" id="pbHeader">
                     <h3>PB</h3></div>
-                <div class="col-2-10 center titleHeaders">
+                <div class="col-2-10 center titleHeaders" id="wrHeader">
                     <h3>WR</h3>
                 </div>
             </div>
@@ -283,7 +283,7 @@ function renderPersonalBests() {
                 <div class="col-8-10">
                     <h2>${gameName}</h2>
                 </div>
-                <div class="col-2-10 center" id="pbRowStatus${i}">
+                <div class="col-2-10 center expandIcon" id="pbRowStatus${i}">
                     <i class="${initialIcon} fa-2x" aria-hidden="true"></i>
                 </div>
                 <br class="clear" />
@@ -303,14 +303,14 @@ function renderPersonalBests() {
             // TODO this can be pulled out into func
             if (settings.hideWR) {
                 pbHTML +=
-                    `<li>
+                    `<li class="categoryRow">
                     <div class="col-8-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
                     <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
                 </li>`
             }
             else {
                 pbHTML +=
-                    `<li>
+                    `<li class="categoryRow">
                     <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
                     <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
                     <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
@@ -321,8 +321,8 @@ function renderPersonalBests() {
         sortedMiscCategories = sortMiscCategories(games[i].categories, currentGame)
         if (settings.miscShow && settings.miscSep && sortedMiscCategories.length > 0) {
             pbHTML +=
-                `<li>
-                <div class="headerRow"><p class="timeHeader">Miscellaneous Categories</div>
+                `<li class="miscRowContainer">
+                <div class="headerRow"><p class="miscHeader">Miscellaneous Categories</div>
             </li>`
         }
         if (settings.miscShow && sortedMiscCategories.length > 0) {
@@ -331,14 +331,14 @@ function renderPersonalBests() {
                 // TODO this can be pulled out into func
                 if (settings.hideWR) {
                     pbHTML +=
-                        `<li>
+                        `<li class="categoryRow">
                         <div class="col-8-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
                         <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
                     </li>`
                 }
                 else {
                     pbHTML +=
-                        `<li>
+                        `<li class="categoryRow">
                         <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
                         <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
                         <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
@@ -350,8 +350,8 @@ function renderPersonalBests() {
         sortedLevels = sortLevels(games[i].levels, currentGame)
         if (settings.ilShow && settings.ilSep && sortedLevels.length > 0) {
             pbHTML +=
-                `<li>
-                <div class="headerRow"><p class="timeHeader">Individual Levels</div>
+                `<li class="ilRowContainer">
+                <div class="headerRow"><p class="ilHeader">Individual Levels</div>
             </li>`
         }
         if (settings.ilShow && sortedLevels.length > 0) {
@@ -360,14 +360,14 @@ function renderPersonalBests() {
                 // TODO this can be pulled out into func
                 if (settings.hideWR) {
                     pbHTML +=
-                        `<li>
+                        `<li class="categoryRow">
                         <div class="col-8-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
                         <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
                     </li>`
                 }
                 else {
                     pbHTML +=
-                        `<li>
+                        `<li class="categoryRow">
                         <div class="col-6-10 truncate"><a class="categoryName" href="${pb.categoryLink}" target="_blank" title="${pb.categoryName}">${pb.categoryName}</a></div>
                         <div class="col-2-10 rightAlign"><a class="pbTime" href="${pb.pbLink}" target="_blank">${secondsToTimeStr(pb.pbTime)}</a></div>
                         <div class="col-2-10 rightAlign"><a class="wrTime" href="${pb.wrLink}" target="_blank">${secondsToTimeStr(pb.wrTime)}</a></div>
@@ -376,35 +376,19 @@ function renderPersonalBests() {
             }
         }
 
-        pbHTML += `</ul></div></div><div class="fancyStripeBlue"></div>`
+        pbHTML += `</ul></div></div><div class="gameDivider"></div>`
 
         // Add to the panel
         $(".pbWrapper").append(pbHTML)
     } // end of game loop
 
     // Setup Streamer's Styling
-    // panelTitleDivColor
-    $(".fancyStripeGreen").css("background", `linear-gradient(180deg, ${settings.panelTitleDivColor}, #101010)`);
-    // gameTitleDivColor
-    $(".fancyStripeBlue").css("background", `linear-gradient(0deg, #101010, ${settings.gameTitleDivColor})`)
-
-    // panelBackgroundColor
-    if (settings.panelTitleBackgroundType == 'solid') {
-        $('.titleContainer').css("background", settings.panelTitleBackgroundColor1)
-    } else if (settings.panelTitleBackgroundType == 'vGradient') {
-        $('.titleContainer').css("background", `linear-gradient(${settings.panelTitleBackgroundColor1}, ${settings.panelTitleBackgroundColor2})`)
-    } else if (settings.panelTitleBackgroundType == 'hGradient') {
-        $('.titleContainer').css("background", `linear-gradient(90deg, ${settings.panelTitleBackgroundColor1}, ${settings.panelTitleBackgroundColor2})`)
-    } else {
-        // do nothing, only one image and its the current default at the moment
+    // TODO pull this out into a function
+    // Panel Title Background Settings
+    // panelTitleShadow
+    if (settings.panelTitleTextShadow == true) {
+        $(".outlineText").css("text-shadow", "2px 2px 3px #000, 2px 2px 3px #000")
     }
-
-    // WR Rainbow Cycling
-    if (settings.wrRainbow == true) {
-        $(".wrTime").css("animation", "rainbowText 10s linear infinite")
-    }
-
-
     // Panel title Height
     var newPanelTitleHeight = settings.panelTitleHeight
     if (newPanelTitleHeight < 80) {
@@ -416,15 +400,18 @@ function renderPersonalBests() {
     // Adjust the pbWrapper's height accordingly
     var newPbWrapperHeight = 500 - newPanelTitleHeight - 8
     $(".pbWrapper").css("height", `${newPbWrapperHeight}px`)
-
-    // Panel Background Color
-    $("body").css("background-color", `${settings.panelBackgroundColor}`)
-
-    // panelTitleShadow
-    if (settings.panelTitleShadow == true) {
-        $(".outlineText").css("text-shadow", "2px 2px 3px #000, 2px 2px 3px #000")
+    // panelBackgroundColor
+    if (settings.panelTitleBackgroundType == 'solid') {
+        $('.titleContainer').css("background", settings.panelTitleBackgroundColor1)
+    } else if (settings.panelTitleBackgroundType == 'vGradient') {
+        $('.titleContainer').css("background", `linear-gradient(${settings.panelTitleBackgroundColor1}, ${settings.panelTitleBackgroundColor2})`)
+    } else if (settings.panelTitleBackgroundType == 'hGradient') {
+        $('.titleContainer').css("background", `linear-gradient(90deg, ${settings.panelTitleBackgroundColor1}, ${settings.panelTitleBackgroundColor2})`)
+    } else {
+        // do nothing, only one image and its the current default at the moment
     }
 
+    // Panel Title Settings
     // panelTitleFontBold
     if (settings.panelTitleFontBold == false) { // Bold by default, so false
         $("#viewerPanelTitle").css("font-weight", "400")
@@ -440,21 +427,55 @@ function renderPersonalBests() {
     // panelTitleFont
     $("#viewerPanelTitle").css("font-family", settings.panelTitleFont)
 
-    // panelHeaderFontBold
-    if (settings.panelHeaderFontBold == false) { // Bold by default, so false
-        $("#headers").css("font-weight", "400")
+    // Category Header Settings
+    if (settings.categoryHeaderFontBold == false) { // Bold by default, so false
+        $("#categoryHeader").css("font-weight", "400")
     }
-    // panelHeaderFontItalic
-    if (settings.panelHeaderFontItalic == true) {
-        $("#headers").css("font-style", "italic")
+    // panelTitleFontItalic
+    if (settings.categoryHeaderFontItalic == true) {
+        $("#categoryHeader").css("font-style", "italic")
     }
-    // panelHeaderFontSize
-    $("#headers").css("font-size", `${settings.panelHeaderFontSize}px`)
-    // panelHeaderFontColor
-    $("#headers").css("color", settings.panelHeaderFontColor)
-    // panelHeaderFont
-    $("#headers").css("font-family", settings.panelHeaderFont)
+    // panelTitleFontSize
+    $("#categoryHeader").css("font-size", `${settings.categoryHeaderFontSize}px`)
+    // panelTitleFontColor
+    $("#categoryHeader").css("color", settings.categoryHeaderFontColor)
 
+    // Personal Best Header Settings
+    if (settings.pbHeaderFontBold == false) { // Bold by default, so false
+        $("#pbHeader").css("font-weight", "400")
+    }
+    // panelTitleFontItalic
+    if (settings.pbHeaderFontItalic == true) {
+        $("#pbHeader").css("font-style", "italic")
+    }
+    // panelTitleFontSize
+    $("#pbHeader").css("font-size", `${settings.pbHeaderFontSize}px`)
+    // panelTitleFontColor
+    $("#pbHeader").css("color", settings.pbHeaderFontColor)
+
+    // World Record Header Settings
+    if (settings.wrHeaderFontBold == false) { // Bold by default, so false
+        $("#wrHeader").css("font-weight", "400")
+    }
+    // panelTitleFontItalic
+    if (settings.wrHeaderFontItalic == true) {
+        $("#wrHeader").css("font-style", "italic")
+    }
+    // panelTitleFontSize
+    $("#wrHeader").css("font-size", `${settings.wrHeaderFontSize}px`)
+    // panelTitleFontColor
+    $("#wrHeader").css("color", settings.wrHeaderFontColor)
+    // WR Rainbow Cycling
+    if (settings.wrRainbow == true) {
+        $(".wrTime").css("animation", "rainbowText 10s linear infinite")
+    }
+
+    // Panel Title Divider Settings
+    $(".panelTitleDiv").css("height", `${settings.panelTitleDivHeight}px`);
+    $(".panelTitleDiv").css("background", `linear-gradient(180deg, ${settings.panelTitleDivColor}, #101010)`);
+    $(".panelTitleDiv").css("margin-bottom", `${settings.panelTitleDivBottomMargin}px`);
+
+    // Game Title Settings
     // gameTitleFontBold
     if (settings.gameTitleFontBold == true) {
         $(".gameTitle").css("font-weight", "700")
@@ -470,6 +491,10 @@ function renderPersonalBests() {
     // gameTitleFont
     $(".gameTitle").css("font-family", settings.gameTitleFont)
 
+    // Expand / Collapse Icon Settings
+    $(".expandIcon").css("color", settings.expandContractColor)
+
+    // Category Name Settings
     // gameCategoryFontBold
     if (settings.gameCategoryFontBold == true) {
         $(".categoryName").css("font-weight", "700")
@@ -484,49 +509,70 @@ function renderPersonalBests() {
     $(".categoryName").css("color", settings.gameCategoryFontColor)
     // gameCategoryFont
     $(".categoryName").css("font-family", settings.gameCategoryFont)
-
+    $(".categoryRow").css("margin-bottom", `${settings.gameCategoryBottomMargin}px`)
+    
+    // Personal Best Time Settings
     // pbFontBold
     if (settings.pbFontBold == true) {
-        $(".pbTime").css("font-weight", 700)
+        $(".pbTime").css("font-weight", "700")
     }
-    // pbFontItalic
+    // gameCategoryFontItalic
     if (settings.pbFontItalic == true) {
         $(".pbTime").css("font-style", "italic")
     }
-    // pbFontSize
+    // gameCategoryFontSize
     $(".pbTime").css("font-size", `${settings.pbFontSize}px`)
-    // pbFontColor
+    // gameCategoryFontColor
     $(".pbTime").css("color", settings.pbFontColor)
-    // pbFont
-    $(".pbTime").css("font-family", settings.pbFont)
 
-    // wrFontBold
-    if (settings.pbFontBold == true) {
-        $(".wrTime").css("font-weight", 700)
+    // World Record Time Settings
+    if (settings.wrFontBold == true) {
+        $(".wrTime").css("font-weight", "700")
     }
-    // wrFontItalic
-    if (settings.pbFontItalic == true) {
+    // gameCategoryFontItalic
+    if (settings.wrFontItalic == true) {
         $(".wrTime").css("font-style", "italic")
     }
-    // wrFontSize
-    $(".wrTime").css("font-size", `${settings.pbFontSize}px`)
-    // wrFont
-    $(".wrTime").css("font-family", settings.pbFont)
+    // gameCategoryFontSize
+    $(".wrTime").css("font-size", `${settings.wrFontSize}px`)
+    // gameCategoryFontColor
+    $(".wrTime").css("color", settings.wrFontColor)
 
-    // timeHeaderFontBold
-    if (settings.timeHeaderFontBold == true) {
-        $(".timeHeader").css("font-weight", 700)
+    // Misc Header Settings
+    if (settings.miscHeaderFontBold == true) {
+        $(".miscHeader").css("font-weight", "700")
     }
-    // timeHeaderFontItalic
-    if (settings.timeHeaderFontItalic == true) {
-        $(".timeHeader").css("font-style", "italic")
+    // gameCategoryFontItalic
+    if (settings.miscHeaderFontItalic == true) {
+        $(".miscHeader").css("font-style", "italic")
     }
-    // timeHeaderFontSize
-    $(".timeHeader").css("font-size", `${settings.timeHeaderFontSize}px`)
-    // timeHeaderFontColor
-    $(".timeHeader").css("color", settings.timeHeaderFontColor)
-    // timeHeaderFont
-    $(".timeHeader").css("font-family", settings.timeHeaderFont)
+    // gameCategoryFontSize
+    $(".miscHeader").css("font-size", `${settings.miscHeaderFontSize}px`)
+    // gameCategoryFontColor
+    $(".miscHeader").css("color", settings.miscHeaderFontColor)
+    $(".miscRowContainer").css("margin-bottom", `${settings.miscHeaderBottomMargin}px`)
+
+    // IL Header Settings
+    if (settings.ilHeaderFontBold == true) {
+        $(".ilHeader").css("font-weight", "700")
+    }
+    // gameCategoryFontItalic
+    if (settings.ilHeaderFontItalic == true) {
+        $(".ilHeader").css("font-style", "italic")
+    }
+    // gameCategoryFontSize
+    $(".ilHeader").css("font-size", `${settings.ilHeaderFontSize}px`)
+    // gameCategoryFontColor
+    $(".ilHeader").css("color", settings.ilHeaderFontColor)
+    $(".ilRowContainer").css("margin-bottom", `${settings.ilHeaderBottomMargin}px`);
+
+    // Game Divider Settings
+    $(".gameDivider").css("height", `${settings.gameDivHeight}px`);
+    $(".gameDivider").css("background", `linear-gradient(180deg, ${settings.gameDivColor}, #101010)`);
+    $(".gameDivider").css("margin-bottom", `${settings.gameDivBottomMargin}px`);
+
+    // Panel Background Settings
+    $("body").css("background-color", `${settings.panelBackgroundColor}`)
 
     // Hover colors for links, progammatically darker
     $(".categoryName, .pbTime, .wrTime, #titleLink").hover(
@@ -541,11 +587,11 @@ function renderPersonalBests() {
             e.target.name = ""
         });
     
-    // TODO give options for changing scrollbar colors / size
     $(".pbWrapper").niceScroll({
-        cursorwidth: "5px",
+        cursorcolor: settings.scrollbarColor,
+        cursorwidth: `${settings.scrollbarWidth}px`,
         cursorborder: "1px solid transparent",
-        cursoropacitymax: 1,
+        cursoropacitymax: parseInt(settings.scrollbarOpacity) / 100,
         autohidemode: "leave",
         nativeparentscrolling: false,
         iframeautoresize: true,
@@ -684,6 +730,8 @@ $(document).ready(function() {
             <i></i>
           </div>
           <div class="spinnerError center">
+            Speedrun.com API Experiencing Problems Lately<br>
+            Panel may be slow to load, or fail altogether
           </div>
         </section>`
     )
