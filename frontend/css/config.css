@@ -3,6 +3,11 @@ body {
     background: #fff;
 }
 
+#backendMessage {
+    font-weight: 700;
+    color: red;
+}
+
 .bootstrap.container {
     padding: 10px;
 }

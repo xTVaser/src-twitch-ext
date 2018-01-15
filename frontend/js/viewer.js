@@ -31,6 +31,7 @@ window.Twitch.ext.onAuthorized(function(auth) {
         data: {},
         success: function(res) {
             if (res.hasOwnProperty('data') == true) {
+                $('.spinnerError').html(res.panelMessage)
                 games = JSON.parse(res.data.games)
                 settings = JSON.parse(res.data.settings)
                 srcID = res.data.srcID
@@ -730,8 +731,6 @@ $(document).ready(function() {
             <i></i>
           </div>
           <div class="spinnerError center">
-            Speedrun.com API Experiencing Problems Lately<br>
-            Panel may be slow to load, or fail altogether
           </div>
         </section>`
     )

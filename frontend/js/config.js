@@ -28,6 +28,7 @@ window.Twitch.ext.onAuthorized(function(auth) {
         dataType: "json",
         data: {},
         success: function(res) {
+            $('#backendMessage').html(res.configMessage)
             savedData = res.data
             if (savedData != null) {
                 restorePreviousSettings(savedData)

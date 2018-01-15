@@ -1,12 +1,5 @@
 "use strict";
 
-/*
-Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
-    http://aws.amazon.com/apache2.0/
-or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-ORIGINAL HAS BEEN MODIFIED
-*/
 require("dotenv").config();
 const express = require("express");
 const fs = require("fs");
@@ -19,6 +12,10 @@ const ua = require('universal-analytics')
 var morgan = require("morgan");
 var striptags = require("striptags");
 var visitor = ua(process.env.ANALYTICS_ID);
+
+/// Messages that everyone will see to inform them on a problem
+const configMessage = "Speedrun.com's API is currently experiencing issues and as a result finding games / loading the preview or panel may fail and require several retries depending on the amount of games associated with your profile.  Sorry for the inconvienance!";
+const panelMessage = "Speedrun.com's API is Experiencing Problems<br>Panel may be slow to load, or fail altogether until resolved.";
 
 /// Simple object to represent channel object in database
 class Channel {
@@ -248,6 +245,8 @@ app.post("/fetch", function(req, res) {
       // Task found.
       const entity = results[0];
       response.data = entity;
+      response.configMessage = configMessage;
+      response.panelMessage = panelMessage;
       res.send(JSON.stringify(response));
     })
     .catch(err => {
