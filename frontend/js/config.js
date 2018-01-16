@@ -103,20 +103,21 @@ function injectSettings(settings) {
     $('#categoryHeaderFontItalic').addClass(toggleButton(settings.categoryHeaderFontItalic))
     $('#categoryHeaderFontSize').bootstrapSlider('setValue', settings.categoryHeaderFontSize)
     $('#categoryHeaderFontColor').val(settings.categoryHeaderFontColor)
-    // $('#categoryHeaderFont').val(settings.categoryHeaderFont) TODO
+    $('#categoryHeaderFontFamily').val(settings.categoryHeaderFontFamily)
 
     // Personal Best Header Settings
     $('#pbHeaderFontBold').addClass(toggleButton(settings.pbHeaderFontBold))
     $('#pbHeaderFontItalic').addClass(toggleButton(settings.pbHeaderFontItalic))
     $('#pbHeaderFontSize').bootstrapSlider('setValue', settings.pbHeaderFontSize)
     $('#pbHeaderFontColor').val(settings.pbHeaderFontColor)
-    // $('#gameCategoryFont').val(settings.gameCategoryFont) TODO
+    $('#pbHeaderFontFamily').val(settings.pbHeaderFontFamily)
 
     // World Record Header Settings
     $('#wrHeaderFontBold').addClass(toggleButton(settings.wrHeaderFontBold))
     $('#wrHeaderFontItalic').addClass(toggleButton(settings.wrHeaderFontItalic))
     $('#wrHeaderFontSize').bootstrapSlider('setValue', settings.wrHeaderFontSize)
     $('#wrHeaderFontColor').val(settings.wrHeaderFontColor)
+    $('#wrHeaderFontFamily').val(settings.wrHeaderFontFamily)
     $('#hideWR').addClass(toggleButton(settings.hideWR))
     $('#wrRainbow').addClass(toggleButton(settings.wrRainbow))
 
@@ -131,7 +132,7 @@ function injectSettings(settings) {
     $('#gameTitleFontItalic').addClass(toggleButton(settings.gameTitleFontItalic))
     $('#gameTitleFontSize').bootstrapSlider('setValue', settings.gameTitleFontSize)
     $('#gameTitleFontColor').val(settings.gameTitleFontColor)
-    // settings.gameTitleFont = $('#gameTitleFont').val() TODO 
+    $('#gameTitleFontFamily').val(settings.gameTitleFontFamily)
 
     // Expand / Collapse Icon Settings
     // TODO new
@@ -143,7 +144,7 @@ function injectSettings(settings) {
     $('#gameCategoryFontItalic').addClass(toggleButton(settings.gameCategoryFontItalic))
     $('#gameCategoryFontSize').bootstrapSlider('setValue', settings.gameCategoryFontSize)
     $('#gameCategoryFontColor').val(settings.gameCategoryFontColor)
-    // settings.gameCategoryFont = $('#gameCategoryFont').val() TODO
+    $('#gameCategoryFontFamily').val(settings.gameCategoryFontFamily)
     $('#gameCategoryBottomMargin').bootstrapSlider('setValue', settings.gameCategoryBottomMargin)
 
     // Personal Best Time Settings
@@ -151,7 +152,7 @@ function injectSettings(settings) {
     $('#pbFontItalic').addClass(toggleButton(settings.pbFontItalic))
     $('#pbFontSize').bootstrapSlider('setValue', settings.pbFontSize)
     $('#pbFontColor').val(settings.pbFontColor)
-    // settings.gameCategoryFont = $('#gameCategoryFont').val() TODO
+    $('#pbFontFamily').val(settings.pbFontFamily)
 
     // World Record Time Settings
     // TODO these are new, use pb options as default if not present
@@ -159,7 +160,7 @@ function injectSettings(settings) {
     $('#wrFontItalic').addClass(toggleButton(settings.wrFontItalic))
     $('#wrFontSize').bootstrapSlider('setValue', settings.wrFontSize)
     $('#wrFontColor').val(settings.wrFontColor)
-    // TODO disabled for now because was never present before , dealing with fonts afterwords settings.wrFont = $('#wrFont').val()
+    $('#wrFontFamily').val(settings.wrFontFamily)
 
     // Miscellaneous Header Settings
     // TODO deprecation, used to use just timeHeader for everything
@@ -167,7 +168,7 @@ function injectSettings(settings) {
     $('#miscHeaderFontItalic').addClass(toggleButton(settings.miscHeaderFontItalic))
     $('#miscHeaderFontSize').bootstrapSlider('setValue', settings.miscHeaderFontSize)
     $('#miscHeaderFontColor').val(settings.miscHeaderFontColor)
-    // settings.miscHeaderFont = $('#miscHeaderFont').val() TODO
+    $('#miscHeaderFontFamily').val(settings.miscHeaderFontFamily)
     $('#miscHeaderBottomMargin').bootstrapSlider('setValue', settings.miscHeaderBottomMargin)
     if (settings.miscShow != undefined && settings.miscSep != undefined) {
         $('#miscShow').addClass(toggleButton(settings.miscShow))
@@ -180,7 +181,7 @@ function injectSettings(settings) {
     $('#ilHeaderFontItalic').addClass(toggleButton(settings.ilHeaderFontItalic))
     $('#ilHeaderFontSize').bootstrapSlider('setValue', settings.ilHeaderFontSize)
     $('#ilHeaderFontColor').val(settings.ilHeaderFontColor)
-    // settings.ilHeaderFont = $('#ilHeaderFont').val() TODO
+    $('#ilHeaderFontFamily').val(settings.ilHeaderFontFamily)
     $('#ilHeaderBottomMargin').bootstrapSlider('setValue', settings.ilHeaderBottomMargin)
     if (settings.ilShow != undefined && settings.ilSep != undefined) {
         $('#ilShow').addClass(toggleButton(settings.ilShow))
@@ -714,7 +715,7 @@ function extractSettings() {
     settings.panelTitleFontItalic = $('#panelTitleFontItalic').hasClass('active')
     settings.panelTitleFontSize = "" + $('#panelTitleFontSize').bootstrapSlider('getValue')
     settings.panelTitleFontColor = $('#panelTitleFontColor').val()
-    settings.panelTitleFont = $('#panelTitleFont').val()
+    settings.panelTitleFontFamily = $('#panelTitleFontFamily').val().trim()
     settings.panelTitleShadow = $('#titleShadow').hasClass('active')
 
     // Category Header Settings
@@ -724,18 +725,21 @@ function extractSettings() {
     settings.categoryHeaderFontItalic = $('#categoryHeaderFontItalic').hasClass('active')
     settings.categoryHeaderFontSize = "" + $('#categoryHeaderFontSize').bootstrapSlider('getValue')
     settings.categoryHeaderFontColor = $('#categoryHeaderFontColor').val()
+    settings.categoryHeaderFontFamily = $('#categoryHeaderFontFamily').val().trim()
 
     // Personal Best Header Settings
     settings.pbHeaderFontBold = $('#pbHeaderFontBold').hasClass('active')
     settings.pbHeaderFontItalic = $('#pbHeaderFontItalic').hasClass('active')
     settings.pbHeaderFontSize = "" + $('#pbHeaderFontSize').bootstrapSlider('getValue')
     settings.pbHeaderFontColor = $('#pbHeaderFontColor').val()
+    settings.pbHeaderFontFamily = $('#pbHeaderFontFamily').val().trim()
 
     // World Record Header Settings
     settings.wrHeaderFontBold = $('#wrHeaderFontBold').hasClass('active')
     settings.wrHeaderFontItalic = $('#wrHeaderFontItalic').hasClass('active')
     settings.wrHeaderFontSize = "" + $('#wrHeaderFontSize').bootstrapSlider('getValue')
     settings.wrHeaderFontColor = $('#wrHeaderFontColor').val()
+    settings.wrHeaderFontFamily = $('#wrHeaderFontFamily').val().trim()
     settings.hideWR = $('#hideWR').hasClass('active')
     settings.wrRainbow = $('#wrRainbow').hasClass('active')
 
@@ -750,7 +754,7 @@ function extractSettings() {
     settings.gameTitleFontItalic = $('#gameTitleFontItalic').hasClass('active')
     settings.gameTitleFontSize = "" + $('#gameTitleFontSize').bootstrapSlider('getValue')
     settings.gameTitleFontColor = $('#gameTitleFontColor').val()
-    settings.gameTitleFont = $('#gameTitleFont').val()
+    settings.gameTitleFontFamily = $('#gameTitleFontFamily').val().trim()
 
     // Expand / Collapse Icon Settings
     // TODO new
@@ -762,7 +766,7 @@ function extractSettings() {
     settings.gameCategoryFontItalic = $('#gameCategoryFontItalic').hasClass('active')
     settings.gameCategoryFontSize = "" + $('#gameCategoryFontSize').bootstrapSlider('getValue')
     settings.gameCategoryFontColor = $('#gameCategoryFontColor').val()
-    settings.gameCategoryFont = $('#gameCategoryFont').val()
+    settings.gameCategoryFontFamily = $('#gameCategoryFontFamily').val().trim()
     settings.gameCategoryBottomMargin = "" + $('#gameCategoryBottomMargin').bootstrapSlider('getValue')
 
     // Personal Best Time Settings
@@ -770,7 +774,7 @@ function extractSettings() {
     settings.pbFontItalic = $('#pbFontItalic').hasClass('active')
     settings.pbFontSize = "" + $('#pbFontSize').bootstrapSlider('getValue')
     settings.pbFontColor = $('#pbFontColor').val()
-    settings.pbFont = $('#pbFont').val()
+    settings.pbFontFamily = $('#pbFontFamily').val().trim()
 
     // World Record Time Settings
     // TODO these are new, use pb options as default if not present
@@ -778,7 +782,7 @@ function extractSettings() {
     settings.wrFontItalic = $('#wrFontItalic').hasClass('active')
     settings.wrFontSize = "" + $('#wrFontSize').bootstrapSlider('getValue')
     settings.wrFontColor = $('#wrFontColor').val()
-    // TODO disabled for now because was never present before , dealing with fonts afterwords settings.wrFont = $('#wrFont').val()
+    settings.wrFontFamily = $('#wrFontFamily').val().trim()
 
     // Miscellaneous Header Settings
     // TODO deprecation, used to use just timeHeader for everything
@@ -786,6 +790,7 @@ function extractSettings() {
     settings.miscHeaderFontItalic = $('#miscHeaderFontItalic').hasClass('active')
     settings.miscHeaderFontSize = "" + $('#miscHeaderFontSize').bootstrapSlider('getValue')
     settings.miscHeaderFontColor = $('#miscHeaderFontColor').val()
+    settings.miscHeaderFontFamily = $('#miscHeaderFontFamily').val().trim()
     settings.miscHeaderBottomMargin = "" + $('#miscHeaderBottomMargin').bootstrapSlider('getValue')
     settings.miscShow = $('#miscShow').hasClass('active')
     settings.miscSep = $('#miscSep').hasClass('active')
@@ -796,6 +801,7 @@ function extractSettings() {
     settings.ilHeaderFontItalic = $('#ilHeaderFontItalic').hasClass('active')
     settings.ilHeaderFontSize = "" + $('#ilHeaderFontSize').bootstrapSlider('getValue')
     settings.ilHeaderFontColor = $('#ilHeaderFontColor').val()
+    settings.ilHeaderFontFamily = $('#ilHeaderFontFamily').val().trim()
     settings.ilHeaderBottomMargin = "" + $('#ilHeaderBottomMargin').bootstrapSlider('getValue')
     settings.ilShow = $('#ilShow').hasClass('active')
     settings.ilSep = $('#ilSep').hasClass('active')

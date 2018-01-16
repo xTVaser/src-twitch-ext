@@ -221,8 +221,32 @@ $(document).on('click', '.gameTitle', function(e) {
     });
 });
 
+function addFontFamily(setting) {
+    // TODO probably a good place to do null checks!
+    return `${setting}, Roboto Condensed`
+}
+
 /// Renders the Panel with the given settings
 function renderPersonalBests() {
+
+    // Pull down all fonts early
+    WebFont.load({
+        google: {
+            families: [
+                settings.panelTitleFontFamily,
+                settings.categoryHeaderFontFamily,
+                settings.pbHeaderFontFamily,
+                settings.wrHeaderFontFamily,
+                settings.gameTitleFontFamily,
+                settings.gameCategoryFontFamily,
+                settings.pbFontFamily,
+                settings.wrFontFamily,
+                settings.miscHeaderFontFamily,
+                settings.ilHeaderFontFamily
+            ]
+        },
+        timeout: 2000
+    });
 
     // Disable the spinner
     $('.spinnerWrapper').remove();
@@ -413,59 +437,48 @@ function renderPersonalBests() {
     }
 
     // Panel Title Settings
-    // panelTitleFontBold
     if (settings.panelTitleFontBold == false) { // Bold by default, so false
         $("#viewerPanelTitle").css("font-weight", "400")
     }
-    // panelTitleFontItalic
     if (settings.panelTitleFontItalic == true) {
         $("#viewerPanelTitle").css("font-style", "italic")
     }
-    // panelTitleFontSize
     $("#viewerPanelTitle").css("font-size", `${settings.panelTitleFontSize}px`)
-    // panelTitleFontColor
     $("#viewerPanelTitle").css("color", settings.panelTitleFontColor)
-    // panelTitleFont
-    $("#viewerPanelTitle").css("font-family", settings.panelTitleFont)
+    $("#viewerPanelTitle").css("font-family", addFontFamily(settings.panelTitleFontFamily))
 
     // Category Header Settings
     if (settings.categoryHeaderFontBold == false) { // Bold by default, so false
         $("#categoryHeader").css("font-weight", "400")
     }
-    // panelTitleFontItalic
     if (settings.categoryHeaderFontItalic == true) {
         $("#categoryHeader").css("font-style", "italic")
     }
-    // panelTitleFontSize
     $("#categoryHeader").css("font-size", `${settings.categoryHeaderFontSize}px`)
-    // panelTitleFontColor
     $("#categoryHeader").css("color", settings.categoryHeaderFontColor)
+    $("#categoryHeader").css("font-family", addFontFamily(settings.categoryHeaderFontFamily))
 
     // Personal Best Header Settings
     if (settings.pbHeaderFontBold == false) { // Bold by default, so false
         $("#pbHeader").css("font-weight", "400")
     }
-    // panelTitleFontItalic
     if (settings.pbHeaderFontItalic == true) {
         $("#pbHeader").css("font-style", "italic")
     }
-    // panelTitleFontSize
     $("#pbHeader").css("font-size", `${settings.pbHeaderFontSize}px`)
-    // panelTitleFontColor
     $("#pbHeader").css("color", settings.pbHeaderFontColor)
+    $("#pbHeader").css("font-family", addFontFamily(settings.pbHeaderFontFamily))
 
     // World Record Header Settings
     if (settings.wrHeaderFontBold == false) { // Bold by default, so false
         $("#wrHeader").css("font-weight", "400")
     }
-    // panelTitleFontItalic
     if (settings.wrHeaderFontItalic == true) {
         $("#wrHeader").css("font-style", "italic")
     }
-    // panelTitleFontSize
     $("#wrHeader").css("font-size", `${settings.wrHeaderFontSize}px`)
-    // panelTitleFontColor
     $("#wrHeader").css("color", settings.wrHeaderFontColor)
+    $("#wrHeader").css("font-family", addFontFamily(settings.wrHeaderFontFamily))
     // WR Rainbow Cycling
     if (settings.wrRainbow == true) {
         $(".wrTime").css("animation", "rainbowText 10s linear infinite")
@@ -477,94 +490,75 @@ function renderPersonalBests() {
     $(".panelTitleDiv").css("margin-bottom", `${settings.panelTitleDivBottomMargin}px`);
 
     // Game Title Settings
-    // gameTitleFontBold
     if (settings.gameTitleFontBold == true) {
         $(".gameTitle").css("font-weight", "700")
     }
-    // gameTitleFontItalic
     if (settings.gameTitleFontItalic == true) {
         $(".gameTitle").css("font-style", "italic")
     }
-    // gameTitleFontSize
     $(".gameTitle").css("font-size", `${settings.gameTitleFontSize}px`)
-    // gameTitleFontColor
     $(".gameTitle").css("color", settings.gameTitleFontColor)
-    // gameTitleFont
-    $(".gameTitle").css("font-family", settings.gameTitleFont)
+    $(".gameTitle").css("font-family", addFontFamily(settings.gameTitleFontFamily))
 
     // Expand / Collapse Icon Settings
     $(".expandIcon").css("color", settings.expandContractColor)
 
     // Category Name Settings
-    // gameCategoryFontBold
     if (settings.gameCategoryFontBold == true) {
         $(".categoryName").css("font-weight", "700")
     }
-    // gameCategoryFontItalic
     if (settings.gameCategoryFontItalic == true) {
         $(".categoryName").css("font-style", "italic")
     }
-    // gameCategoryFontSize
     $(".categoryName").css("font-size", `${settings.gameCategoryFontSize}px`)
-    // gameCategoryFontColor
     $(".categoryName").css("color", settings.gameCategoryFontColor)
-    // gameCategoryFont
-    $(".categoryName").css("font-family", settings.gameCategoryFont)
+    $(".categoryName").css("font-family", addFontFamily(settings.gameCategoryFontFamily))
     $(".categoryRow").css("margin-bottom", `${settings.gameCategoryBottomMargin}px`)
     
     // Personal Best Time Settings
-    // pbFontBold
     if (settings.pbFontBold == true) {
         $(".pbTime").css("font-weight", "700")
     }
-    // gameCategoryFontItalic
     if (settings.pbFontItalic == true) {
         $(".pbTime").css("font-style", "italic")
     }
-    // gameCategoryFontSize
     $(".pbTime").css("font-size", `${settings.pbFontSize}px`)
-    // gameCategoryFontColor
     $(".pbTime").css("color", settings.pbFontColor)
+    $(".pbTime").css("font-family", addFontFamily(settings.pbFontFamily))
 
     // World Record Time Settings
     if (settings.wrFontBold == true) {
         $(".wrTime").css("font-weight", "700")
     }
-    // gameCategoryFontItalic
     if (settings.wrFontItalic == true) {
         $(".wrTime").css("font-style", "italic")
     }
-    // gameCategoryFontSize
     $(".wrTime").css("font-size", `${settings.wrFontSize}px`)
-    // gameCategoryFontColor
     $(".wrTime").css("color", settings.wrFontColor)
+    $(".wrTime").css("font-family", addFontFamily(settings.wrFontFamily))
 
     // Misc Header Settings
     if (settings.miscHeaderFontBold == true) {
         $(".miscHeader").css("font-weight", "700")
     }
-    // gameCategoryFontItalic
     if (settings.miscHeaderFontItalic == true) {
         $(".miscHeader").css("font-style", "italic")
     }
-    // gameCategoryFontSize
     $(".miscHeader").css("font-size", `${settings.miscHeaderFontSize}px`)
-    // gameCategoryFontColor
     $(".miscHeader").css("color", settings.miscHeaderFontColor)
+    $(".miscHeader").css("font-family", addFontFamily(settings.miscHeaderFontFamily))
     $(".miscRowContainer").css("margin-bottom", `${settings.miscHeaderBottomMargin}px`)
 
     // IL Header Settings
     if (settings.ilHeaderFontBold == true) {
         $(".ilHeader").css("font-weight", "700")
     }
-    // gameCategoryFontItalic
     if (settings.ilHeaderFontItalic == true) {
         $(".ilHeader").css("font-style", "italic")
     }
-    // gameCategoryFontSize
     $(".ilHeader").css("font-size", `${settings.ilHeaderFontSize}px`)
-    // gameCategoryFontColor
     $(".ilHeader").css("color", settings.ilHeaderFontColor)
+    $(".ilHeader").css("font-family", addFontFamily(settings.ilHeaderFontFamily))
     $(".ilRowContainer").css("margin-bottom", `${settings.ilHeaderBottomMargin}px`);
 
     // Game Divider Settings

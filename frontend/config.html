@@ -92,6 +92,13 @@
                     <p style="text-align:left;">
                         (Click on the Element/Edit button to modify related settings)
                     </p>
+                    <p style="text-align:left;">
+                        Now supports ANY google font! <a href="https://fonts.google.com/" target="_blank">Google Fonts Page</a>
+                    </p>
+                    <p style="text-align:left;">
+                        Just enter the font family name as displayed on Google fonts, it is <b>case sensitive!</b>
+                        <img style="width:100%;" src="img/fontExample.png" alt="Font Example for 'Roboto Condensed'"/>
+                    </p>
                 </div>
                 <div class="col-md-8">
                     <div class="frameWrapper" style="overflow:visible;">
@@ -244,6 +251,11 @@
                                             <br>
                                             <input id='panelTitleFontColor' type='color' value='#FFFFFF'></input>
                                         </li>
+                                        <li>
+                                            Google Font Family
+                                            <br>
+                                            <input id='panelTitleFontFamily' type='text' value='Roboto Condensed'></input>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -276,6 +288,11 @@
                                                 <br>
                                                 <input id='categoryHeaderFontColor' type='color' value='#FFFFFF'></input>
                                             </li>
+                                            <li>
+                                                Google Font Family
+                                                <br>
+                                                <input id='categoryHeaderFontFamily' type='text' value='Roboto Condensed'></input>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -307,6 +324,11 @@
                                                 <br>
                                                 <input id='pbHeaderFontColor' type='color' value='#FFFFFF'></input>
                                             </li>
+                                            <li>
+                                                Google Font Family
+                                                <br>
+                                                <input id='pbHeaderFontFamily' type='text' value='Roboto Condensed'></input>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -337,6 +359,11 @@
                                                 Color
                                                 <br>
                                                 <input id='wrHeaderFontColor' type='color' value='#FFFFFF'></input>
+                                            </li>
+                                            <li>
+                                                Google Font Family
+                                                <br>
+                                                <input id='wrHeaderFontFamily' type='text' value='Roboto Condensed'></input>
                                             </li>
                                             <li>
                                                 <button id='hideWR' type='button' class='btn btn-primary btn-unpressed' data-toggle='button' aria-pressed='false' autocomplete='off'>Hide WR Column</button>
@@ -378,6 +405,11 @@
                                                 Color
                                                 <br>
                                                 <input id='gameTitleFontColor' type='color' value='#FFFFFF'></input>
+                                            </li>
+                                            <li>
+                                                Google Font Family
+                                                <br>
+                                                <input id='gameTitleFontFamily' type='text' value='Roboto Condensed'></input>
                                             </li>
                                         </ul>
                                     </div>
@@ -434,6 +466,11 @@
                                                                 <input id='gameCategoryFontColor' type='color' value='#f1eecb'></input>
                                                             </li>
                                                             <li>
+                                                                Google Font Family
+                                                                <br>
+                                                                <input id='gameCategoryFontFamily' type='text' value='Roboto Condensed'></input>
+                                                            </li>
+                                                            <li>
                                                                 Extra Bottom Margin
                                                                 <br>
                                                                 <input id="gameCategoryBottomMargin" type="text" data-provide="slider" data-slider-min="0" data-slider-max="10" data-slider-value="0">
@@ -468,6 +505,11 @@
                                                                 <br>
                                                                 <input id='pbFontColor' type='color' value='#FFFFFF'></input>
                                                             </li>
+                                                            <li>
+                                                                Google Font Family
+                                                                <br>
+                                                                <input id='pbFontFamily' type='text' value='Roboto Condensed'></input>
+                                                            </li>
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -497,10 +539,15 @@
                                                                 <br>
                                                                 <input id='wrFontColor' type='color' value='#f3e221'></input>
                                                             </li>
+                                                            <li>
+                                                                Google Font Family
+                                                                <br>
+                                                                <input id='wrFontFamily' type='text' value='Roboto Condensed'></input>
+                                                            </li>
                                                         </ul>
                                                     </div>
                                                 </div>
-                                                <br class="clear"> <!-- TODO not in actual code, should maybe fix this? -->
+                                                <br class="clear">
                                             </li>
                                         </div>
                                         <li>
@@ -531,6 +578,11 @@
                                                             Color
                                                             <br>
                                                             <input id='miscHeaderFontColor' type='color' value='#FFFFFF'></input>
+                                                        </li>
+                                                        <li>
+                                                            Google Font Family
+                                                            <br>
+                                                            <input id='miscHeaderFontFamily' type='text' value='Roboto Condensed'></input>
                                                         </li>
                                                         <li>
                                                             Extra Bottom Margin
@@ -589,6 +641,11 @@
                                                             <input id='ilHeaderFontColor' type='color' value='#FFFFFF'></input>
                                                         </li>
                                                         <li>
+                                                            Google Font Family
+                                                            <br>
+                                                            <input id='ilHeaderFontFamily' type='text' value='Roboto Condensed'></input>
+                                                        </li>
+                                                        <li>
                                                             Extra Bottom Margin
                                                             <br>
                                                             <input id="ilHeaderBottomMargin" type="text" data-provide="slider" data-slider-min="0" data-slider-max="10" data-slider-value="0">
@@ -622,157 +679,6 @@
                     </div>
                 </div>
                 <!-- end of mock-up style panel -->
-            </div>
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">Panel Title Font Options</h3>
-                </div>
-                <div class="col-md-8">
-                    <div>
-                        <label for="titleFont">Font Family</label>
-                        <select name="titleFont" id="panelTitleFont">
-                            <option value="'Roboto Condensed', sans-serif" selected>Roboto Condensed</option>
-                            <option value="'Roboto', sans-serif">Roboto</option>
-                            <option value="'Open Sans', sans-serif">Open Sans</option>
-                            <option value="'Lato', sans-serif">Lato</option>
-                            <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
-                            <option value="'Oswald', sans-serif">Oswald</option>
-                            <option value="'Raleway', sans-serif">Raleway</option>
-                            <option value="'PT Sans Narrow', sans-serif">PT Sans Narrow</option>
-                            <option value="'Muli', sans-serif">Muli</option>
-                            <option value="'Anton', sans-serif">Anton</option>
-                            <option value="'Fjalla One', sans-serif">Fjalla One</option>
-                            <option value="'Helvetica', sans-serif">Helvetica</option>
-                        </select>
-                    </div>
-                </div>
-
-            </div>
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">Panel Header Font Options</h3>
-                </div>
-                <div class="col-md-8">
-                    <div>
-                        <label for="panelHeaderFont">Font Family</label>
-                        <select name="panelHeaderFont" id="panelHeaderFont">
-                            <option value="'Roboto Condensed', sans-serif" selected>Roboto Condensed</option>
-                            <option value="'Roboto', sans-serif">Roboto</option>
-                            <option value="'Open Sans', sans-serif">Open Sans</option>
-                            <option value="'Lato', sans-serif">Lato</option>
-                            <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
-                            <option value="'Oswald', sans-serif">Oswald</option>
-                            <option value="'Raleway', sans-serif">Raleway</option>
-                            <option value="'PT Sans Narrow', sans-serif">PT Sans Narrow</option>
-                            <option value="'Muli', sans-serif">Muli</option>
-                            <option value="'Anton', sans-serif">Anton</option>
-                            <option value="'Fjalla One', sans-serif">Fjalla One</option>
-                            <option value="'Helvetica', sans-serif">Helvetica</option>
-                        </select>
-                    </div>
-                </div>
-
-            </div>
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">Game Title Font Options</h3>
-                </div>
-                <div class="col-md-8">
-                    <div>
-                        <label for="gameTitleFont">Font Family</label>
-                        <select name="gameTitleFont" id="gameTitleFont">
-                            <option value="'Roboto Condensed', sans-serif" selected>Roboto Condensed</option>
-                            <option value="'Roboto', sans-serif">Roboto</option>
-                            <option value="'Open Sans', sans-serif">Open Sans</option>
-                            <option value="'Lato', sans-serif">Lato</option>
-                            <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
-                            <option value="'Oswald', sans-serif">Oswald</option>
-                            <option value="'Raleway', sans-serif">Raleway</option>
-                            <option value="'PT Sans Narrow', sans-serif">PT Sans Narrow</option>
-                            <option value="'Muli', sans-serif">Muli</option>
-                            <option value="'Anton', sans-serif">Anton</option>
-                            <option value="'Fjalla One', sans-serif">Fjalla One</option>
-                            <option value="'Helvetica', sans-serif">Helvetica</option>
-                        </select>
-                    </div>
-                </div>
-
-            </div>
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">Game Category Font Options</h3>
-                </div>
-                <div class="col-md-8">
-                    <div>
-                        <label for="gameCategoryFont">Font Family</label>
-                        <select name="gameCategoryFont" id="gameCategoryFont">
-                            <option value="'Roboto Condensed', sans-serif" selected>Roboto Condensed</option>
-                            <option value="'Roboto', sans-serif">Roboto</option>
-                            <option value="'Open Sans', sans-serif">Open Sans</option>
-                            <option value="'Lato', sans-serif">Lato</option>
-                            <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
-                            <option value="'Oswald', sans-serif">Oswald</option>
-                            <option value="'Raleway', sans-serif">Raleway</option>
-                            <option value="'PT Sans Narrow', sans-serif">PT Sans Narrow</option>
-                            <option value="'Muli', sans-serif">Muli</option>
-                            <option value="'Anton', sans-serif">Anton</option>
-                            <option value="'Fjalla One', sans-serif">Fjalla One</option>
-                            <option value="'Helvetica', sans-serif">Helvetica</option>
-                        </select>
-                    </div>
-                </div>
-
-            </div>
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">PB/WR Info Font Options</h3>
-                </div>
-                <div class="col-md-8">
-                    <div>
-                        <label for="pbFont">Font Family</label>
-                        <select name="pbFont" id="pbFont">
-                            <option value="'Roboto Condensed', sans-serif" selected>Roboto Condensed</option>
-                            <option value="'Roboto', sans-serif">Roboto</option>
-                            <option value="'Open Sans', sans-serif">Open Sans</option>
-                            <option value="'Lato', sans-serif">Lato</option>
-                            <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
-                            <option value="'Oswald', sans-serif">Oswald</option>
-                            <option value="'Raleway', sans-serif">Raleway</option>
-                            <option value="'PT Sans Narrow', sans-serif">PT Sans Narrow</option>
-                            <option value="'Muli', sans-serif">Muli</option>
-                            <option value="'Anton', sans-serif">Anton</option>
-                            <option value="'Fjalla One', sans-serif">Fjalla One</option>
-                            <option value="'Helvetica', sans-serif">Helvetica</option>
-                        </select>
-                    </div>
-                </div>
-
-            </div>
-            <div class="row config">
-                <div class="col-md-4">
-                    <h3 class="config">Misc/IL Header Font Options</h3>
-                </div>
-                <div class="col-md-8">
-
-                    <div>
-                        <label for="timeHeaderFont">Font Family</label>
-                        <select name="timeHeaderFont" id="timeHeaderFont">
-                            <option value="'Roboto Condensed', sans-serif" selected>Roboto Condensed</option>
-                            <option value="'Roboto', sans-serif">Roboto</option>
-                            <option value="'Open Sans', sans-serif">Open Sans</option>
-                            <option value="'Lato', sans-serif">Lato</option>
-                            <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
-                            <option value="'Oswald', sans-serif">Oswald</option>
-                            <option value="'Raleway', sans-serif">Raleway</option>
-                            <option value="'PT Sans Narrow', sans-serif">PT Sans Narrow</option>
-                            <option value="'Muli', sans-serif">Muli</option>
-                            <option value="'Anton', sans-serif">Anton</option>
-                            <option value="'Fjalla One', sans-serif">Fjalla One</option>
-                            <option value="'Helvetica', sans-serif">Helvetica</option>
-                        </select>
-                    </div>
-                </div>
-
             </div>
         </div>
         <div class="col-md-6 text-center">
