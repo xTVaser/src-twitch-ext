@@ -71,7 +71,6 @@ function toggleButton(state) {
 
 // Restore All Configuration Settings
 function injectSettings(settings) {
-    console.log(settings)
     $('#panelTitle').val(settings.title)
     $('#srcName').val(srcName)
     // TODO theme preset
