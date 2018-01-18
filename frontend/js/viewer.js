@@ -222,7 +222,9 @@ $(document).on('click', '.gameTitle', function(e) {
 });
 
 function addFontFamily(setting) {
-    // TODO probably a good place to do null checks!
+    if (setting == null) {
+        return "Roboto Condensed"
+    }
     return `${setting}, Roboto Condensed`
 }
 
@@ -230,23 +232,25 @@ function addFontFamily(setting) {
 function renderPersonalBests() {
 
     // Pull down all fonts early
-    WebFont.load({
-        google: {
-            families: [
-                settings.panelTitleFontFamily,
-                settings.categoryHeaderFontFamily,
-                settings.pbHeaderFontFamily,
-                settings.wrHeaderFontFamily,
-                settings.gameTitleFontFamily,
-                settings.gameCategoryFontFamily,
-                settings.pbFontFamily,
-                settings.wrFontFamily,
-                settings.miscHeaderFontFamily,
-                settings.ilHeaderFontFamily
-            ]
-        },
-        timeout: 2000
-    });
+    if (settings.hasOwnProperty('panelTitleFontFamily')) {
+        WebFont.load({
+            google: {
+                families: [
+                    settings.panelTitleFontFamily,
+                    settings.categoryHeaderFontFamily,
+                    settings.pbHeaderFontFamily,
+                    settings.wrHeaderFontFamily,
+                    settings.gameTitleFontFamily,
+                    settings.gameCategoryFontFamily,
+                    settings.pbFontFamily,
+                    settings.wrFontFamily,
+                    settings.miscHeaderFontFamily,
+                    settings.ilHeaderFontFamily
+                ]
+            },
+            timeout: 2000
+        });
+    }
 
     // Disable the spinner
     $('.spinnerWrapper').remove();
@@ -410,11 +414,9 @@ function renderPersonalBests() {
     // Setup Streamer's Styling
     // TODO pull this out into a function
     // Panel Title Background Settings
-    // panelTitleShadow
     if (settings.panelTitleTextShadow == true) {
         $(".outlineText").css("text-shadow", "2px 2px 3px #000, 2px 2px 3px #000")
     }
-    // Panel title Height
     var newPanelTitleHeight = settings.panelTitleHeight
     if (newPanelTitleHeight < 80) {
         newPanelTitleHeight = 80
@@ -425,7 +427,6 @@ function renderPersonalBests() {
     // Adjust the pbWrapper's height accordingly
     var newPbWrapperHeight = 500 - newPanelTitleHeight - 8
     $(".pbWrapper").css("height", `${newPbWrapperHeight}px`)
-    // panelBackgroundColor
     if (settings.panelTitleBackgroundType == 'solid') {
         $('.titleContainer').css("background", settings.panelTitleBackgroundColor1)
     } else if (settings.panelTitleBackgroundType == 'vGradient') {
@@ -445,9 +446,21 @@ function renderPersonalBests() {
     }
     $("#viewerPanelTitle").css("font-size", `${settings.panelTitleFontSize}px`)
     $("#viewerPanelTitle").css("color", settings.panelTitleFontColor)
+    if (!settings.hasOwnProperty('panelTitleFontFamily')) {
+        dropSecond = settings.panelTitleFont.split(',')[0]
+        settings.panelTitleFontFamily = dropSecond.substring(1, dropSecond.length-1)
+    }
     $("#viewerPanelTitle").css("font-family", addFontFamily(settings.panelTitleFontFamily))
 
     // Category Header Settings
+    if (!settings.hasOwnProperty('categoryHeaderFontBold')) {
+        settings.categoryHeaderFontBold = settings.pbHeaderFontBold = settings.wrHeaderFontBold = settings.panelHeaderFontBold
+        settings.categoryHeaderFontItalic = settings.categoryHeaderFontItalic = settings.categoryHeaderFontItalic = settings.panelHeaderFontItalic
+        settings.categoryHeaderFontSize = settings.categoryHeaderFontItalic = settings.categoryHeaderFontItalic = settings.panelHeaderFontSize
+        settings.categoryHeaderFontColor = settings.categoryHeaderFontColor = settings.categoryHeaderFontColor = settings.panelHeaderFontColor
+        dropSecond = settings.panelHeaderFont.split(',')[0]
+        settings.categoryHeaderFontFamily = settings.pbHeaderFontFamily = settings.wrHeaderFontFamily = dropSecond.substring(1, dropSecond.length-1)
+    }
     if (settings.categoryHeaderFontBold == false) { // Bold by default, so false
         $("#categoryHeader").css("font-weight", "400")
     }
@@ -485,10 +498,12 @@ function renderPersonalBests() {
     }
 
     // Panel Title Divider Settings
-    $(".panelTitleDiv").css("height", `${settings.panelTitleDivHeight}px`);
-    $(".panelTitleDiv").css("background", `linear-gradient(180deg, ${settings.panelTitleDivColor}, #101010)`);
-    $(".panelTitleDiv").css("margin-bottom", `${settings.panelTitleDivBottomMargin}px`);
-
+    if (settings.hasOwnProperty('panelTitleDividerHeight')) {
+        $(".panelTitleDiv").css("height", `${settings.panelTitleDivHeight}px`);
+        $(".panelTitleDiv").css("background", `linear-gradient(180deg, ${settings.panelTitleDivColor}, ${settings.panelBackgroundColor})`);
+        $(".panelTitleDiv").css("margin-bottom", `${settings.panelTitleDivBottomMargin}px`);
+    }
+    
     // Game Title Settings
     if (settings.gameTitleFontBold == true) {
         $(".gameTitle").css("font-weight", "700")
@@ -498,10 +513,16 @@ function renderPersonalBests() {
     }
     $(".gameTitle").css("font-size", `${settings.gameTitleFontSize}px`)
     $(".gameTitle").css("color", settings.gameTitleFontColor)
+    if (!settings.hasOwnProperty('gameTitleFontFamily')) {
+        dropSecond = settings.gameTitleFont.split(',')[0]
+        settings.gameTitleFontFamily = dropSecond.substring(1, dropSecond.length-1)
+    }
     $(".gameTitle").css("font-family", addFontFamily(settings.gameTitleFontFamily))
 
     // Expand / Collapse Icon Settings
-    $(".expandIcon").css("color", settings.expandContractColor)
+    if (settings.hasOwnProperty('expandContractColor')) {
+        $(".expandIcon").css("color", settings.expandContractColor)
+    }
 
     // Category Name Settings
     if (settings.gameCategoryFontBold == true) {
@@ -512,8 +533,14 @@ function renderPersonalBests() {
     }
     $(".categoryName").css("font-size", `${settings.gameCategoryFontSize}px`)
     $(".categoryName").css("color", settings.gameCategoryFontColor)
+    if (!settings.hasOwnProperty('gameCategoryFontFamily')) {
+        dropSecond = settings.gameCategoryFont.split(',')[0]
+        settings.gameCategoryFontFamily = dropSecond.substring(1, dropSecond.length-1)
+    }
     $(".categoryName").css("font-family", addFontFamily(settings.gameCategoryFontFamily))
-    $(".categoryRow").css("margin-bottom", `${settings.gameCategoryBottomMargin}px`)
+    if (settings.hasOwnProperty('gameCategoryBottomMargin')) {
+        $(".categoryRow").css("margin-bottom", `${settings.gameCategoryBottomMargin}px`)
+    }
     
     // Personal Best Time Settings
     if (settings.pbFontBold == true) {
@@ -524,9 +551,19 @@ function renderPersonalBests() {
     }
     $(".pbTime").css("font-size", `${settings.pbFontSize}px`)
     $(".pbTime").css("color", settings.pbFontColor)
+    if (!settings.hasOwnProperty('pbFontFamily')) {
+        dropSecond = settings.pbFont.split(',')[0]
+        settings.pbFontFamily = dropSecond.substring(1, dropSecond.length-1)
+    }
     $(".pbTime").css("font-family", addFontFamily(settings.pbFontFamily))
 
     // World Record Time Settings
+    if (!settings.hasOwnProperty('wrFontBold')) {
+        settings.wrFontBold = settings.pbFontBold
+        settings.wrFontItalic = settings.pbFontItalic
+        settings.wrFontColor = '#f3e221'
+        settings.wrFontFamily = settings.pbFontFamily
+    }
     if (settings.wrFontBold == true) {
         $(".wrTime").css("font-weight", "700")
     }
@@ -538,6 +575,15 @@ function renderPersonalBests() {
     $(".wrTime").css("font-family", addFontFamily(settings.wrFontFamily))
 
     // Misc Header Settings
+    if (!settings.hasOwnProperty('miscHeaderFontBold')) {
+        settings.miscHeaderFontBold = settings.ilHeaderFontBold = settings.timeHeaderFontBold
+        settings.miscHeaderFontBold = settings.ilHeaderFontItalic = settings.timeHeaderFontItalic
+        settings.miscHeaderFontSize = settings.ilHeaderFontSize = settings.timeHeaderFontSize
+        settings.miscHeaderFontColor = settings.ilHeaderFontColor = settings.timeHeaderFontColor
+        dropSecond = settings.timeHeaderFont.split(',')[0]
+        settings.miscHeaderFontFamily = settings.ilHeaderFontFamily = dropSecond.substring(1, dropSecond.length-1)
+        settings.miscHeaderBottomMargin = settings.ilHeaderBottomMargin = 0
+    }
     if (settings.miscHeaderFontBold == true) {
         $(".miscHeader").css("font-weight", "700")
     }
@@ -562,9 +608,11 @@ function renderPersonalBests() {
     $(".ilRowContainer").css("margin-bottom", `${settings.ilHeaderBottomMargin}px`);
 
     // Game Divider Settings
-    $(".gameDivider").css("height", `${settings.gameDivHeight}px`);
-    $(".gameDivider").css("background", `linear-gradient(180deg, ${settings.gameDivColor}, #101010)`);
-    $(".gameDivider").css("margin-bottom", `${settings.gameDivBottomMargin}px`);
+    if (settings.hasOwnProperty('gameDividerHeight')) {
+        $(".gameDivider").css("height", `${settings.gameDivHeight}px`);
+        $(".gameDivider").css("background", `linear-gradient(180deg, ${settings.gameDivColor}, #101010)`);
+        $(".gameDivider").css("margin-bottom", `${settings.gameDivBottomMargin}px`);
+    }
 
     // Panel Background Settings
     $("body").css("background-color", `${settings.panelBackgroundColor}`)
@@ -582,6 +630,11 @@ function renderPersonalBests() {
             e.target.name = ""
         });
     
+    if (!settings.hasOwnProperty('scrollbarWidth')) {
+        settings.scrollbarColor = "#424242"
+        settings.scrollbarOpacity = 100
+        settings.scrollbarWidth = 5
+    }
     $(".pbWrapper").niceScroll({
         cursorcolor: settings.scrollbarColor,
         cursorwidth: `${settings.scrollbarWidth}px`,
