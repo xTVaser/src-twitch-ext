@@ -71,6 +71,7 @@ function toggleButton(state) {
 
 // Restore All Configuration Settings
 function injectSettings(settings) {
+    console.log(settings)
     $('#panelTitle').val(settings.title)
     $('#srcName').val(srcName)
     // TODO theme preset
@@ -93,11 +94,23 @@ function injectSettings(settings) {
     $('#panelTitleFontItalic').addClass(toggleButton(settings.panelTitleFontItalic))
     $('#panelTitleFontSize').bootstrapSlider('setValue', settings.panelTitleFontSize)
     $('#panelTitleFontColor').val(settings.panelTitleFontColor)
-    $('#panelTitleFont').val(settings.panelTitleFont)
+    if (!settings.hasOwnProperty('panelTitleFontFamily')) {
+        dropSecond = settings.panelTitleFont.split(',')[0]
+        settings.panelTitleFontFamily = dropSecond.substring(1, dropSecond.length-1)
+    }
+    $('#panelTitleFontFamily').val(settings.panelTitleFontFamily)
     $('#titleShadow').addClass(toggleButton(settings.panelTitleShadow)) // TODO currently effects everything in panel title, probably should move outside of panel title settings
 
     // Category Header Settings
-    // TODO deprecation for #panelHeaderFontX
+    // Deprecation of panelHeaderFont
+    if (!settings.hasOwnProperty('categoryHeaderFontBold')) {
+        settings.categoryHeaderFontBold = settings.pbHeaderFontBold = settings.wrHeaderFontBold = settings.panelHeaderFontBold
+        settings.categoryHeaderFontItalic = settings.categoryHeaderFontItalic = settings.categoryHeaderFontItalic = settings.panelHeaderFontItalic
+        settings.categoryHeaderFontSize = settings.categoryHeaderFontItalic = settings.categoryHeaderFontItalic = settings.panelHeaderFontSize
+        settings.categoryHeaderFontColor = settings.categoryHeaderFontColor = settings.categoryHeaderFontColor = settings.panelHeaderFontColor
+        dropSecond = settings.panelHeaderFont.split(',')[0]
+        settings.categoryHeaderFontFamily = settings.pbHeaderFontFamily = settings.wrHeaderFontFamily = dropSecond.substring(1, dropSecond.length-1)
+    }
     // those values will be the default for these if none exists
     $('#categoryHeaderFontBold').addClass(toggleButton(settings.categoryHeaderFontBold))
     $('#categoryHeaderFontItalic').addClass(toggleButton(settings.categoryHeaderFontItalic))
@@ -122,40 +135,60 @@ function injectSettings(settings) {
     $('#wrRainbow').addClass(toggleButton(settings.wrRainbow))
 
     // Panel Title Divider Settings
-    // TODO new settings here
-    $('#panelTitleDividerHeight').bootstrapSlider('setValue', settings.panelTitleDivHeight)
-    $('#panelTitleDividerColor').val(settings.panelTitleDivColor)
-    $('#panelTitleDividerBottomMargin').bootstrapSlider('setValue', settings.panelTitleDivBottomMargin)
+    if (settings.hasOwnProperty('panelTitleDividerHeight')) {
+        $('#panelTitleDividerHeight').bootstrapSlider('setValue', settings.panelTitleDivHeight)
+        $('#panelTitleDividerColor').val(settings.panelTitleDivColor)
+        $('#panelTitleDividerBottomMargin').bootstrapSlider('setValue', settings.panelTitleDivBottomMargin)
+    }
 
     // Game Title Settings
     $('#gameTitleFontBold').addClass(toggleButton(settings.gameTitleFontBold))
     $('#gameTitleFontItalic').addClass(toggleButton(settings.gameTitleFontItalic))
     $('#gameTitleFontSize').bootstrapSlider('setValue', settings.gameTitleFontSize)
     $('#gameTitleFontColor').val(settings.gameTitleFontColor)
+    if (!settings.hasOwnProperty('gameTitleFontFamily')) {
+        dropSecond = settings.gameTitleFont.split(',')[0]
+        settings.gameTitleFontFamily = dropSecond.substring(1, dropSecond.length-1)
+    }
     $('#gameTitleFontFamily').val(settings.gameTitleFontFamily)
 
     // Expand / Collapse Icon Settings
-    // TODO new
-    $('#expandContractColor').val(settings.expandContractColor)
+    if (settings.hasOwnProperty('expandContractColor')) {
+        $('#expandContractColor').val(settings.expandContractColor)
+    }
 
     // Category Name Settings
-    // TODO has a new option with margin
     $('#gameCategoryFontBold').addClass(toggleButton(settings.gameCategoryFontBold))
     $('#gameCategoryFontItalic').addClass(toggleButton(settings.gameCategoryFontItalic))
     $('#gameCategoryFontSize').bootstrapSlider('setValue', settings.gameCategoryFontSize)
     $('#gameCategoryFontColor').val(settings.gameCategoryFontColor)
+    if (!settings.hasOwnProperty('gameCategoryFontFamily')) {
+        dropSecond = settings.gameCategoryFont.split(',')[0]
+        settings.gameCategoryFontFamily = dropSecond.substring(1, dropSecond.length-1)
+    }
     $('#gameCategoryFontFamily').val(settings.gameCategoryFontFamily)
-    $('#gameCategoryBottomMargin').bootstrapSlider('setValue', settings.gameCategoryBottomMargin)
+    if (settings.hasOwnProperty('gameCategoryBottomMargin')) {
+        $('#gameCategoryBottomMargin').bootstrapSlider('setValue', settings.gameCategoryBottomMargin)
+    }
 
     // Personal Best Time Settings
     $('#pbFontBold').addClass(toggleButton(settings.pbFontBold))
     $('#pbFontItalic').addClass(toggleButton(settings.pbFontItalic))
     $('#pbFontSize').bootstrapSlider('setValue', settings.pbFontSize)
     $('#pbFontColor').val(settings.pbFontColor)
+    if (!settings.hasOwnProperty('pbFontFamily')) {
+        dropSecond = settings.pbFont.split(',')[0]
+        settings.pbFontFamily = dropSecond.substring(1, dropSecond.length-1)
+    }
     $('#pbFontFamily').val(settings.pbFontFamily)
 
     // World Record Time Settings
-    // TODO these are new, use pb options as default if not present
+    if (!settings.hasOwnProperty('wrFontBold')) {
+        settings.wrFontBold = settings.pbFontBold
+        settings.wrFontItalic = settings.pbFontItalic
+        settings.wrFontColor = '#f3e221'
+        settings.wrFontFamily = settings.pbFontFamily
+    }
     $('#wrFontBold').addClass(toggleButton(settings.wrFontBold))
     $('#wrFontItalic').addClass(toggleButton(settings.wrFontItalic))
     $('#wrFontSize').bootstrapSlider('setValue', settings.wrFontSize)
@@ -163,7 +196,15 @@ function injectSettings(settings) {
     $('#wrFontFamily').val(settings.wrFontFamily)
 
     // Miscellaneous Header Settings
-    // TODO deprecation, used to use just timeHeader for everything
+    if (!settings.hasOwnProperty('miscHeaderFontBold')) {
+        settings.miscHeaderFontBold = settings.ilHeaderFontBold = settings.timeHeaderFontBold
+        settings.miscHeaderFontBold = settings.ilHeaderFontItalic = settings.timeHeaderFontItalic
+        settings.miscHeaderFontSize = settings.ilHeaderFontSize = settings.timeHeaderFontSize
+        settings.miscHeaderFontColor = settings.ilHeaderFontColor = settings.timeHeaderFontColor
+        dropSecond = settings.timeHeaderFont.split(',')[0]
+        settings.miscHeaderFontFamily = settings.ilHeaderFontFamily = dropSecond.substring(1, dropSecond.length-1)
+        settings.miscHeaderBottomMargin = settings.ilHeaderBottomMargin = 0
+    }
     $('#miscHeaderFontBold').addClass(toggleButton(settings.miscHeaderFontBold))
     $('#miscHeaderFontItalic').addClass(toggleButton(settings.miscHeaderFontItalic))
     $('#miscHeaderFontSize').bootstrapSlider('setValue', settings.miscHeaderFontSize)
@@ -176,7 +217,6 @@ function injectSettings(settings) {
     }
 
     // Individual Level Header Settings
-    // TODO deprecation for the same reason as above
     $('#ilHeaderFontBold').addClass(toggleButton(settings.ilHeaderFontBold))
     $('#ilHeaderFontItalic').addClass(toggleButton(settings.ilHeaderFontItalic))
     $('#ilHeaderFontSize').bootstrapSlider('setValue', settings.ilHeaderFontSize)
@@ -189,20 +229,22 @@ function injectSettings(settings) {
     }
 
     // Game Divider Settings
-    // TODO new settings here
-    $('#gameDividerHeight').bootstrapSlider('setValue', settings.gameDivHeight)
-    $('#gameDividerColor').val(settings.gameDivColor)
-    $('#gameDividerBottomMargin').bootstrapSlider('setValue', settings.gameDivBottomMargin)
+    if (settings.hasOwnProperty('gameDividerHeight')) {
+        $('#gameDividerHeight').bootstrapSlider('setValue', settings.gameDivHeight)
+        $('#gameDividerColor').val(settings.gameDivColor)
+        $('#gameDividerBottomMargin').bootstrapSlider('setValue', settings.gameDivBottomMargin)
+    }
 
     // Panel Background Settings
     if (settings.panelBackgroundColor != undefined) {
         $('#panelBackgroundColor').val(settings.panelBackgroundColor)
     }
     // Scrollbar Settings
-    // TODO new settings
-    $('#scrollbarWidth').bootstrapSlider('setValue', settings.scrollbarWidth)
-    $('#scrollbarOpacity').bootstrapSlider('setValue', settings.scrollbarOpacity)
-    $('#scrollbarColor').val(settings.scrollbarColor)
+    if (settings.hasOwnProperty('scrollbarWidth')) {
+        $('#scrollbarWidth').bootstrapSlider('setValue', settings.scrollbarWidth)
+        $('#scrollbarOpacity').bootstrapSlider('setValue', settings.scrollbarOpacity)
+        $('#scrollbarColor').val(settings.scrollbarColor)
+    }
 }
 
 function restorePreviousSettings(savedData) {
