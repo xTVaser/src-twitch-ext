@@ -72,13 +72,13 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 
 	// Polyfill console methods
 	if (windowIsDefined && !window.console) {
-		window.console = {};
+		// window.console = {};
 	}
 	if (windowIsDefined && !window.console.log) {
-		window.console.log = function () {};
+		// window.console.log = function () {};
 	}
 	if (windowIsDefined && !window.console.warn) {
-		window.console.warn = function () {};
+		// window.console.warn = function () {};
 	}
 
 	// Reference to Slider constructor
