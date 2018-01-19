@@ -62,11 +62,13 @@ window.Twitch.ext.onAuthorized(function(auth) {
     });
 });
 
-function toggleButton(state) {
-    if (state) {
-        return "active"
+function toggleButton(element, config) {
+    if (!config) {
+        element.removeClass('active')
     }
-    return ""
+    else {
+        element.addClass('active')
+    }
 }
 
 // Restore All Configuration Settings
@@ -76,7 +78,7 @@ function injectSettings(settings) {
     // TODO theme preset
     // Panel Title Background Settings
     $('#panelTitleHeight').bootstrapSlider('setValue', settings.panelTitleHeight)
-    $('#panelTitleShadow').addClass(toggleButton(settings.panelTitleTextShadow))
+    toggleButton($('#panelTitleShadow'), settings.panelTitleTextShadow)
     $('#panelTitleBackgroundType').val(settings.panelTitleBackgroundType)
     if (settings.panelTitleBackgroundType == 'image') {
         // Do nothing, only got 1 image atm
@@ -89,8 +91,8 @@ function injectSettings(settings) {
     }
     
     // Panel Title Settings
-    $('#panelTitleFontBold').addClass(toggleButton(settings.panelTitleFontBold))
-    $('#panelTitleFontItalic').addClass(toggleButton(settings.panelTitleFontItalic))
+    toggleButton($('#panelTitleFontBold'), settings.panelTitleFontBold)
+    toggleButton($('#panelTitleFontItalic'), settings.panelTitleFontItalic)
     $('#panelTitleFontSize').bootstrapSlider('setValue', settings.panelTitleFontSize)
     $('#panelTitleFontColor').val(settings.panelTitleFontColor)
     if (!settings.hasOwnProperty('panelTitleFontFamily')) {
@@ -98,7 +100,7 @@ function injectSettings(settings) {
         settings.panelTitleFontFamily = dropSecond.substring(1, dropSecond.length-1)
     }
     $('#panelTitleFontFamily').val(settings.panelTitleFontFamily)
-    $('#titleShadow').addClass(toggleButton(settings.panelTitleShadow)) // TODO currently effects everything in panel title, probably should move outside of panel title settings
+    toggleButton($('#titleShadow'), settings.panelTitleShadow)
 
     // Category Header Settings
     // Deprecation of panelHeaderFont
@@ -111,27 +113,27 @@ function injectSettings(settings) {
         settings.categoryHeaderFontFamily = settings.pbHeaderFontFamily = settings.wrHeaderFontFamily = dropSecond.substring(1, dropSecond.length-1)
     }
     // those values will be the default for these if none exists
-    $('#categoryHeaderFontBold').addClass(toggleButton(settings.categoryHeaderFontBold))
-    $('#categoryHeaderFontItalic').addClass(toggleButton(settings.categoryHeaderFontItalic))
+    toggleButton($('#categoryHeaderFontBold'), settings.categoryHeaderFontBold)
+    toggleButton($('#categoryHeaderFontItalic'), settings.categoryHeaderFontItalic)
     $('#categoryHeaderFontSize').bootstrapSlider('setValue', settings.categoryHeaderFontSize)
     $('#categoryHeaderFontColor').val(settings.categoryHeaderFontColor)
     $('#categoryHeaderFontFamily').val(settings.categoryHeaderFontFamily)
 
     // Personal Best Header Settings
-    $('#pbHeaderFontBold').addClass(toggleButton(settings.pbHeaderFontBold))
-    $('#pbHeaderFontItalic').addClass(toggleButton(settings.pbHeaderFontItalic))
+    toggleButton($('#pbHeaderFontBold'), settings.pbHeaderFontBold)
+    toggleButton($('#pbHeaderFontItalic'), settings.pbHeaderFontItalic)
     $('#pbHeaderFontSize').bootstrapSlider('setValue', settings.pbHeaderFontSize)
     $('#pbHeaderFontColor').val(settings.pbHeaderFontColor)
     $('#pbHeaderFontFamily').val(settings.pbHeaderFontFamily)
 
     // World Record Header Settings
-    $('#wrHeaderFontBold').addClass(toggleButton(settings.wrHeaderFontBold))
-    $('#wrHeaderFontItalic').addClass(toggleButton(settings.wrHeaderFontItalic))
+    toggleButton($('#wrHeaderFontBold'), settings.wrHeaderFontBold)
+    toggleButton($('#wrHeaderFontItalic'), settings.wrHeaderFontItalic)
     $('#wrHeaderFontSize').bootstrapSlider('setValue', settings.wrHeaderFontSize)
     $('#wrHeaderFontColor').val(settings.wrHeaderFontColor)
     $('#wrHeaderFontFamily').val(settings.wrHeaderFontFamily)
-    $('#hideWR').addClass(toggleButton(settings.hideWR))
-    $('#wrRainbow').addClass(toggleButton(settings.wrRainbow))
+    toggleButton($('#hideWR'), settings.hideWR)
+    toggleButton($('#wrRainbow'), settings.wrRainbow)
 
     // Panel Title Divider Settings
     if (settings.hasOwnProperty('panelTitleDividerHeight')) {
@@ -141,8 +143,8 @@ function injectSettings(settings) {
     }
 
     // Game Title Settings
-    $('#gameTitleFontBold').addClass(toggleButton(settings.gameTitleFontBold))
-    $('#gameTitleFontItalic').addClass(toggleButton(settings.gameTitleFontItalic))
+    toggleButton($('#gameTitleFontBold'), settings.gameTitleFontBold)
+    toggleButton($('#gameTitleFontItalic'), settings.gameTitleFontItalic)
     $('#gameTitleFontSize').bootstrapSlider('setValue', settings.gameTitleFontSize)
     $('#gameTitleFontColor').val(settings.gameTitleFontColor)
     if (!settings.hasOwnProperty('gameTitleFontFamily')) {
@@ -157,8 +159,8 @@ function injectSettings(settings) {
     }
 
     // Category Name Settings
-    $('#gameCategoryFontBold').addClass(toggleButton(settings.gameCategoryFontBold))
-    $('#gameCategoryFontItalic').addClass(toggleButton(settings.gameCategoryFontItalic))
+    toggleButton($('#gameCategoryFontBold'), settings.gameCategoryFontBold)
+    toggleButton($('#gameCategoryFontItalic'), settings.gameCategoryFontItalic)
     $('#gameCategoryFontSize').bootstrapSlider('setValue', settings.gameCategoryFontSize)
     $('#gameCategoryFontColor').val(settings.gameCategoryFontColor)
     if (!settings.hasOwnProperty('gameCategoryFontFamily')) {
@@ -171,8 +173,8 @@ function injectSettings(settings) {
     }
 
     // Personal Best Time Settings
-    $('#pbFontBold').addClass(toggleButton(settings.pbFontBold))
-    $('#pbFontItalic').addClass(toggleButton(settings.pbFontItalic))
+    toggleButton($('#pbFontBold'), settings.pbFontBold)
+    toggleButton($('#pbFontItalic'), settings.pbFontItalic)
     $('#pbFontSize').bootstrapSlider('setValue', settings.pbFontSize)
     $('#pbFontColor').val(settings.pbFontColor)
     if (!settings.hasOwnProperty('pbFontFamily')) {
@@ -188,8 +190,8 @@ function injectSettings(settings) {
         settings.wrFontColor = '#f3e221'
         settings.wrFontFamily = settings.pbFontFamily
     }
-    $('#wrFontBold').addClass(toggleButton(settings.wrFontBold))
-    $('#wrFontItalic').addClass(toggleButton(settings.wrFontItalic))
+    toggleButton($('#wrFontBold'), settings.wrFontBold)
+    toggleButton($('#wrFontItalic'), settings.wrFontItalic)
     $('#wrFontSize').bootstrapSlider('setValue', settings.wrFontSize)
     $('#wrFontColor').val(settings.wrFontColor)
     $('#wrFontFamily').val(settings.wrFontFamily)
@@ -204,27 +206,27 @@ function injectSettings(settings) {
         settings.miscHeaderFontFamily = settings.ilHeaderFontFamily = dropSecond.substring(1, dropSecond.length-1)
         settings.miscHeaderBottomMargin = settings.ilHeaderBottomMargin = 0
     }
-    $('#miscHeaderFontBold').addClass(toggleButton(settings.miscHeaderFontBold))
-    $('#miscHeaderFontItalic').addClass(toggleButton(settings.miscHeaderFontItalic))
+    toggleButton($('#miscHeaderFontBold'), settings.miscHeaderFontBold)
+    toggleButton($('#miscHeaderFontItalic'), settings.miscHeaderFontItalic)
     $('#miscHeaderFontSize').bootstrapSlider('setValue', settings.miscHeaderFontSize)
     $('#miscHeaderFontColor').val(settings.miscHeaderFontColor)
     $('#miscHeaderFontFamily').val(settings.miscHeaderFontFamily)
     $('#miscHeaderBottomMargin').bootstrapSlider('setValue', settings.miscHeaderBottomMargin)
     if (settings.miscShow != undefined && settings.miscSep != undefined) {
-        $('#miscShow').addClass(toggleButton(settings.miscShow))
-        $('#miscSep').addClass(toggleButton(settings.miscSep))
+        toggleButton($('#miscShow'), settings.miscShow)
+        toggleButton($('#miscSep'), settings.miscSep)
     }
 
     // Individual Level Header Settings
-    $('#ilHeaderFontBold').addClass(toggleButton(settings.ilHeaderFontBold))
-    $('#ilHeaderFontItalic').addClass(toggleButton(settings.ilHeaderFontItalic))
+    toggleButton($('#ilHeaderFontBold'), settings.ilHeaderFontBold)
+    toggleButton($('#ilHeaderFontItalic'), settings.ilHeaderFontItalic)
     $('#ilHeaderFontSize').bootstrapSlider('setValue', settings.ilHeaderFontSize)
     $('#ilHeaderFontColor').val(settings.ilHeaderFontColor)
     $('#ilHeaderFontFamily').val(settings.ilHeaderFontFamily)
     $('#ilHeaderBottomMargin').bootstrapSlider('setValue', settings.ilHeaderBottomMargin)
     if (settings.ilShow != undefined && settings.ilSep != undefined) {
-        $('#ilShow').addClass(toggleButton(settings.ilShow))
-        $('#ilSep').addClass(toggleButton(settings.ilSep))
+        toggleButton($('#ilShow'), settings.ilShow)
+        toggleButton($('#ilSep'), settings.ilSep)
     }
 
     // Game Divider Settings

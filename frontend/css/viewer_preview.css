@@ -48,17 +48,20 @@ h2 {
     height:500px;
     background-color: #101010;
     font-family: 'Roboto Condensed', sans-serif;
-    font-size: 15px;
+    font-size: 14px;
     line-height: 1.42857143;
     /* lol what? */
     color: #fff;
     margin-left: 25%;
 }
 
-.timeHeader {
+.headerRow {
+    text-align: center;
+}
+
+.miscHeader, .ilHeader {
     color: #fff;
     font-size: 0.93em;
-    margin: 0;
 }
 
 @keyframes rainbowText {
@@ -83,6 +86,22 @@ h2 {
     margin-top: 25px;
 }
 
+#titleContainerRow {
+    height:75%; 
+    overflow: hidden; 
+    margin-bottom: 0px;
+}
+
+#headers {
+    height:25%; 
+    margin-bottom: 0px;
+    overflow: hidden;
+}
+
+#titleHeaders {
+    height:100%;
+}
+
 .pbWrapper {
     height: 392px;
     padding-top: 3px;
@@ -91,16 +110,16 @@ h2 {
 
 .fa-2x {
     font-size: 1em;
-    margin-top: 10%;
+    line-height: 1.5em;
 }
 
-.fancyStripeGreen {
+.panelTitleDiv {
     height: 5px;
-    background: linear-gradient(180deg, #101010, green, #101010);
+    background: linear-gradient(180deg, green, #101010);
     background-color: green;
 }
 
-.fancyStripeBlue {
+.gameDivider {
     height: 5px;
     margin-top: 5px;
     margin-bottom: 5px;
@@ -134,6 +153,10 @@ h2 {
     background: radial-gradient( rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6)), url('../img/DarkTheme.png');
     background-position: center top;
     font-weight: 700;
+}
+
+.titleContainer a {
+    text-decoration: none;
 }
 
 h2 {
@@ -204,4 +227,12 @@ ul {
 
 li.preview { /* fix */
     height: 1.5em;
+}
+
+.pbRow > ul > li:first-child {
+    margin-top: 5px;
+}
+
+.headerRow p {
+    margin: 0;
 }
