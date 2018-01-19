@@ -104,7 +104,7 @@ body {
     box-sizing: border-box;
     padding-left: 10px;
     padding-top: 10px;
-    padding-bottom: 5px;
+    /* padding-bottom: 5px; */
     height: 100px;
     background: radial-gradient( rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6)), url('../img/DarkTheme.png');
     background-position: center top;
@@ -124,6 +124,7 @@ h2 {
     cursor: pointer;
     display: flex;
     align-items: center;
+    overflow: hidden;
 }
 
 .pbContainer {
@@ -174,6 +175,7 @@ ul {
 
 li {
     height: 1.5em;
+    overflow: hidden;
 }
 
 .pbRow > ul > li:first-child {
