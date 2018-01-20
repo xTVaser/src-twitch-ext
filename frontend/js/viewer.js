@@ -451,6 +451,9 @@ function renderPersonalBests() {
         settings.panelTitleFontFamily = dropSecond.substring(1, dropSecond.length-1)
     }
     $("#viewerPanelTitle").css("font-family", addFontFamily(settings.panelTitleFontFamily))
+    if (settings.hasOwnProperty('panelTitleHeightPercentage')) {
+        $("#titleContainerRow").css("height", `${settings.panelTitleHeightPercentage}%`)
+    }
 
     // Category Header Settings
     if (!settings.hasOwnProperty('categoryHeaderFontBold')) {

@@ -8,6 +8,7 @@ defaultTheme = {
     "panelTitleFontSize": "30",
     "panelTitleFontColor": "#ffffff",
     "panelTitleFontFamily": "Roboto Condensed",
+    "panelTitleHeightPercentage": "75",
     "panelTitleShadow": false,
     "categoryHeaderFontBold": false,
     "categoryHeaderFontItalic": false,

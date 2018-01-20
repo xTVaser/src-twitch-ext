@@ -20,6 +20,12 @@ div.col-19-20 .gameTitleBox {
     margin-right: 25px;
 }
 
+#mockTitleContainerRow {
+    height:75%; 
+    overflow: hidden; 
+    margin-bottom: 0px;
+}
+
 li.ui-state-default {
     margin-bottom: 10px;
     padding: 5px;

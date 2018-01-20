@@ -100,6 +100,9 @@ function injectSettings(settings) {
         settings.panelTitleFontFamily = dropSecond.substring(1, dropSecond.length-1)
     }
     $('#panelTitleFontFamily').val(settings.panelTitleFontFamily)
+    if (settings.hasOwnProperty('panelTitleHeightPercentage')) {
+        $('#panelTitleHeightPercentage').bootstrapSlider('setValue', settings.panelTitleHeightPercentage)
+    }
     toggleButton($('#titleShadow'), settings.panelTitleShadow)
 
     // Category Header Settings
@@ -759,6 +762,7 @@ function extractSettings() {
     settings.panelTitleFontSize = "" + $('#panelTitleFontSize').bootstrapSlider('getValue')
     settings.panelTitleFontColor = $('#panelTitleFontColor').val()
     settings.panelTitleFontFamily = $('#panelTitleFontFamily').val().trim()
+    settings.panelTitleHeightPercentage = "" + $('#panelTitleHeightPercentage').bootstrapSlider('getValue')
     settings.panelTitleShadow = $('#titleShadow').hasClass('active')
 
     // Category Header Settings

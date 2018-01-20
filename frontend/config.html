@@ -23,7 +23,7 @@
     <div class="container">
         <div class="row text-center">
             <p>Current Version - 1.1.0
-                <a href="https://github.com/xTVaser/src-twitch-ext/releases/tag/v1.1.0">Click Here to See Latest Release Notes</a>
+                <a href="https://github.com/xTVaser/src-twitch-ext/releases/tag/v1.1.0" target="_blank">Click Here to See Latest Release Notes</a>
             </p>
             <p id="backendMessage">
             </p>
@@ -63,7 +63,7 @@
             <div class="row config">
                 <div class="col-md-6">
                     <b>Export Style Settings
-                        <a href="https://github.com/xTVaser/src-twitch-ext/issues/36">(Will not work on Firefox)</a>
+                        <a href="https://github.com/xTVaser/src-twitch-ext/issues/36" target="_blank">(Will not work on Firefox)</a>
                     </b>
                     <br>
                     <button id="exportSettings">Download</button>
@@ -221,7 +221,7 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="row center" id="titleContainerRow" style="overflow:visible;">
+                            <div class="row center" id="mockTitleContainerRow" style="overflow:visible;">
                                 <!-- Panel Title Settings -->
                                 <div class="dropdown">
                                     <a class="edit-button-not-abs dropdown-toggle" data-toggle="dropdown">
@@ -255,6 +255,11 @@
                                             Google Font Family
                                             <br>
                                             <input id='panelTitleFontFamily' type='text' value='Roboto Condensed'></input>
+                                        </li>
+                                        <li>
+                                            Reserved Space for Panel Title (as a %)
+                                            <br>
+                                            <input id="panelTitleHeightPercentage" type="text" data-provide="slider" data-slider-min="25" data-slider-max="75" data-slider-value="75">
                                         </li>
                                     </ul>
                                 </div>
