@@ -14,8 +14,8 @@ var striptags = require("striptags");
 var visitor = ua(process.env.ANALYTICS_ID);
 
 /// Messages that everyone will see to inform them on a problem
-const configMessage = "";
-const panelMessage = "";
+const configMessage = "Speedrun.com's API has been very slow / failing to return quite a lot recently.  This will hopefully be mitigated in the future but it is largely out of my control, sorry.  Finding games may take several re-attempts.";
+const panelMessage = "Speedrun.com's API has been experiencing problems, Loading will unfortunately be slow or fail at times.";
 
 /// Simple object to represent channel object in database
 class Channel {
