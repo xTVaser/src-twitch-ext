@@ -139,7 +139,7 @@ function injectSettings(settings) {
     toggleButton($('#wrRainbow'), settings.wrRainbow)
 
     // Panel Title Divider Settings
-    if (settings.hasOwnProperty('panelTitleDividerHeight')) {
+    if (settings.hasOwnProperty('panelTitleDivHeight')) {
         $('#panelTitleDividerHeight').bootstrapSlider('setValue', settings.panelTitleDivHeight)
         $('#panelTitleDividerColor').val(settings.panelTitleDivColor)
         $('#panelTitleDividerBottomMargin').bootstrapSlider('setValue', settings.panelTitleDivBottomMargin)
@@ -233,7 +233,7 @@ function injectSettings(settings) {
     }
 
     // Game Divider Settings
-    if (settings.hasOwnProperty('gameDividerHeight')) {
+    if (settings.hasOwnProperty('gameDivHeight')) {
         $('#gameDividerHeight').bootstrapSlider('setValue', settings.gameDivHeight)
         $('#gameDividerColor').val(settings.gameDivColor)
         $('#gameDividerBottomMargin').bootstrapSlider('setValue', settings.gameDivBottomMargin)

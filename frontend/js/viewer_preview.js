@@ -510,7 +510,7 @@ function renderPersonalBests() {
     }
 
     // Panel Title Divider Settings
-    if (settings.hasOwnProperty('panelTitleDividerHeight')) {
+    if (settings.hasOwnProperty('panelTitleDivHeight')) {
         $(".panelTitleDiv").css("height", `${settings.panelTitleDivHeight}px`);
         $(".panelTitleDiv").css("background", `linear-gradient(180deg, ${settings.panelTitleDivColor}, ${settings.panelBackgroundColor})`);
         $(".panelTitleDiv").css("margin-bottom", `${settings.panelTitleDivBottomMargin}px`);
@@ -620,7 +620,7 @@ function renderPersonalBests() {
     $(".ilRowContainer").css("margin-bottom", `${settings.ilHeaderBottomMargin}px`);
 
     // Game Divider Settings
-    if (settings.hasOwnProperty('gameDividerHeight')) {
+    if (settings.hasOwnProperty('gameDivHeight')) {
         $(".gameDivider").css("height", `${settings.gameDivHeight}px`);
         $(".gameDivider").css("background", `linear-gradient(180deg, ${settings.gameDivColor}, #101010)`);
         $(".gameDivider").css("margin-bottom", `${settings.gameDivBottomMargin}px`);
