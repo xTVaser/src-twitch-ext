@@ -1,0 +1,22 @@
+{
+  "name": "src-twitch-ext",
+  "version": "1.0.0",
+  "description": "Shows up-to-date PBs and WRs for the games you do runs in via speedrun.com",
+  "main": "index.js",
+  "scripts": {
+    "local-server": "http-server ./frontend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xTVaser/src-twitch-ext.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xTVaser/src-twitch-ext/issues"
+  },
+  "homepage": "https://github.com/xTVaser/src-twitch-ext#readme",
+  "dependencies": {
+    "http-server": "^0.11.1"
+  }
+}
