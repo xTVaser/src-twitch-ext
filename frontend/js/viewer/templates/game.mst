@@ -1,0 +1,64 @@
+<div class="gameTitle outlineText" id="g{{key}}">
+    <div class="col-8-10">
+        <h2>{{gameName}}</h2>
+    </div>
+    <div class="col-2-10 center expandIcon" id="pbRowStatus{{key}}">
+        <i class="{{initialExpandIcon}} fa-2x" aria-hidden="true"></i>
+    </div>
+    <br class="clear" />
+</div>
+<div class="pbContainer">
+    <div class="pbRow outlineText" id="pbRow{{key}}" style="display: {{expandPBs}};">
+        <ul>
+            {{! Categories }}
+            {{#categories}}
+            <li class="categoryRow">
+                <div class="{{categoryColumnSize}} truncate"><a class="categoryName" href="{{categoryLink}}" target="_blank" title="{{categoryName}}">{{categoryName}}</a></div>
+                <div class="col-2-10 rightAlign"><a class="pbTime" href="{{pbLink}}" target="_blank">{{pbTime}}</a></div>
+                {{^settings.hideWR}}
+                <div class="col-2-10 rightAlign"><a class="wrTime" href="{{wrLink}}" target="_blank">{{wrTime}}</a></div>
+                {{/settings.hideWR}}
+            </li>
+            {{/categories}}
+            {{! Miscellaneous Categories }}
+            {{#showMiscCategories}}
+            {{! Separator }}
+            {{#settings.miscSep}}
+            <li class="miscRowContainer">
+                <div class="headerRow"><p class="miscHeader">Miscellaneous Categories</div>
+            </li>
+            {{/settings.miscSep}}
+            {{! Iterate through times }}
+            {{#miscCategories}}
+            <li class="categoryRow">
+                <div class="{{categoryColumnSize}} truncate"><a class="categoryName" href="{{categoryLink}}" target="_blank" title="{{categoryName}}">{{categoryName}}</a></div>
+                <div class="col-2-10 rightAlign"><a class="pbTime" href="{{pbLink}}" target="_blank">{{pbTime}}</a></div>
+                {{^settings.hideWR}}
+                <div class="col-2-10 rightAlign"><a class="wrTime" href="{{wrLink}}" target="_blank">{{wrTime}}</a></div>
+                {{/settings.hideWR}}
+            </li>
+            {{/miscCategories}}
+            {{/showMiscCategories}}
+            {{! Individual Levels }}
+            {{#showLevels}}
+            {{! Separator }}
+            {{#settings.ilSep}}
+            <li class="ilRowContainer">
+                <div class="headerRow"><p class="ilHeader">Individual Levels</div>
+            </li>
+            {{/settings.ilSep}}
+            {{! Iterate through times }}
+            {{#levels}}
+            <li class="categoryRow">
+                <div class="{{categoryColumnSize}} truncate"><a class="categoryName" href="{{categoryLink}}" target="_blank" title="{{categoryName}}">{{categoryName}}</a></div>
+                <div class="col-2-10 rightAlign"><a class="pbTime" href="{{pbLink}}" target="_blank">{{pbTime}}</a></div>
+                {{^settings.hideWR}}
+                <div class="col-2-10 rightAlign"><a class="wrTime" href="{{wrLink}}" target="_blank">{{wrTime}}</a></div>
+                {{/settings.hideWR}}
+            </li>
+            {{/levels}}
+            {{/showLevels}}
+        </ul>
+    </div>
+</div>
+<div class="gameDivider"></div>
