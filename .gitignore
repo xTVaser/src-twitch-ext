@@ -1,2 +1,4 @@
 *.zip
 *.code-workspace
+token
+node_modules/
