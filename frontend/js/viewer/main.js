@@ -3,7 +3,8 @@ var debug = false;
 
 // TODO - detect if older browser and if so, display an upfront error
 // - async functions - https://caniuse.com/#search=await
-// ...
+// - fetch API - https://caniuse.com/#search=fetch
+// - 
 
 /// Javascript to render the personal bests on the channel page
 var loaded = false
@@ -13,7 +14,8 @@ var settings
 var srcID
 var srcName
 
-var pbList = new Array()
+// pbList
+var personalBests = new Array();
 
 // Templates
 var templates = {
@@ -80,6 +82,7 @@ $(document).ready(function() {
     } else {
         $('.spinnerError').html('Extension not Configured')
     }
+    // TODO - fetch not AJAX
     // $.ajax({
     //     type: "POST",
     //     url: "https://extension.xtvaser.xyz/fetch",
@@ -115,93 +118,10 @@ $(document).ready(function() {
 });
 
 async function gatherSpeedrunData() {
-    await getPersonalBests(srcID, games);
-}
-
-
-var deferreds = []
-function getLevelCategories(url, currentPBEntry) {
-    deferreds.push($.getJSON(url, function(json) {
-        category = json.data
-        categories = category
-        for (var i = 0; i < categories.length; i++) {
-            if (categories[i].id == currentPBEntry.categoryID) {
-                category = categories[i]
-            }
-        }
-        // if there is only one category, then we can omit the name
-        if (categories.length > 1 && currentPBEntry.subcategoryName != "") {
-            currentPBEntry.categoryName += " - " + currentPBEntry.subcategoryName + " - " + category.name
-        }
-        else if (categories.length > 1 && currentPBEntry.subcategoryName == "") {
-            currentPBEntry.categoryName += " - " + category.name
-        }
-        // overwrite
-        currentPBEntry.categoryLink = category.weblink
-        currentPBEntry.isMisc = category.miscellaneous
-    }))
-}
-
-// NOTE: this is needed as we want to truncate the category from the name
-// if it wasnt, then this step could be avoided with the embed query
-function resolveSubcategoryNames() {
-    gameIDs = Object.keys(pbList)
-    for (var i = 0; i < gameIDs.length; i++) {
-        for (var j = 0; j < pbList[gameIDs[i]].length; j++) {
-            currentPBEntry = pbList[gameIDs[i]][j]
-            if (currentPBEntry.isLevel) {
-                levelCategoryAPILink = `https://www.speedrun.com/api/v1/levels/${currentPBEntry.levelID}/categories`
-                getLevelCategories(levelCategoryAPILink, currentPBEntry)
-            }
-            else if (currentPBEntry.subcategoryName != "") {
-                // just append the subcategory
-                currentPBEntry.categoryName += " - " + currentPBEntry.subcategoryName
-            }
-        }
-    }
-    // Then the variable link to fully construct the category link
-    $.when.apply(null, deferreds).done(function() {
-        deferreds = [] // clear ready for next group of calls
-        getWorldRecords()
-    });
-}
-
-function examineWorldRecordEntry(url, currentPBEntry) {
-    deferreds.push($.getJSON(url, function(json) {
-        wr = json.data
-        // Guaranteed to a be wr as we only check categories that streamer has done
-        // a run of, which means there is atleast one run (theres)
-        currentPBEntry.wrLink = wr.runs[0].run.weblink
-        currentPBEntry.wrTime = wr.runs[0].run.times.primary_t
-    }))
-}
-
-function getWorldRecords() {
-    gameIDs = Object.keys(pbList)
-    // format for api link                          v if not null v
-    //.../gameid/category/categoryid?top=1&var-subcategoryid=subcategoryvalue
-    for (var i = 0; i < gameIDs.length; i++) {
-        for (var j = 0; j < pbList[gameIDs[i]].length; j++) {
-            currentPBEntry = pbList[gameIDs[i]][j]
-            // Construct API Request
-            requestURL = ""
-            if (currentPBEntry.isLevel) {
-                requestURL = `https://www.speedrun.com/api/v1/leaderboards/${currentPBEntry.gameId}/level/${currentPBEntry.levelID}/${currentPBEntry.categoryID}?top=1`
-            }
-            else {
-                requestURL = `https://www.speedrun.com/api/v1/leaderboards/${currentPBEntry.gameId}/category/${currentPBEntry.categoryID}?top=1`
-            }
-            if (currentPBEntry.subcategoryID != null) {
-                requestURL += `&var-${currentPBEntry.subcategoryID}=${currentPBEntry.subcategoryVal}`
-            }
-            examineWorldRecordEntry(requestURL, currentPBEntry)
-        }
-    }
-    // Now we can finally render the contents of the panel
-    $.when.apply(null, deferreds).done(function() {
-        deferreds = [] // clear ready for next group of calls
-        renderPersonalBests()
-    });
+    await getPersonalBests(srcID, games, personalBests);
+    await resolveSubcategoryNames(personalBests);
+    await getWorldRecords(personalBests);
+    renderPersonalBests();
 }
 
 $(document).on('click', '.gameTitle', function(e) {
@@ -265,7 +185,7 @@ async function renderPersonalBests() {
     // Loop through every Game
     await gameTemplatePromise;
     for (var i = 0; i < games.length; i++) {
-        currentGame = pbList[games[i].id]
+        currentGame = personalBests[games[i].id]
 
         // Get all the Personal Bests now
         // Normal Categories
