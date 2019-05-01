@@ -5,6 +5,11 @@ function addFontFamily(setting) {
     return `${setting}, Roboto Condensed`
 }
 
+// Testing Scaffolding
+if (typeof exports !== 'undefined') {
+    exports.addFontFamily = addFontFamily
+}
+
 // Setup Streamer's Styling
 function configureCustomStyling() {
     // Panel Title Background Settings

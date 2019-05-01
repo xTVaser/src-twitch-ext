@@ -73,6 +73,7 @@ async function resolveSubcategoryNames(personalBests) {
             currentPBEntry = personalBests[gameIDs[i]][j];
             if (currentPBEntry.isLevel) {
                 // TODO - I believe these API calls can be deleted, although I'd like to wait till I have some unit-tests / functional tests around it before changing
+                // the SM64 IL board is a good one to test with (many levels, each with sub categories)
                 levelCategoryAPILink = `https://www.speedrun.com/api/v1/levels/${currentPBEntry.levelID}/categories`;
                 // TODO - currently not performant, calls should be spawned in parallel and https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
                 await getLevelCategories(levelCategoryAPILink, currentPBEntry);
@@ -108,6 +109,7 @@ async function getLevelCategories(url, currentPBEntry) {
     currentPBEntry.isMisc = category.miscellaneous
 }
 
+// TODO - If Speedrun.com ever allows you to get the top runs on more than 1 category/level, then this doesn't have to be a million requests
 async function getWorldRecords(personalBests) {
     gameIDs = Object.keys(personalBests)
     // format for api link                          v if not null v
