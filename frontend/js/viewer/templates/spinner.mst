@@ -1,0 +1,13 @@
+<section class="spinnerWrapper">
+    <div class="spinner">
+    <i></i>
+    <i></i>
+    <i></i>
+    <i></i>
+    <i></i>
+    <i></i>
+    <i></i>
+    </div>
+        <div class="spinnerError center">
+    </div>
+</section>
