@@ -4,8 +4,9 @@
   "description": "Shows up-to-date PBs and WRs for the games you do runs in via speedrun.com",
   "main": "index.js",
   "scripts": {
-    "local-server": "http-server .",
-    "test": "mocha test/unit/**/*.js"
+    "local-server": "http-server ./",
+    "test": "mocha test/unit/**/*.js",
+    "integration-tests": ""
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,10 @@
   },
   "homepage": "https://github.com/xTVaser/src-twitch-ext#readme",
   "dependencies": {
+    "chai": "^4.2.0",
+    "chai-webdriver": "^1.2.0",
     "http-server": "^0.11.1",
-    "mocha": "^6.1.4"
+    "mocha": "^6.1.4",
+    "selenium-webdriver": "^4.0.0-alpha.1"
   }
 }

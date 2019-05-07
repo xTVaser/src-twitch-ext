@@ -5,13 +5,37 @@ var authObject = null;
 var srcID = null;
 var srcName = null;
 
+// Detect if we are running locally (dev) or in a deployed env.
+var DEV_ENV = window.location.href.startsWith("http://localhost");
+
+if (DEV_ENV) {
+    $(document).ready(function() {
+        authObject = {
+            "channelId": "test123",
+            "clientId": "test123",
+            // Token Contents, signed with "password123":
+            // {
+            //     "channel_id": "test123"
+            // }
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjaGFubmVsX2lkIjoidGVzdDEyMyJ9.kfCD7f2bKwBtdXJfhQbEzv5OZHqgRKbl6Qn8-1taqlA"
+        };
+        renderConfigPage();
+    });
+}
+
 window.Twitch.ext.onAuthorized(function(auth) {
     authObject = auth;
+    renderConfigPage();
+});
+
+function renderConfigPage() {
     if (loaded == true) {
         return;
     }
     loaded = true
-    renderPreview(authObject)
+    // TODO - reenable
+    // renderPreview(authObject)
+
     // console.log('The JWT that will be passed to the EBS is', authObject.token);
     // console.log('The channel ID is', authObject.channelId);
     $('#saveBtn').prop("disabled", true)
@@ -21,9 +45,9 @@ window.Twitch.ext.onAuthorized(function(auth) {
     // Get previous settings
     $.ajax({
         type: "POST",
-        url: "https://extension.xtvaser.xyz/fetch",
+        url: DEV_ENV ? "http://localhost:8081/fetch" : "https://extension.xtvaser.xyz/fetch",
         headers: {
-            'x-extension-jwt': auth.token,
+            'x-extension-jwt': authObject.token,
         },
         dataType: "json",
         data: {},
@@ -34,7 +58,7 @@ window.Twitch.ext.onAuthorized(function(auth) {
                 restorePreviousSettings(savedData)
             }
             // Auto populate srcname with twitch name by default
-            if (savedData == null) {
+            if (savedData == null && !DEV_ENV) {
                 $.ajax({
                     type: "GET",
                     url: `https://api.twitch.tv/helix/users?id=${authObject.channelId}`,
@@ -60,7 +84,7 @@ window.Twitch.ext.onAuthorized(function(auth) {
             $("#searchBtn").attr('class', 'btn-primary');
         }
     });
-});
+}
 
 function toggleButton(element, config) {
     if (!config) {
@@ -970,7 +994,7 @@ $("#saveBtn").click(function() {
 function sendResult(gamesToSend, settings) {
     $.ajax({
         type: "POST",
-        url: "https://extension.xtvaser.xyz/save",
+        url: DEV_ENV ? "http://localhost:8081/save" : "https://extension.xtvaser.xyz/save",
         headers: {
             'x-extension-jwt': authObject.token,
         },
@@ -986,7 +1010,9 @@ function sendResult(gamesToSend, settings) {
                 setError("Saving Error: Database Error, Contact Extension Developer")
             } else {
                 setError("SUCCESS: Saved Successfully!")
-                renderPreview(authObject)
+
+                // TODO - reenable
+                // renderPreview(authObject)
             }
         },
         error: function() {
@@ -1001,9 +1027,7 @@ document.getElementById('exportSettings').onclick = function(){
 }
 
 document.getElementById('importSettings').onchange = function(){
-    
       var file = this.files[0];
-    
       var reader = new FileReader();
       reader.onload = function(progressEvent){
         // Entire file
