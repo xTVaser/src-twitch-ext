@@ -1,0 +1,160 @@
+<li class="ui-sortable-handle">
+    <div class="row">
+        <nav class="navbar navbar-default game">
+            <div class="container-fluid">
+                <ul class="nav navbar-nav gameOptionContainer">
+                    {{! Name }}
+                    <li>
+                        <input type="text" value="{{game.name}}" class="gameTitleBox">
+                    </li>
+                    {{! Options }}
+                    <li class="dropdown optionList">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Options
+                            <span class="caret"></span>
+                        </a>
+                        <ol class="dropdown-menu ui-sortable">
+                            {{! Remove Game }}
+                            <li>
+                                <div class="row optionRow">
+                                    <div class="col-md-8">
+                                        <p>Remove Game</p>
+                                    </div>
+                                    <div class="col-md-4 selectionContainer">
+                                        <input type=checkbox value="{{game.id}}" class="displayBox" {{removeBoxChecked}}>
+                                    </div>
+                                </div>
+                            </li>
+                            {{! Initially Expand }}
+                            <li>
+                                <div class="row optionRow">
+                                    <div class="col-md-8">
+                                        <p>Initially Expand Game</p>
+                                    </div>
+                                    <div class="col-md-4 selectionContainer">
+                                        <input type="checkbox" class="expandBox" {{expandBoxChecked}}>
+                                    </div>
+                                </div>
+                            </li>
+                        </ol>
+                    </li>
+                    {{! Category List }}
+                    <li class="dropdown categoryList">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Categories
+                            <span class="caret"></span>
+                        </a>
+                        <ol class="dropdown-menu">
+                            {{! No Categories to Render }}
+                            {{^renderCategories}}
+                            <li>
+                                <div class="row optionRow">
+                                    <div class="col-md-8">
+                                        <p>No Categories</p>
+                                    </div>
+                                </div>
+                            </li>
+                            {{/renderCategories}}
+                            {{! List Normal Categories }}
+                            {{#categories}}
+                            <li>
+                                <div class="row optionRow">
+                                    <div class="col-md-8">
+                                        <p>{{name}}</p>
+                                    </div>
+                                    <div class="col-md-4 selectionContainer">
+                                        <input type=checkbox value="{{id}}" checked>
+                                    </div>
+                                </div>
+                            </li>
+                            {{/categories}}
+                        </ol>
+                    </li>
+                    {{! Miscellaneous Category List }}
+                    <li class="dropdown miscList">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Misc.
+                            <span class="caret"></span>
+                        </a>
+                        <ol class="dropdown-menu">
+                            {{! Miscellaneous Categories Disabled }}
+                            {{^miscCategoriesDisabled}}
+                            <li>
+                                <div class="row optionRow">
+                                    <div class="col-md-8">
+                                        <p>Misc. Disabled!</p>
+                                    </div>
+                                </div>
+                            </li>
+                            {{/miscCategoriesDisabled}}
+                            {{! No Miscellaneous Categories to List }}
+                            {{^renderMiscCategories}}
+                            <li>
+                                <div class="row optionRow">
+                                    <div class="col-md-8">
+                                        <p>No Misc. Cats.</p>
+                                    </div>
+                                </div>
+                            </li>
+                            {{/renderMiscCategories}}
+                            {{! Miscellaneous Categories }}
+                            {{#miscCategories}}
+                            <li>
+                                <div class="row optionRow">
+                                    <div class="col-md-8">
+                                        <p>{{name}}</p>
+                                    </div>
+                                    <div class="col-md-4 selectionContainer">
+                                        <input type=checkbox value="{{id}}" checked>
+                                    </div>
+                                </div>
+                            </li>
+                            {{/miscCategories}}
+                        </ol>
+                    </li>
+                    {{! Individual Levels }}
+                    <li class="dropdown levelList">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="">Levels
+                            <span class="caret"></span>
+                        </a>
+                        <ol class="dropdown-menu">
+                            {{! Individual Levels Disabled }}
+                            {{^individualLevelsDisabled}}
+                            <li>
+                                <div class="row optionRow">
+                                    <div class="col-md-8">
+                                        <p>ILs Disabled!</p>
+                                    </div>
+                                </div>
+                            </li>
+                            {{/individualLevelsDisabled}}
+                            {{! Individual Levels Disabled }}
+                            {{^renderIndividualLevels}}
+                            <li>
+                                <div class="row optionRow">
+                                    <div class="col-md-8">
+                                        <p>No Levels</p>
+                                    </div>
+                                </div>
+                            </li>
+                            {{/renderIndividualLevels}}
+                            {{! Individual Levels }}
+                            {{^individualLevels}}
+                            <li>
+                                <div class="row optionRow">
+                                    <div class="col-md-8">
+                                        <p>{{name}}</p>
+                                    </div>
+                                    <div class="col-md-4 selectionContainer">
+                                        <input type=checkbox value="{{id}}" checked>
+                                    </div>
+                                </div>
+                            </li>
+                            {{/individualLevels}}
+                        </ol>
+                    </li>
+                    <li class="fa-config">
+                        <i class="fas fa-bars" aria-hidden="true"></i>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</li>

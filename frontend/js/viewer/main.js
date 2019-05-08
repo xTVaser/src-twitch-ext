@@ -25,13 +25,6 @@ var templates = {
     'gameTemplate': undefined
 }
 
-async function fetchMustacheTemplate(path, templateKey) {
-    return fetch(path).then(response => response.text()).then(template => {
-        Mustache.parse(template);
-        templates[templateKey] = template;
-    }).catch(error => console.log('Unable to get the template: ', error.message));
-}
-
 var spinnerTemplatePromise = fetchMustacheTemplate("js/viewer/templates/spinner.mst", 'spinnerTemplate');
 var titleTemplatePromise = fetchMustacheTemplate("js/viewer/templates/title.mst", 'titleTemplate');
 var headerTemplatePromise = fetchMustacheTemplate("js/viewer/templates/headers.mst", 'headerTemplate');
