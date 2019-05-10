@@ -6,7 +6,7 @@
   "scripts": {
     "local-server": "http-server ./",
     "test": "mocha test/unit/**/*.js",
-    "integration-tests": ""
+    "integration-tests": "mocha test/integration/test.js --timeout 5000"
   },
   "repository": {
     "type": "git",
