@@ -6,7 +6,7 @@
   "scripts": {
     "local-server": "http-server ./",
     "test": "mocha test/unit/**/*.js",
-    "integration-tests": "mocha test/integration/test.js --timeout 5000"
+    "integration-tests": "mocha test/integration/**/*.js --timeout 50000"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
   "dependencies": {
     "chai": "^4.2.0",
     "chai-webdriver": "^1.2.0",
+    "chai-webdriver-promised": "^4.0.3",
     "http-server": "^0.11.1",
     "mocha": "^6.1.4",
     "selenium-webdriver": "^4.0.0-alpha.1"

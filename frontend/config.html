@@ -57,7 +57,7 @@
                     <h3 class="config">Speedrun.com Name(*)</h3>
                 </div>
                 <div class="col-md-8">
-                    <input id="srcName" type="text" name="search" value="" placeholder="Speedrun.com Name">
+                    <input id="srcName" type="text" name="search" value="" placeholder="Speedrun.com Name" data-test="srcName">
                 </div>
             </div>
             <div class="row config">
@@ -688,13 +688,13 @@
         </div>
         <div class="col-md-6 text-center">
             <div class="row config">
-                <button id="searchBtn" type="button" name="button" class="btn-primary">Find Games</button>
+                <button id="searchBtn" type="button" name="button" class="btn-primary" data-test="searchBtn">Find Games</button>
             </div>
-            <div class="row errorOutput center" id="errorDialog">
+            <div class="row errorOutput center" id="errorDialog" data-test="errorDialog">
 
             </div>
             <div class="row config">
-                <button type="button" name="button" class="btn-warning" id="saveBtn">Save</button>
+                <button type="button" name="button" class="btn-warning" id="saveBtn" data-test="saveBtn">Save</button>
             </div>
             <div class="row center">
                 <div class="center" id="gamesHeader">
@@ -705,7 +705,7 @@
 
             <!-- games go here -->
             <div class="row">
-                <ol id="gameList">
+                <ol id="gameList" data-test="gameList">
                 </ol>
             </div>
 

@@ -91,7 +91,7 @@ function renderConfigPage() {
             $("#searchBtn").attr('class', 'btn-primary');
         },
         error: function() {
-            $('#saveBtn').prop("disabled", false)
+            $('#saveBtn').prop("disabled", true); // TODO - This should be true... if we get back nothing they need to enter a valid SRC name.  This should have an error as well
             $("#saveBtn").attr('class', 'btn-warning');
             $("#searchBtn").prop("disabled", false);
             $("#searchBtn").attr('class', 'btn-primary');

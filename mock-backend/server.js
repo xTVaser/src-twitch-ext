@@ -177,6 +177,7 @@ app.post("/fetch", function (req, res) {
     // TODO - add back the other response options
     var token = jwt.verify(req.header("x-extension-jwt"), "password123");
     const rawEntity = datastore[token.channel_id];
+    console.log(rawEntity);
     var entity = {};
     for (var i = 0; i < rawEntity.data.length; i++) {
         entity[rawEntity.data[i]['name']] = rawEntity.data[i]['value'];
