@@ -2,8 +2,8 @@
 var debug = false;
 
 // TODO - detect if older browser and if so, display an upfront error
-// - async functions - https://caniuse.com/#search=await
-// - fetch API - https://caniuse.com/#search=fetch
+// - async functions - https://caniuse.com/#search=await 
+// - fetch API - https://caniuse.com/#search=fetch / https://github.com/github/fetch
 // - 
 
 /// Javascript to render the personal bests on the channel page

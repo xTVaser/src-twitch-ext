@@ -1,20 +1,24 @@
-// TODO - all fetches should go into a function that handles backoff and retry
+/// Common Functions
 
-async function getPersonalBests(srcID, trackedGames, personalBests) {
-    var response = await fetch(`https://www.speedrun.com/api/v1/users/${srcID}/personal-bests?embed=category.variables,level.variables`);
+// TODO - all fetches should go into a function that handles backoff and retry
+async function getPersonalBests(srcID, trackedGames, personalBests, bypassFilter = false) {
+    var response = await fetch(`https://www.speedrun.com/api/v1/users/${srcID}/personal-bests?embed=game,category.variables,level.variables`);
     // TODO - currently assuming the request was successful, should detect problems with SRC's API
     var pbData = (await response.json()).data;
 
     for (var i = 0; i < pbData.length; i++) {
+        game = pbData[i].game.data;
         run = pbData[i].run;
         category = pbData[i].category.data;
         level = pbData[i].level.data;
 
         // Check that this is one of the games the user wants tracked
-        // TODO - filter this outside the loop
-        index = trackedGames.findIndex(x => x.id === run.game);
-        if (index <= -1) {
-            continue;
+        if (!bypassFilter) {
+            // TODO - filter this outside the loop
+            index = trackedGames.findIndex(x => x.id === run.game);
+            if (index <= -1) {
+                continue;
+            }
         }
 
         // If this is the first game there, init the index
@@ -44,6 +48,8 @@ async function getPersonalBests(srcID, trackedGames, personalBests) {
 
         personalBests[run.game].push({
             gameId: run.game, // laziness, but with good intentions
+            // TODO - added, this shouldnt cause problems but...yet to see for sure
+            gameName: game.names.international,
             categoryID: run.category,
             categoryName: categoryName,
             categoryLink: category.weblink,
@@ -63,6 +69,8 @@ async function getPersonalBests(srcID, trackedGames, personalBests) {
         })
     }
 }
+
+/// Viewer-Only functions
 
 // NOTE: this is needed as we want to truncate the category from the name
 // if it wasnt, then this step could be avoided with the embed query
@@ -142,4 +150,13 @@ async function examineWorldRecordEntry(url, currentPBEntry) {
     // a run of, which means there is atleast one run
     currentPBEntry.wrLink = worldRecord.runs[0].run.weblink;
     currentPBEntry.wrTime = worldRecord.runs[0].run.times.primary_t;
+}
+
+// TODO - docstring functions
+
+/// Configuration-Only Functions
+
+async function lookupSpeedrunner(name) {
+    var response = await fetch(`https://www.speedrun.com/api/v1/users?lookup=${name}`);
+    return (await response.json()).data;
 }

@@ -75,7 +75,7 @@
                         </a>
                         <ol class="dropdown-menu">
                             {{! Miscellaneous Categories Disabled }}
-                            {{^miscCategoriesDisabled}}
+                            {{#miscCategoriesDisabled}}
                             <li>
                                 <div class="row optionRow">
                                     <div class="col-md-8">
@@ -116,7 +116,7 @@
                         </a>
                         <ol class="dropdown-menu">
                             {{! Individual Levels Disabled }}
-                            {{^individualLevelsDisabled}}
+                            {{#individualLevelsDisabled}}
                             <li>
                                 <div class="row optionRow">
                                     <div class="col-md-8">
@@ -136,7 +136,7 @@
                             </li>
                             {{/renderIndividualLevels}}
                             {{! Individual Levels }}
-                            {{^individualLevels}}
+                            {{#individualLevels}}
                             <li>
                                 <div class="row optionRow">
                                     <div class="col-md-8">

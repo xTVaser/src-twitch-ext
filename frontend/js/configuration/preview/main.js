@@ -64,7 +64,8 @@ function renderPreview(auth) {
     });
 }
 
-function getPersonalBests(json) {
+// TODO redundant now
+function getPersonalBestss(json) {
     
     personalBests = json.data
     for (var i = 0; i < personalBests.length; i++) {

@@ -4,9 +4,10 @@ var loaded = false;
 var authObject = null;
 var srcID = null;
 var srcName = null;
+var gameList = [];
 
 // Detect if we are running locally (dev) or in a deployed env.
-var DEV_URL = "http://localhost:8081"
+var DEV_URL = "http://localhost:8081";
 var DEV_ENV = window.location.href.startsWith("http://localhost");
 
 var PROD_URL = "https://extension.xtvaser.xyz";
@@ -15,13 +16,13 @@ var PROD_URL = "https://extension.xtvaser.xyz";
 var templates = {
     'gameTemplate': undefined,
     'spinnerTemplate': undefined
-}
+};
 
 var gameTemplatePromise = fetchMustacheTemplate("js/configuration/templates/game.mst", 'gameTemplate');
 var spinnerTemplatePromise = fetchMustacheTemplate("js/common/templates/spinner.mst", 'spinnerTemplate');
 
 if (DEV_ENV) {
-    $(document).ready(function() {
+    $(document).ready(function () {
         authObject = {
             "channelId": "test123",
             "clientId": "test123",
@@ -35,12 +36,12 @@ if (DEV_ENV) {
     });
 }
 
-window.Twitch.ext.onAuthorized(function(auth) {
+window.Twitch.ext.onAuthorized(function (auth) {
     authObject = auth;
     renderConfigPage();
 });
 
-function renderConfigPage() {
+async function renderConfigPage() {
     if (loaded == true) {
         return;
     }
@@ -54,53 +55,54 @@ function renderConfigPage() {
     $("#saveBtn").attr('class', 'btn-disabled');
     $("#searchBtn").prop("disabled", true);
     $("#searchBtn").attr('class', 'btn-disabled');
-    // Get previous settings
-    // TODO - async
-    $.ajax({
-        type: "POST",
-        url: DEV_ENV ? `${DEV_URL}/fetch` : `${PROD_URL}/fetch`,
-        headers: {
-            'x-extension-jwt': authObject.token,
-        },
-        dataType: "json",
-        data: {},
-        success: function(res) {
-            $('#backendMessage').html(res.configMessage)
-            savedData = res.data
-            if (savedData != null) {
-                restorePreviousSettings(savedData)
-            }
-            // Auto populate srcname with twitch name by default
-            if (savedData == null && !DEV_ENV) {
-                $.ajax({
-                    type: "GET",
-                    url: `https://api.twitch.tv/helix/users?id=${authObject.channelId}`,
-                    headers: {
-                        'Client-ID': authObject.clientId,
-                        'Authorization': `Bearer ${authObject.token}`
-                    },
-                    success: function(userObject) {
-                        $('#srcName').val(userObject.data[0].display_name)
-                    }
-                })
-            }
 
-            $('#saveBtn').prop("disabled", false)
-            $("#saveBtn").attr('class', 'btn-warning');
-            $("#searchBtn").prop("disabled", false);
-            $("#searchBtn").attr('class', 'btn-primary');
+    // Get previous settings
+    var backendFetchUrl = DEV_ENV ? `${DEV_URL}/fetch` : `${PROD_URL}/fetch`;
+    var response = await fetch(backendFetchUrl, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'x-extension-jwt': authObject.token
         },
-        error: function() {
-            $('#saveBtn').prop("disabled", true); // TODO - This should be true... if we get back nothing they need to enter a valid SRC name.  This should have an error as well
-            $("#saveBtn").attr('class', 'btn-warning');
-            $("#searchBtn").prop("disabled", false);
-            $("#searchBtn").attr('class', 'btn-primary');
-        }
     });
+
+    // TODO - error handling on await calls https://alligator.io/js/fetch-api/
+    if (response.ok) {
+        var responseData = await response.json();
+        $('#backendMessage').html(responseData.configMessage)
+        savedData = responseData.data
+        if (savedData != null) {
+            restorePreviousSettings(savedData)
+        }
+        // Auto populate srcname with twitch name by default
+        // TODO - mock twitch environment
+        if (savedData == null && !DEV_ENV) {
+            var twitchResponse = await fetch(`https://api.twitch.tv/helix/users?id=${authObject.channelId}`, {
+                method: "GET",
+                headers: {
+                    'Client-ID': authObject.clientId,
+                    'Authorization': `Bearer ${authObject.token}`
+                }
+            });
+            if (twitchResponse.ok) {
+                var twitchResponseData = await twitchResponse.json();
+                $('#srcName').val(twitchResponseData.data[0].display_name)
+            }
+        }
+        $('#saveBtn').prop("disabled", false)
+        $("#saveBtn").attr('class', 'btn-warning');
+        $("#searchBtn").prop("disabled", false);
+        $("#searchBtn").attr('class', 'btn-primary');
+    } else {
+        $('#saveBtn').prop("disabled", true); // TODO - This should be true... if we get back nothing they need to enter a valid SRC name.  This should have an error as well
+        $("#saveBtn").attr('class', 'btn-warning');
+        $("#searchBtn").prop("disabled", false);
+        $("#searchBtn").attr('class', 'btn-primary');
+    }
 }
 
 function toggleButton(element, config) {
-    config ? element.addClass('active'): element.removeClass('active');
+    config ? element.addClass('active') : element.removeClass('active');
 }
 
 function restorePreviousSettings(savedData) {
@@ -144,7 +146,7 @@ function restorePreviousSettings(savedData) {
         for (var j = 0; j < games[i].miscCategoryNames.length; j++) {
             categories.push({
                 name: games[i].miscCategoryNames[j],
-                id: games[i].categories[offset+j],
+                id: games[i].categories[offset + j],
                 isMisc: true
             })
         }
@@ -173,107 +175,7 @@ function setError(string) {
     )
 }
 
-var gameList = []
-var ajaxCalls = []
-
-function getGameName(url, gameID) {
-    ajaxCalls.push($.getJSON(url, function(json) {
-        game = json.data
-        index = gameList.findIndex(x => x.id === gameID)
-        gameList[index].name = game.names.international
-    }))
-}
-
-function getCategories(url, gameID) {
-    ajaxCalls.push($.getJSON(url, function(json) {
-        categories = json.data
-        index = gameList.findIndex(x => x.id === gameID)
-        if (gameList[index].categories == null)
-            gameList[index].categories = []
-        for (let category of categories) {
-            if (category.type != "per-level") {
-                gameList[index].categories.push({
-                    id: category.id,
-                    name: category.name,
-                    isMisc: category.miscellaneous == true
-                })
-            }
-        }
-    }))
-}
-
-function getLevels(url, gameID) {
-    ajaxCalls.push($.getJSON(url, function(json) {
-        levels = json.data
-        index = gameList.findIndex(x => x.id === gameID)
-        if (gameList[index].levels == null)
-            gameList[index].levels = []
-        for (let level of levels) {
-            gameList[index].levels.push({
-                id: level.id,
-                name: level.name
-            })
-        }
-    }))
-}
-
-function populateGameList(json) {
-
-    personalBests = json.data
-    for (let pb of personalBests) {
-        // Not added yet
-        if (gameList.findIndex(x => x.id === pb.run.game) <= -1) {
-            gameList.push({
-                id: pb.run.game,
-                name: null
-            })
-        }
-    }
-
-    // TODO support pagination for people who have an absurd number of runs
-    // Get the names for all the games we added
-    for (let game of gameList) {
-        getGameName(`https://www.speedrun.com/api/v1/games/${game.id}`, game.id)
-        getCategories(`https://www.speedrun.com/api/v1/games/${game.id}/categories?orderby=name&max=200`, game.id)
-        getLevels(`https://www.speedrun.com/api/v1/games/${game.id}/levels?orderby=name&max=200`, game.id)
-    }
-
-    $.when.apply(null, ajaxCalls).done(function() {
-        ajaxCalls = []
-
-        // Wipe Any Existing Games
-        $("#gameList").html('')
-
-        // Display The Games
-        for (let game of gameList) {
-            addGameToList(game, false, false)
-        }
-        // Disable the spinner
-        $('.spinnerWrapper').remove();
-        $('#saveBtn').prop("disabled", false)
-        $("#saveBtn").attr('class', 'btn-warning');
-        $("#searchBtn").prop("disabled", false);
-        $("#searchBtn").attr('class', 'btn-primary');
-    })
-}
-
-function segregateCategories(game) {
-    var miscCategories = [];
-    var filteredCategories = [];
-    for (var i = 0; i < game.categories.length; i++) {
-        if (game.categories[i].isMisc) {
-            miscCategories.push(game.categories[i]);
-        } else {
-            filteredCategories.push(game.categories[i]);
-        }
-    }
-    game.miscCategories = miscCategories;
-    game.categories = filteredCategories;
-}
-
 async function addGameToList(game, removeBoxChecked, expandBoxChecked) {
-
-    segregateCategories(game);
 
     await gameTemplatePromise;
     $('#gameList').append(Mustache.render(templates['gameTemplate'], {
@@ -313,54 +215,72 @@ async function addGameToList(game, removeBoxChecked, expandBoxChecked) {
     $("#gameList").sortable({});
 }
 
-// TODO - embeds?
-function getGameList() {
-    $.ajax({
-        url: "https://www.speedrun.com/api/v1/users/" + srcID + "/personal-bests",
-        dataType: "json",
-        success: function(data) {
-            populateGameList(data)
+function populateGameList(personalBests) {
+    // TODO support pagination for people who have an absurd number of runs
+    Object.keys(personalBests).forEach(function(gameID) {
+        var runsInGame = personalBests[gameID];
+        // Ensure the game has not been added yet
+        if (gameList.findIndex(x => x.id === gameID) <= -1) {
+            var gameName = "";
+            var categories = [];
+            var miscCategories = [];
+            var levels = [];
+            if (runsInGame.length >= 0) {
+                gameName = runsInGame[0].gameName;
+                for (var i = 0; i < runsInGame.length; i++) {
+                    var run = runsInGame[i];
+                    // TODO - assuming the name doesnt change (it really shouldn't)
+                    gameName = run.gameName;
+                    // TODO - not currently supporting hiding subcategories (i think)
+                    // It can be done, but for now ensure we don't add a category twice
+                    if (run.isMisc && miscCategories.findIndex(y => y.id === run.categoryID) <= -1) {
+                        miscCategories.push({
+                            id: run.categoryID,
+                            name: run.categoryName
+                        });
+                    } else if (run.isLevel && levels.findIndex(y => y.id === run.levelID) <= -1) {
+                        levels.push({
+                            id: run.levelID,
+                            name: run.categoryName
+                        });
+                    } else if (categories.findIndex(y => y.id === run.categoryID) <= -1) {
+                        categories.push({
+                            id: run.categoryID,
+                            name: run.categoryName
+                        });
+                    }
+                }
+
+                gameList.push({
+                    id: gameID,
+                    name: gameName,
+                    categories: categories,
+                    miscCategories: miscCategories,
+                    levels: levels
+                })
+            }
         }
     });
-}
 
-function printResults(json) {
-    var data = json.data
+    // Wipe Any Existing Games
+    $("#gameList").html('');
 
-    // No name found
-    if (data.length <= 0) {
-        setError("No one found on Speedrun.com by that name!")
-        $("#searchBtn").prop("disabled", false);
-        $("#searchBtn").attr('class', 'btn-primary');
-        $('.spinnerWrapper').remove();
-        return;
+    // Display The Games
+    for (let game of gameList) {
+        addGameToList(game, false, false);
     }
-    // More than 1 result, not going to handle this, so be more specific please
-    else if (data.length > 1) {
-        setError("Found too many users by that name, be more specific!")
-        $("#searchBtn").prop("disabled", false);
-        $("#searchBtn").attr('class', 'btn-primary');
-        $('.spinnerWrapper').remove();
-        return;
-    }
-
-    // K we are fine then, get the ID
-    srcID = data[0].id;
-    // Populate the game list
-    getGameList();
+    // Disable the spinner
+    $('.spinnerWrapper').remove();
+    $('#saveBtn').prop("disabled", false);
+    $("#saveBtn").attr('class', 'btn-warning');
+    $("#searchBtn").prop("disabled", false);
+    $("#searchBtn").attr('class', 'btn-primary');
 }
 
-function searchForUser(name) {
-    $.ajax({
-        url: `https://www.speedrun.com/api/v1/users?lookup=${name}`,
-        dataType: "json",
-        success: function(data) {
-            printResults(data)
-        }
-    });
-}
+// TODO - what happens if a category/level is deleted from a leaderboard?
+// the frontend should probably check / ignore it
 
-$("#searchBtn").click(function() {
+async function findGames(runnerName) {
     // Clean Potential Previous State
     $("#sortableGames").html('')
     srcID = null;
@@ -393,10 +313,39 @@ $("#searchBtn").click(function() {
     $("#gamesHeader").html(
         `<h3 class="config">Game List (Reorderable and Toggleable)</h3><br>`
     )
-    searchForUser($("#srcName").val())
+
+    // Lookup Username on Speedrun.com
+    var runnerData = await lookupSpeedrunner(runnerName);
+
+    // No name found
+    if (runnerData.length <= 0) {
+        setError("No one found on Speedrun.com by that name!")
+        $("#searchBtn").prop("disabled", false);
+        $("#searchBtn").attr('class', 'btn-primary');
+        $('.spinnerWrapper').remove();
+        return;
+    }
+    // More than 1 result, not going to handle this, so be more specific please
+    else if (runnerData.length > 1) {
+        setError("Found too many users by that name, be more specific!")
+        $("#searchBtn").prop("disabled", false);
+        $("#searchBtn").attr('class', 'btn-primary');
+        $('.spinnerWrapper').remove();
+        return;
+    }
+
+    // Otherwise, we are fine to continue
+    var srcID = runnerData[0].id;
+    var personalBests = [];
+    await getPersonalBests(srcID, null, personalBests, true);
+    populateGameList(personalBests);
+}
+
+$("#searchBtn").click(async function () {
+    findGames($("#srcName").val());
 })
 
-$('#panelTitleBackgroundType').change(function() {
+$('#panelTitleBackgroundType').change(function () {
     value = $('#panelTitleBackgroundType').val().trim()
     // Clear Container
     $('#colorPickerContainer').html('')
@@ -412,7 +361,7 @@ $('#panelTitleBackgroundType').change(function() {
     }
 })
 
-$('#themeSelector').change(function() {
+$('#themeSelector').change(function () {
     value = $('#themeSelector').val().trim()
     if (value == 'default') {
         injectSettings(defaultTheme)
@@ -441,7 +390,7 @@ function spawnGradientColorPicker(label1, label2, color1, color2) {
     )
 }
 
-$("#saveBtn").click(function() {
+$("#saveBtn").click(function () {
 
     // Check to see if we can actually save or not
     if (gameList == []) {
@@ -470,7 +419,7 @@ $("#saveBtn").click(function() {
     settings = extractSettings()
 
     gamesToSend = []
-    $('#gameList').find('.game').each(function() {
+    $('#gameList').find('.game').each(function () {
         var currentGame = $(this)
         var checkbox = currentGame.find('.displayBox')
         if (checkbox.is(':checked') == false) {
@@ -482,10 +431,10 @@ $("#saveBtn").click(function() {
             miscCategoryNames = []
             levels = []
             levelNames = []
-            $(currentGame).find('.categoryList').each(function() {
-                $(this).find('.optionRow').each(function() {
+            $(currentGame).find('.categoryList').each(function () {
+                $(this).find('.optionRow').each(function () {
                     name = ""
-                    $(this).find('p').each(function() {
+                    $(this).find('p').each(function () {
                         name = $(this).text().trim()
                     })
                     info = $(this).find('input')
@@ -495,10 +444,10 @@ $("#saveBtn").click(function() {
                     }
                 })
             })
-            $(currentGame).find('.miscList').each(function() {
-                $(this).find('.optionRow').each(function() {
+            $(currentGame).find('.miscList').each(function () {
+                $(this).find('.optionRow').each(function () {
                     name = ""
-                    $(this).find('p').each(function() {
+                    $(this).find('p').each(function () {
                         name = $(this).text().trim()
                     })
                     info = $(this).find('input')
@@ -508,10 +457,10 @@ $("#saveBtn").click(function() {
                     }
                 })
             })
-            $(currentGame).find('.levelList').each(function() {
-                $(this).find('.optionRow').each(function() {
+            $(currentGame).find('.levelList').each(function () {
+                $(this).find('.optionRow').each(function () {
                     name = ""
-                    $(this).find('p').each(function() {
+                    $(this).find('p').each(function () {
                         name = $(this).text().trim()
                     })
                     info = $(this).find('input')
@@ -550,7 +499,7 @@ function sendResult(gamesToSend, settings) {
             srcName: srcName,
             games: JSON.stringify(gamesToSend)
         },
-        success: function(res) {
+        success: function (res) {
             if (res.status == 501) {
                 setError("Saving Error: Database Error, Contact Extension Developer")
             } else {
@@ -560,30 +509,30 @@ function sendResult(gamesToSend, settings) {
                 // renderPreview(authObject)
             }
         },
-        error: function() {
+        error: function () {
             setError("ERROR: An Unexpected Error Occurred, Contact Extension Developer")
         }
     });
 }
 
-document.getElementById('exportSettings').onclick = function(){
-    var blob = new Blob([JSON.stringify(extractSettings())], {type: "text/plain;charset=utf-8"});
+document.getElementById('exportSettings').onclick = function () {
+    var blob = new Blob([JSON.stringify(extractSettings())], { type: "text/plain;charset=utf-8" });
     saveAs(blob, "src-ext-backup-settings.json");
 }
 
-document.getElementById('importSettings').onchange = function(){
+document.getElementById('importSettings').onchange = function () {
     var file = this.files[0];
     var reader = new FileReader();
-    reader.onload = function(progressEvent){
-    // Entire file
-    var jsonString = this.result;
-    try {
-        settings = JSON.parse(jsonString);
-        injectSettings(settings)
-    }
-    catch (e) {
-        setError("ERROR: Invalid/Outdated Settings File!")
-    }
+    reader.onload = function (progressEvent) {
+        // Entire file
+        var jsonString = this.result;
+        try {
+            settings = JSON.parse(jsonString);
+            injectSettings(settings)
+        }
+        catch (e) {
+            setError("ERROR: Invalid/Outdated Settings File!")
+        }
     };
     reader.readAsText(file);
 };
