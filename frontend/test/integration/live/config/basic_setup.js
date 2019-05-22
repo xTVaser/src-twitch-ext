@@ -93,5 +93,3 @@ describe('Verify Frontend Renders as Expected', function() {
     await chai.expect('[data-test=panelTitle]').dom.to.have.value("Test Title");
   });
 });
-
-

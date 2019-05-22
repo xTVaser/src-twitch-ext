@@ -44,19 +44,20 @@ async function getPersonalBests(srcID, trackedGames, personalBests, bypassFilter
                 subcategoryName = variables[j].values.values[subcategoryVal].label
             }
         }
-        categoryName = run.level == null ? category.name : level.name;
 
         personalBests[run.game].push({
             gameId: run.game, // laziness, but with good intentions
             // TODO - added, this shouldnt cause problems but...yet to see for sure
             gameName: game.names.international,
             categoryID: run.category,
-            categoryName: categoryName,
-            categoryLink: category.weblink,
+            categoryName: category.name,
+            // BUG - workaround for SRC bug
+            categoryLink: (run.level == null) ? category.weblink : `${level.weblink}#${category.name}`,
             subcategoryName: subcategoryName,
             subcategoryID: subcategoryID, // may not exist, will leave null if that is the case
             subcategoryVal: subcategoryVal, // may not exist, will leave null if that is the case
             levelID: run.level, // will be null if not a level
+            levelName: level.name,
             levelSubcategoryName: subcategoryName,
             variables: run.values, // We have no guarantee which variables are subcategories or not until we check
             pbTime: run.times.primary_t,
@@ -72,20 +73,31 @@ async function getPersonalBests(srcID, trackedGames, personalBests, bypassFilter
 
 /// Viewer-Only functions
 
-// NOTE: this is needed as we want to truncate the category from the name
-// if it wasnt, then this step could be avoided with the embed query
+// TODO - may move this into the above function
+
+// TODO - Not checking to see how many categories a level has to reduce API calls
+// previously we'd investigate to see if a level only had 1 category, if so we'd hide it
+// however this really isnt' worth encuring the cost.  If we really want this, perhaps we can query each _game_ once rather than each level
+// This could be a toggable option, I'm imagining most leaderboards have multiple categories anyway
 async function resolveSubcategoryNames(personalBests) {
     gameIDs = Object.keys(personalBests);
     for (var i = 0; i < gameIDs.length; i++) {
         for (var j = 0; j < personalBests[gameIDs[i]].length; j++) {
             currentPBEntry = personalBests[gameIDs[i]][j];
+            // TODO - this should probably be done in templating later rather than overwriting values here
             if (currentPBEntry.isLevel) {
-                // TODO - I believe these API calls can be deleted, although I'd like to wait till I have some unit-tests / functional tests around it before changing
-                // the SM64 IL board is a good one to test with (many levels, each with sub categories)
-                levelCategoryAPILink = `https://www.speedrun.com/api/v1/levels/${currentPBEntry.levelID}/categories`;
-                // TODO - currently not performant, calls should be spawned in parallel and https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
-                await getLevelCategories(levelCategoryAPILink, currentPBEntry);
+                // NOTE - I deleted API calls here despite the SRC API issue, this should be fine and I work-around this small issue above
+                // BUG - bug in category embed, weblink = game URL for levels
+                if (currentPBEntry.categoryName != "") {
+                    currentPBEntry.categoryName = `${currentPBEntry.levelName} - ${currentPBEntry.categoryName}`;
+                } else {
+                    currentPBEntry.categoryName = currentPBEntry.levelName;
+                }
+                if (currentPBEntry.subcategoryName != "") {
+                    currentPBEntry.categoryName += ` - ${currentPBEntry.subcategoryName}`;
+                }
             }
+            // TODO - this should probably be done in templating later rather than overwriting values here
             else if (currentPBEntry.subcategoryName != "") {
                 // just append the subcategory
                 currentPBEntry.categoryName += " - " + currentPBEntry.subcategoryName;
@@ -94,31 +106,9 @@ async function resolveSubcategoryNames(personalBests) {
     }
 }
 
-// This can probably be done in parallel with getWorldRecords
-async function getLevelCategories(url, currentPBEntry) {
-    var response = await fetch(url);
-    // TODO - currently assuming the request was successful, should detect problems with SRC's API
-    var category = (await response.json()).data;
-    categories = category
-    for (var i = 0; i < categories.length; i++) {
-        if (categories[i].id == currentPBEntry.categoryID) {
-            category = categories[i]
-        }
-    }
-    // if there is only one category, then we can omit the name
-    if (categories.length > 1 && currentPBEntry.subcategoryName != "") {
-        currentPBEntry.categoryName += " - " + currentPBEntry.subcategoryName + " - " + category.name
-    }
-    else if (categories.length > 1 && currentPBEntry.subcategoryName == "") {
-        currentPBEntry.categoryName += " - " + category.name
-    }
-    // overwrite
-    currentPBEntry.categoryLink = category.weblink
-    currentPBEntry.isMisc = category.miscellaneous
-}
-
 // TODO - If Speedrun.com ever allows you to get the top runs on more than 1 category/level, then this doesn't have to be a million requests
 async function getWorldRecords(personalBests) {
+    reqs = [];
     gameIDs = Object.keys(personalBests)
     // format for api link                          v if not null v
     //.../gameid/category/categoryid?top=1&var-subcategoryid=subcategoryvalue
@@ -136,10 +126,10 @@ async function getWorldRecords(personalBests) {
             if (currentPBEntry.subcategoryID != null) {
                 requestURL += `&var-${currentPBEntry.subcategoryID}=${currentPBEntry.subcategoryVal}`
             }
-            // TODO - currently not performant, calls should be spawned in parallel and https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
-            await examineWorldRecordEntry(requestURL, currentPBEntry)
+            reqs.push(examineWorldRecordEntry(requestURL, currentPBEntry));
         }
     }
+    await Promise.all(reqs);
 }
 
 async function examineWorldRecordEntry(url, currentPBEntry) {

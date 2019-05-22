@@ -1,14 +1,20 @@
-/// Debug Vars
-var debug = false;
-
-// TODO - detect if older browser and if so, display an upfront error
-// - async functions - https://caniuse.com/#search=await 
+// TODO - detect if older browser and if so, display an upfront error / add poly-fills if available
+// - async functions - https://caniuse.com/#search=await
 // - fetch API - https://caniuse.com/#search=fetch / https://github.com/github/fetch
-// - 
 
 /// Javascript to render the personal bests on the channel page
+
+// This is to solve issues specifically with hosting, where the authorized event fires
+// multiple times, causing the panel to render more than once
 var loaded = false
 
+// Detect if we are running locally (dev) or in a deployed env.
+var DEV_URL = "http://localhost:8081";
+var DEV_ENV = window.location.href.startsWith("http://localhost");
+
+var PROD_URL = "https://extension.xtvaser.xyz";
+
+var authObject = null;
 var games
 var settings
 var srcID
@@ -35,80 +41,66 @@ async function renderSpinner() {
     $(".frameWrapper").append(Mustache.render(templates['spinnerTemplate']));
 }
 
-$(document).ready(function() {
+if (DEV_ENV) {
+    $(document).ready(function () {
+        authObject = {
+            "channelId": "test123",
+            "clientId": "test123",
+            // Token Contents, signed with "password123":
+            // {
+            //     "channel_id": "test123"
+            // }
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjaGFubmVsX2lkIjoidGVzdDEyMyJ9.kfCD7f2bKwBtdXJfhQbEzv5OZHqgRKbl6Qn8-1taqlA"
+        };
+        renderViewer();
+    });
+}
 
+
+window.Twitch.ext.onAuthorized(function (auth) {
+    authObject = auth;
+    renderViewer();
+});
+
+async function renderViewer() {
     renderSpinner();
-    if (debug == true) {
-        console.log('The JWT that will be passed to the EBS is', auth.token);
-        console.log('The channel ID is', auth.channelId);
-    }
-
     if (loaded == true) {
         return;
     }
-    loaded = true
-    for (var i = 1; i <= 8; i++) {
-        var random_color = '#'+Math.floor(Math.random()*16777215).toString(16);
-        $(`div.spinner i:nth-child(${i})`).css('border-color', random_color);
+    loaded = true;
+
+    if (DEV_ENV) {
+        console.log('The JWT that will be passed to the EBS is', authObject.token);
+        console.log('The channel ID is', authObject.channelId);
     }
 
-    res = {
-        "status": 200,
-        "message": "Retrieved Data Successfully",
-        "data": {
-            "settings": "{\"title\":\"My Personal Bests\",\"panelTitleHeight\":\"100\",\"panelTitleTextShadow\":false,\"panelTitleBackgroundType\":\"vGradient\",\"panelTitleBackgroundColor1\":\"#0000ff\",\"panelTitleBackgroundColor2\":\"#000000\",\"panelTitleFontBold\":false,\"panelTitleFontItalic\":false,\"panelTitleFontSize\":\"30\",\"panelTitleFontColor\":\"#ffffff\",\"panelTitleFontFamily\":\"Roboto Condensed\",\"panelTitleHeightPercentage\":\"75\",\"panelTitleShadow\":false,\"categoryHeaderFontBold\":false,\"categoryHeaderFontItalic\":false,\"categoryHeaderFontSize\":\"14\",\"categoryHeaderFontColor\":\"#ffffff\",\"categoryHeaderFontFamily\":\"Roboto Condensed\",\"pbHeaderFontBold\":false,\"pbHeaderFontItalic\":false,\"pbHeaderFontSize\":\"14\",\"pbHeaderFontColor\":\"#ffffff\",\"pbHeaderFontFamily\":\"Roboto Condensed\",\"wrHeaderFontBold\":false,\"wrHeaderFontItalic\":false,\"wrHeaderFontSize\":\"14\",\"wrHeaderFontColor\":\"#ffffff\",\"wrHeaderFontFamily\":\"Roboto Condensed\",\"hideWR\":false,\"wrRainbow\":false,\"panelTitleDivHeight\":\"5\",\"panelTitleDivColor\":\"#00ff00\",\"panelTitleDivBottomMargin\":\"0\",\"gameTitleFontBold\":false,\"gameTitleFontItalic\":false,\"gameTitleFontSize\":\"19\",\"gameTitleFontColor\":\"#ffffff\",\"gameTitleFontFamily\":\"Roboto Condensed\",\"expandContractColor\":\"#ffffff\",\"gameCategoryFontBold\":false,\"gameCategoryFontItalic\":false,\"gameCategoryFontSize\":\"14\",\"gameCategoryFontColor\":\"#f1eecb\",\"gameCategoryFontFamily\":\"Roboto Condensed\",\"gameCategoryBottomMargin\":\"0\",\"pbFontBold\":false,\"pbFontItalic\":false,\"pbFontSize\":\"15\",\"pbFontColor\":\"#ffffff\",\"pbFontFamily\":\"Roboto Condensed\",\"wrFontBold\":false,\"wrFontItalic\":false,\"wrFontSize\":\"15\",\"wrFontColor\":\"#f3e221\",\"wrFontFamily\":\"Roboto Condensed\",\"miscHeaderFontBold\":false,\"miscHeaderFontItalic\":false,\"miscHeaderFontSize\":\"15\",\"miscHeaderFontColor\":\"#ffffff\",\"miscHeaderFontFamily\":\"Roboto Condensed\",\"miscHeaderBottomMargin\":\"0\",\"miscShow\":true,\"miscSep\":true,\"ilHeaderFontBold\":false,\"ilHeaderFontItalic\":false,\"ilHeaderFontSize\":\"15\",\"ilHeaderFontColor\":\"#ffffff\",\"ilHeaderFontFamily\":\"Roboto Condensed\",\"ilHeaderBottomMargin\":\"0\",\"ilShow\":true,\"ilSep\":true,\"gameDivHeight\":\"5\",\"gameDivColor\":\"#ff8000\",\"gameDivBottomMargin\":\"5\",\"panelBackgroundColor\":\"#101010\",\"scrollbarWidth\":\"5\",\"scrollbarOpacity\":\"100\",\"scrollbarColor\":\"#424242\"}",
-            "games": "[{\"name\":\"Jak II\",\"id\":\"ok6qlo1g\",\"shouldExpand\":true,\"categories\":[\"mkeon9d6\",\"7dg8q424\",\"wdmze42q\",\"xd1rxxrk\",\"vdo0jodp\",\"wkpj7vkr\"],\"categoryNames\":[\"All Missions\",\"100%\",\"Any%\",\"Any% Hoverless\"],\"miscCategoryNames\":[\"Any% Hero Mode\",\"Any% All Orbs\"],\"levels\":[\"nwl7n2p9\",\"ldypj3jd\",\"gdrqgy89\",\"ywe8nqqw\",\"69z4x86w\",\"nwl7kg9v\",\"r9g27opd\",\"z98jv1wl\",\"gdrqkk9z\",\"n9305r90\",\"ldye77w3\",\"rw6vp697\",\"rdn5j6dm\",\"ywe8z4wl\"],\"levelNames\":[\"Blow up Strip Mine Eco Wells\",\"Beat Time to Race Garage\",\"Catch Scouts in Haven Forest\",\"Destroy Cargo in Port\",\"Destroy Equipment at Dig Site\",\"Erol Race\",\"Lifeseed Ghosttown\",\"NYFE-Race Class 1\",\"NYFE-Race Class 1 Reverse\",\"NYFE-Race Class 2\",\"NYFE-Race Class 2 Reverse\",\"NYFE-Race Class 3\",\"NYFE-Race Class 3 Reverse\",\"Port Race\"]},{\"name\":\"Jak II Flashgame\",\"id\":\"3692x0dl\",\"shouldExpand\":false,\"categories\":[\"5dwj1o0k\",\"z27gv7o2\"],\"categoryNames\":[\"Any%\",\"Any% Hero Mode\"],\"miscCategoryNames\":[],\"levels\":[],\"levelNames\":[]}]",
-            "srcID": "e8envo80",
-            "srcName": "xTVaser"
+    // Get previous settings
+    var backendFetchUrl = DEV_ENV ? `${DEV_URL}/fetch` : `${PROD_URL}/fetch`;
+    var response = await fetch(backendFetchUrl, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'x-extension-jwt': authObject.token
         },
-        "configMessage": "Speedrun.com's API has been very slow / failing to return quite a lot recently.  This will hopefully be mitigated in the future but it is largely out of my control, sorry.  Finding games may take several re-attempts.",
-        "panelMessage": "Speedrun.com's API has been experiencing problems, Loading will unfortunately be slow or fail at times."
-    };
-    if (res.hasOwnProperty('data') == true) {
-        $('.spinnerError').html(res.panelMessage)
-        games = JSON.parse(res.data.games)
-        settings = JSON.parse(res.data.settings)
-        srcID = res.data.srcID
-        srcName = res.data.srcName
-        hidePBs = res.data.hidePBs
-        gatherSpeedrunData();
-    } else {
-        $('.spinnerError').html('Extension not Configured')
+    });
+
+    // TODO - error handling on await calls https://alligator.io/js/fetch-api/
+    // - $('.spinnerError').html('Extension Error')
+    if (response.ok) {
+        var resp = await response.json();
+        if (resp.hasOwnProperty('data') == true) {
+            $('.spinnerError').html(resp.panelMessage)
+            games = JSON.parse(resp.data.games)
+            settings = JSON.parse(resp.data.settings)
+            srcID = resp.data.srcID
+            srcName = resp.data.srcName
+            hidePBs = resp.data.hidePBs
+            await gatherSpeedrunData();
+        } else {
+            $('.spinnerError').html('Extension not Configured')
+        }
     }
-    // TODO - fetch not AJAX
-    // $.ajax({
-    //     type: "POST",
-    //     url: "https://extension.xtvaser.xyz/fetch",
-    //     headers: {
-    //         'x-extension-jwt': auth.token,
-    //     },
-    //     dataType: "json",
-    //     data: {},
-    //     success: function(res) {
-    //         if (res.hasOwnProperty('data') == true) {
-    //             $('.spinnerError').html(res.panelMessage)
-    //             games = JSON.parse(res.data.games)
-    //             settings = JSON.parse(res.data.settings)
-    //             srcID = res.data.srcID
-    //             srcName = res.data.srcName
-    //             hidePBs = res.data.hidePBs
-    //             // First we will get all the runner's personal bests
-    //             $.ajax({
-    //                 url: "https://www.speedrun.com/api/v1/users/" + srcID + "/personal-bests?embed=category.variables,level.variables",
-    //                 dataType: "json",
-    //                 success: function(data) {
-    //                     getPersonalBests(data)
-    //                 }
-    //             });
-    //         } else {
-    //             $('.spinnerError').html('Extension not Configured')
-    //         }
-    //     },
-    //     error: function() {
-    //         $('.spinnerError').html('Extension Error')
-    //     }
-    // });
-});
+}
 
 async function gatherSpeedrunData() {
     await getPersonalBests(srcID, games, personalBests);
