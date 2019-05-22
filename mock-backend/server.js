@@ -7,7 +7,7 @@ const striptags = require("striptags");
 const jwt = require('jsonwebtoken');
 
 // Instantiates a client
-const datastore = {};
+var datastore = {};
 const app = express();
 const PORT = 8081;
 
@@ -92,6 +92,14 @@ class Channel {
         ];
     }
 }
+
+app.get("/reset", function (req, res) {
+    datastore = {};
+    var response = {
+        status: 200
+    };
+    res.send(response);
+});
 
 app.options("/save", function (req, res) {
     var params = {

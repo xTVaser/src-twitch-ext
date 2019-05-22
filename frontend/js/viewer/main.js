@@ -31,7 +31,7 @@ var templates = {
     'gameTemplate': undefined
 }
 
-var spinnerTemplatePromise = fetchMustacheTemplate("js/viewer/templates/spinner.mst", 'spinnerTemplate');
+var spinnerTemplatePromise = fetchMustacheTemplate("js/common/templates/spinner.mst", 'spinnerTemplate');
 var titleTemplatePromise = fetchMustacheTemplate("js/viewer/templates/title.mst", 'titleTemplate');
 var headerTemplatePromise = fetchMustacheTemplate("js/viewer/templates/headers.mst", 'headerTemplate');
 var gameTemplatePromise = fetchMustacheTemplate("js/viewer/templates/game.mst", 'gameTemplate');

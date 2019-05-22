@@ -1,3 +1,5 @@
+const request = require('request-promise');
+
 var lib = require("../../common");
 
 var browser = lib.driver;
@@ -5,6 +7,8 @@ var chai = lib.chai;
 var selenium = lib.selenium;
 
 var expectations = {
+  panelTitle: "Test Title",
+  srcName: "xTVaser",
   games: []
 };
 
@@ -14,6 +18,7 @@ var expectations = {
 describe('Initial Panel Setup', function() {
   before('Load Configuration Page', async function() {
     await browser.get('http://localhost:8080/config');
+    await request('http://localhost:8081/reset');
   });
 
   beforeEach('Deliberate delay between test actions', async function() {
@@ -22,15 +27,14 @@ describe('Initial Panel Setup', function() {
 
   it('Modify Panel Title', async function() {
     await browser.findElement({xpath: '//*[@data-test="panelTitle"]'}).clear();
-    await browser.findElement({xpath: '//*[@data-test="panelTitle"]'}).sendKeys("Test Title");
-    await chai.expect('[data-test=panelTitle]').dom.to.have.value("Test Title");
-    expectations.panelTitle = "Test Title";
+    await browser.findElement({xpath: '//*[@data-test="panelTitle"]'}).sendKeys(expectations.panelTitle);
+    await chai.expect('[data-test=panelTitle]').dom.to.have.value(expectations.panelTitle);
   });
 
   it('Set Speedrun.com Name', async function() {
     await browser.findElement({xpath: '//*[@data-test="srcName"]'}).clear();
-    await browser.findElement({xpath: '//*[@data-test="srcName"]'}).sendKeys("xTVaser");
-    await chai.expect('[data-test=srcName]').dom.to.have.value("xTVaser");
+    await browser.findElement({xpath: '//*[@data-test="srcName"]'}).sendKeys(expectations.srcName);
+    await chai.expect('[data-test=srcName]').dom.to.have.value(expectations.srcName);
   });
 
   it('Verify Speedrun.com validity, search for games', async function() {
@@ -42,7 +46,7 @@ describe('Initial Panel Setup', function() {
   });
 
   it('Attempt to Save', async function() {
-    var elem = await browser.findElement({xpath: '//*[@data-test="saveBtn"]'});
+    var elem = await browser.findElement(lib.findByDataTestAttrib("saveBtn"));
     await browser.wait(selenium.until.elementIsEnabled(elem));
     await browser.findElement({xpath: '//*[@data-test="saveBtn"]'}).click();
     await chai.expect('[data-test=errorDialog]').dom.to.contain.text("SUCCESS: Saved Successfully!");
@@ -76,8 +80,8 @@ describe('Initial Panel Setup', function() {
 
   it('Reload Page and Ensure Settings Saved', async function() {
     await browser.navigate().refresh();
-    await chai.expect('[data-test=panelTitle]').dom.to.have.value("Test Title");
-    await chai.expect('[data-test=srcName]').dom.to.have.value("xTVaser");
+    await chai.expect('[data-test=panelTitle]').dom.to.have.value(expectations.panelTitle);
+    await chai.expect('[data-test=srcName]').dom.to.have.value(expectations.srcName);
   });
 });
 
@@ -87,9 +91,7 @@ describe('Verify Frontend Renders as Expected', function() {
   });
 
   it('Modify Panel Title', async function() {
-    console.log(expectations);
-    await browser.findElement({xpath: '//*[@data-test="panelTitle"]'}).clear();
-    await browser.findElement({xpath: '//*[@data-test="panelTitle"]'}).sendKeys("Test Title");
-    await chai.expect('[data-test=panelTitle]').dom.to.have.value("Test Title");
+    await browser.wait(selenium.until.elementLocated(lib.findByDataTestAttrib("panelTitle")));
+    await chai.expect('[data-test=panelTitle]').dom.to.have.text(expectations.panelTitle);
   });
 });
