@@ -335,7 +335,7 @@ async function findGames(runnerName) {
     }
 
     // Otherwise, we are fine to continue
-    var srcID = runnerData[0].id;
+    srcID = runnerData[0].id;
     var personalBests = [];
     await getPersonalBests(srcID, null, personalBests, true);
     populateGameList(personalBests);

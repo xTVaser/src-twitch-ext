@@ -112,7 +112,7 @@ app.use(
   })
 );
 
-app.options("/save", function(req, res) {
+app.options("/save", function (req, res) {
   var params = {
     ec: "Configuration",
     ea: "Pre-flight Handshake",
@@ -132,7 +132,7 @@ app.options("/save", function(req, res) {
   res.send(response);
 });
 
-app.post("/save", function(req, res) {
+app.post("/save", function (req, res) {
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization, X-Requested-With",
@@ -188,7 +188,7 @@ app.post("/save", function(req, res) {
     });
 });
 
-app.options("/fetch", function(req, res) {
+app.options("/fetch", function (req, res) {
   var params = {
     ec: "Panel",
     ea: "Pre-flight Handshake",
@@ -208,7 +208,7 @@ app.options("/fetch", function(req, res) {
   res.send(response);
 });
 
-app.post("/fetch", function(req, res) {
+app.post("/fetch", function (req, res) {
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization, X-Requested-With, x-extension-jwt"
@@ -278,6 +278,6 @@ let options = {
   key: fs.readFileSync("../certs/server.key")
 };
 
-https.createServer(options, app).listen(PORT, function() {
+https.createServer(options, app).listen(PORT, function () {
   console.log("Extension Boilerplate service running on https", PORT);
 });

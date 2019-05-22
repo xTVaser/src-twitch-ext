@@ -2,10 +2,10 @@
     <div class="row">
         <nav class="navbar navbar-default game">
             <div class="container-fluid">
-                <ul class="nav navbar-nav gameOptionContainer">
+                <ul class="nav navbar-nav gameOptionContainer" data-test="gameContainer">
                     {{! Name }}
                     <li>
-                        <input type="text" value="{{game.name}}" class="gameTitleBox">
+                        <input type="text" value="{{game.name}}" class="gameTitleBox" data-test="gameName">
                     </li>
                     {{! Options }}
                     <li class="dropdown optionList">
@@ -58,7 +58,7 @@
                             <li>
                                 <div class="row optionRow">
                                     <div class="col-md-8">
-                                        <p>{{name}}</p>
+                                        <p data-test="categoryName">{{name}}</p>
                                     </div>
                                     <div class="col-md-4 selectionContainer">
                                         <input type=checkbox value="{{id}}" checked>
@@ -89,7 +89,7 @@
                             <li>
                                 <div class="row optionRow">
                                     <div class="col-md-8">
-                                        <p>No Misc. Cats.</p>
+                                        <p data-test="miscCategoryName">No Misc. Cats.</p>
                                     </div>
                                 </div>
                             </li>
@@ -140,7 +140,7 @@
                             <li>
                                 <div class="row optionRow">
                                     <div class="col-md-8">
-                                        <p>{{name}}</p>
+                                        <p data-test="levelName">{{name}}</p>
                                     </div>
                                     <div class="col-md-4 selectionContainer">
                                         <input type=checkbox value="{{id}}" checked>
