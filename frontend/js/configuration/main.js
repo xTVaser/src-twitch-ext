@@ -72,7 +72,7 @@ async function renderConfigPage() {
         $('#backendMessage').html(responseData.configMessage)
         savedData = responseData.data
         if (savedData != null) {
-            restorePreviousSettings(savedData)
+            await restorePreviousSettings(savedData)
         }
         // Auto populate srcname with twitch name by default
         // TODO - mock twitch environment
@@ -99,13 +99,15 @@ async function renderConfigPage() {
         $("#searchBtn").prop("disabled", false);
         $("#searchBtn").attr('class', 'btn-primary');
     }
+    // Page Fully Loaded
+    $('body').append(`<div hidden="true" data-test="pageLoaded"></div>`);
 }
 
 function toggleButton(element, config) {
     config ? element.addClass('active') : element.removeClass('active');
 }
 
-function restorePreviousSettings(savedData) {
+async function restorePreviousSettings(savedData) {
 
     var settings = JSON.parse(savedData.settings)
     var games = JSON.parse(savedData.games)

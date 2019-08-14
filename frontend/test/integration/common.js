@@ -4,8 +4,10 @@ var chai = require('chai');
 var chaiWebdriver = require('chai-webdriver');
 
 // TODO - also test chrome!
+// TODO - https://opensource.zalando.com/zalenium/
 var driver = new sw.Builder()
   .withCapabilities(sw.Capabilities.firefox())
+  .usingWebDriverProxy("http://localhost:4444/wd/hub")
   .build()
 sw.promise.USE_PROMISE_MANAGER = false;
 
@@ -16,7 +18,7 @@ exports.sleep = function sleep(ms) {
 }
 
 exports.findByDataTestAttrib = function findByDataTestAttrib(dataTest) {
-  return { xpath: `//*[@data-test="${dataTest}"]` };
+  return { xpath: `.//*[@data-test="${dataTest}"]` };
 }
 
 exports.driver = driver;
