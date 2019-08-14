@@ -1,0 +1,62 @@
+version: 2.1
+
+commands:
+  early_return_for_forked_pull_requests:
+    description: >-
+      If this build is from a fork, stop executing the current job and return success.
+      This is useful to avoid steps that will fail due to missing credentials.
+    steps:
+      - run:
+          name: Early return if this build is from a forked PR
+          command: |
+            if [ -n "$CIRCLE_PR_NUMBER" ]; then
+              echo "Nothing to do for forked PRs, so marking this step successful"
+              circleci step halt
+            fi
+
+jobs:
+  checkout_code:
+    docker:
+      - image: circleci/node:10-browsers
+    working_directory: ~/build
+    steps:
+      - checkout
+      - save_cache:
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/build
+  integration_tests:
+    docker:
+      - image: circleci/node:10-browsers
+    working_directory: ~/build
+    steps:
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      # TODO - custom image with this stuff already pulled
+      - docker pull elgalu/selenium
+      - docker pull dosel/zalenium
+      - mkdir -p ./artifacts/videos
+      # TODO - docker compose
+      - pushd ./mock-backend && node ./server.js & && popd
+      - pushd ./frontend && node run local-server & && popd
+      - docker run --name zalenium -p 4444:4444 -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/videos:./videos -d
+      - pushd ./frontend && node run integration-tests & && popd
+      - docker stop zalenium
+      - store_artifacts:
+          path: ./artifacts
+
+workflows:
+  version: 2.1
+  build_salttoday:
+    jobs:
+      - checkout_code:
+          filters:
+            tags:
+              only: /.*/
+      - integration_tests:
+          filters:
+            tags:
+              only: /.*/
