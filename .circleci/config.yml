@@ -26,25 +26,52 @@ jobs:
           paths:
             - ~/build
   integration_tests:
-    docker:
-      - image: circleci/node:10-browsers
+    machine:
+      image: ubuntu-1604:201903-01
     working_directory: ~/build
     steps:
-      - setup_remote_docker:
-          docker_layer_caching: false
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-      # TODO - custom image with this stuff already pulled
-      - docker pull elgalu/selenium
-      - docker pull dosel/zalenium
-      - mkdir -p ./artifacts/videos
+      # https://github.com/ClouDesire/docusaurus/blob/ee11951336be3f64f5c6a25a8047bfeecc29fb43/website/blog/2018-11-21-upgrade-node-version-circleci.md
+      - run: |
+            echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
+            echo ' [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+      - run: |
+          nvm install v10
+          node -v
+          nvm alias default v10
+      - run: npm --version
+      - run: node --version
+      - run: docker pull elgalu/selenium
+      - run: docker pull dosel/zalenium
+      - run: mkdir -p ./artifacts/videos
       # TODO - docker compose
-      - pushd ./mock-backend && node ./server.js & && popd
-      - pushd ./frontend && node run local-server & && popd
-      - docker run --name zalenium -p 4444:4444 -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/videos:./videos -d
-      - pushd ./frontend && node run integration-tests & && popd
-      - docker stop zalenium
+      - run: docker run --name zalenium -p 4444:4444 -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/videos:/home/circleci/build/artifacts/videos -d dosel/zalenium start
+      - run: docker ps
+      - run: cd ./mock-backend && npm install
+      - run:
+          command: cd ./mock-backend && node ./server.js
+          background: true
+      - run: cd ./frontend && npm install
+      - run:
+          command: cd ./frontend && npm run local-server
+          background: true
+      - run:
+          shell: /bin/sh
+          command: |
+            wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 10 http://localhost:8080/config
+            :
+      - run:
+          shell: /bin/sh
+          command: |
+            wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 30 http://localhost:4444
+            :
+      - run: docker logs zalenium
+      - run: cd ./frontend && npm run integration-tests
+      - run: docker logs zalenium
+      - run: docker stop zalenium
+      - run: ls ./artifacts/videos
       - store_artifacts:
           path: ./artifacts
 
@@ -57,6 +84,8 @@ workflows:
             tags:
               only: /.*/
       - integration_tests:
+          requires:
+            - checkout_code
           filters:
             tags:
               only: /.*/
