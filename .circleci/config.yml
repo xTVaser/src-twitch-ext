@@ -25,10 +25,30 @@ jobs:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - ~/build
-  # TODO - Chrome Tests as well
   firefox_integration_tests:
     docker:
       - image: circleci/node:10-browsers
+    working_directory: ~/build
+    steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      # TODO - switch to cypress.io from selenium
+      - run: cd ./mock-backend && npm install
+      - run:
+          command: cd ./mock-backend && node ./server.js
+          background: true
+      - run: cd ./frontend && npm install
+      - run:
+          command: cd ./frontend && npm run local-server
+          background: true
+      - run: wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 10 http://localhost:8080/config
+      - run: cd ./frontend && npm run integration-tests
+  chrome_integration_tests:
+    docker:
+      - image: circleci/node:10-browsers
+    environment:
+      BROWSER: "chrome"
     working_directory: ~/build
     steps:
       - restore_cache:
@@ -55,6 +75,12 @@ workflows:
             tags:
               only: /.*/
       - firefox_integration_tests:
+          requires:
+            - checkout_code
+          filters:
+            tags:
+              only: /.*/
+      - chrome_integration_tests:
           requires:
             - checkout_code
           filters:

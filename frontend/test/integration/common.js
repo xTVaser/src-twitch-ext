@@ -3,13 +3,11 @@ var sw = require('selenium-webdriver');
 var chai = require('chai');
 var chaiWebdriver = require('chai-webdriver');
 
+const BROWSER = process.env.BROWSER || "firefox";
+
 // TODO - also test chrome!
 // TODO - https://opensource.zalando.com/zalenium/
-var driver = new sw.Builder()
-  .usingServer("http://localhost:4444/wd/hub")
-  .forBrowser("firefox")
-  .build()
-// var driver = new sw.Builder().withCapabilities(sw.Capabilities.firefox()).build();
+var driver = new sw.Builder().withCapabilities(BROWSER === "firefox" ? sw.Capabilities.firefox() : sw.Capabilities.chrome()).build();
 sw.promise.USE_PROMISE_MANAGER = false;
 
 chai.use(chaiWebdriver(driver));
