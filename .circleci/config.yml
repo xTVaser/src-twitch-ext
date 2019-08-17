@@ -25,30 +25,16 @@ jobs:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - ~/build
-  integration_tests:
-    machine:
-      image: ubuntu-1604:201903-01
+  # TODO - Chrome Tests as well
+  firefox_integration_tests:
+    docker:
+      - image: circleci/node:10-browsers
     working_directory: ~/build
     steps:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-      # https://github.com/ClouDesire/docusaurus/blob/ee11951336be3f64f5c6a25a8047bfeecc29fb43/website/blog/2018-11-21-upgrade-node-version-circleci.md
-      - run: |
-            echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
-            echo ' [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
-      - run: |
-          nvm install v10
-          node -v
-          nvm alias default v10
-      - run: npm --version
-      - run: node --version
-      - run: docker pull elgalu/selenium
-      - run: docker pull dosel/zalenium
-      - run: mkdir -p ./artifacts/videos
-      # TODO - docker compose
-      - run: docker run --name zalenium -p 4444:4444 -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/videos:/home/circleci/build/artifacts/videos -d dosel/zalenium start
-      - run: docker ps
+      # TODO - switch to cypress.io from selenium
       - run: cd ./mock-backend && npm install
       - run:
           command: cd ./mock-backend && node ./server.js
@@ -57,33 +43,18 @@ jobs:
       - run:
           command: cd ./frontend && npm run local-server
           background: true
-      - run:
-          shell: /bin/sh
-          command: |
-            wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 10 http://localhost:8080/config
-            :
-      - run:
-          shell: /bin/sh
-          command: |
-            wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 30 http://localhost:4444
-            :
-      - run: docker logs zalenium
+      - run: wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 10 http://localhost:8080/config
       - run: cd ./frontend && npm run integration-tests
-      - run: docker logs zalenium
-      - run: docker stop zalenium
-      - run: ls ./artifacts/videos
-      - store_artifacts:
-          path: ./artifacts
 
 workflows:
   version: 2.1
-  build_salttoday:
+  extension_workflow:
     jobs:
       - checkout_code:
           filters:
             tags:
               only: /.*/
-      - integration_tests:
+      - firefox_integration_tests:
           requires:
             - checkout_code
           filters:
