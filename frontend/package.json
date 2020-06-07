@@ -19,14 +19,10 @@
   },
   "homepage": "https://github.com/xTVaser/src-twitch-ext#readme",
   "dependencies": {
-    "chai": "^4.2.0",
-    "chai-webdriver": "^1.2.0",
-    "chai-webdriver-promised": "^4.0.3",
     "http-server": "^0.11.1",
     "mocha": "^6.1.4",
     "request": "^2.88.0",
-    "request-promise": "^4.2.4",
-    "selenium-webdriver": "^4.0.0-alpha.1"
+    "request-promise": "^4.2.4"
   },
   "devDependencies": {
     "cypress": "^4.7.0"
