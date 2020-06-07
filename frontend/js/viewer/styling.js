@@ -47,7 +47,7 @@ function configureCustomStyling() {
     $("#viewerPanelTitle").css("color", settings.panelTitleFontColor)
     if (!settings.hasOwnProperty('panelTitleFontFamily')) {
         dropSecond = settings.panelTitleFont.split(',')[0]
-        settings.panelTitleFontFamily = dropSecond.substring(1, dropSecond.length-1)
+        settings.panelTitleFontFamily = dropSecond.substring(1, dropSecond.length - 1)
     }
     $("#viewerPanelTitle").css("font-family", addFontFamily(settings.panelTitleFontFamily))
     if (settings.hasOwnProperty('panelTitleHeightPercentage')) {
@@ -61,7 +61,7 @@ function configureCustomStyling() {
         settings.categoryHeaderFontSize = settings.categoryHeaderFontItalic = settings.categoryHeaderFontItalic = settings.panelHeaderFontSize
         settings.categoryHeaderFontColor = settings.categoryHeaderFontColor = settings.categoryHeaderFontColor = settings.panelHeaderFontColor
         dropSecond = settings.panelHeaderFont.split(',')[0]
-        settings.categoryHeaderFontFamily = settings.pbHeaderFontFamily = settings.wrHeaderFontFamily = dropSecond.substring(1, dropSecond.length-1)
+        settings.categoryHeaderFontFamily = settings.pbHeaderFontFamily = settings.wrHeaderFontFamily = dropSecond.substring(1, dropSecond.length - 1)
     }
     if (settings.categoryHeaderFontBold == false) { // Bold by default, so false
         $("#categoryHeader").css("font-weight", "400")
@@ -105,7 +105,7 @@ function configureCustomStyling() {
         $(".panelTitleDiv").css("background", `linear-gradient(180deg, ${settings.panelTitleDivColor}, ${settings.panelBackgroundColor})`);
         $(".panelTitleDiv").css("margin-bottom", `${settings.panelTitleDivBottomMargin}px`);
     }
-    
+
     // Game Title Settings
     if (settings.gameTitleFontBold == true) {
         $(".gameTitle").css("font-weight", "700")
@@ -117,7 +117,7 @@ function configureCustomStyling() {
     $(".gameTitle").css("color", settings.gameTitleFontColor)
     if (!settings.hasOwnProperty('gameTitleFontFamily')) {
         dropSecond = settings.gameTitleFont.split(',')[0]
-        settings.gameTitleFontFamily = dropSecond.substring(1, dropSecond.length-1)
+        settings.gameTitleFontFamily = dropSecond.substring(1, dropSecond.length - 1)
     }
     $(".gameTitle").css("font-family", addFontFamily(settings.gameTitleFontFamily))
 
@@ -137,13 +137,13 @@ function configureCustomStyling() {
     $(".categoryName").css("color", settings.gameCategoryFontColor)
     if (!settings.hasOwnProperty('gameCategoryFontFamily')) {
         dropSecond = settings.gameCategoryFont.split(',')[0]
-        settings.gameCategoryFontFamily = dropSecond.substring(1, dropSecond.length-1)
+        settings.gameCategoryFontFamily = dropSecond.substring(1, dropSecond.length - 1)
     }
     $(".categoryName").css("font-family", addFontFamily(settings.gameCategoryFontFamily))
     if (settings.hasOwnProperty('gameCategoryBottomMargin')) {
         $(".categoryRow").css("margin-bottom", `${settings.gameCategoryBottomMargin}px`)
     }
-    
+
     // Personal Best Time Settings
     if (settings.pbFontBold == true) {
         $(".pbTime").css("font-weight", "700")
@@ -155,7 +155,7 @@ function configureCustomStyling() {
     $(".pbTime").css("color", settings.pbFontColor)
     if (!settings.hasOwnProperty('pbFontFamily')) {
         dropSecond = settings.pbFont.split(',')[0]
-        settings.pbFontFamily = dropSecond.substring(1, dropSecond.length-1)
+        settings.pbFontFamily = dropSecond.substring(1, dropSecond.length - 1)
     }
     $(".pbTime").css("font-family", addFontFamily(settings.pbFontFamily))
 
@@ -183,7 +183,7 @@ function configureCustomStyling() {
         settings.miscHeaderFontSize = settings.ilHeaderFontSize = settings.timeHeaderFontSize
         settings.miscHeaderFontColor = settings.ilHeaderFontColor = settings.timeHeaderFontColor
         dropSecond = settings.timeHeaderFont.split(',')[0]
-        settings.miscHeaderFontFamily = settings.ilHeaderFontFamily = dropSecond.substring(1, dropSecond.length-1)
+        settings.miscHeaderFontFamily = settings.ilHeaderFontFamily = dropSecond.substring(1, dropSecond.length - 1)
         settings.miscHeaderBottomMargin = settings.ilHeaderBottomMargin = 0
     }
     if (settings.miscHeaderFontBold == true) {
@@ -221,17 +221,17 @@ function configureCustomStyling() {
 
     // Hover colors for links, progammatically darker
     $(".categoryName, .pbTime, .wrTime, #titleLink").hover(
-        function(e) {
+        function (e) {
             nonHoverColor = rgb2hex($(e.target).css("color"))
             hoverColor = ((parseInt(nonHoverColor.replace(/^#/, ''), 16) & 0xfefefe) >> 1).toString(16);
             $(e.target).css("color", `#${("000000" + hoverColor).slice(-6)}`)
             e.target.name = nonHoverColor
         },
-        function(e) {
+        function (e) {
             $(e.target).css("color", e.target.name)
             e.target.name = ""
         });
-    
+
     if (!settings.hasOwnProperty('scrollbarWidth')) {
         settings.scrollbarColor = "#424242"
         settings.scrollbarOpacity = 100

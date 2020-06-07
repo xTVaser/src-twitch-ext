@@ -1,0 +1,54 @@
+{
+  "data": [
+    {
+      "id": "e8envo80",
+      "names": { "international": "xTVaser", "japanese": null },
+      "weblink": "https://www.speedrun.com/user/xTVaser",
+      "name-style": {
+        "style": "gradient",
+        "color-from": { "light": "#000000", "dark": "#FFFFFF" },
+        "color-to": { "light": "#EE2222", "dark": "#EE4444" }
+      },
+      "role": "user",
+      "signup": "2014-11-14T02:35:56Z",
+      "location": {
+        "country": {
+          "code": "ca",
+          "names": { "international": "Canada", "japanese": null }
+        },
+        "region": {
+          "code": "ca/on",
+          "names": { "international": "Ontario, Canada", "japanese": null }
+        }
+      },
+      "twitch": { "uri": "https://www.twitch.tv/xTVaser" },
+      "hitbox": null,
+      "youtube": {
+        "uri": "https://www.youtube.com/channel/UC1v1Xv5exFz83_Q7PQmvasQ"
+      },
+      "twitter": null,
+      "speedrunslive": {
+        "uri": "http://www.speedrunslive.com/profiles/#!/Vaser"
+      },
+      "links": [
+        {
+          "rel": "self",
+          "uri": "https://www.speedrun.com/api/v1/users/e8envo80"
+        },
+        {
+          "rel": "runs",
+          "uri": "https://www.speedrun.com/api/v1/runs?user=e8envo80"
+        },
+        {
+          "rel": "games",
+          "uri": "https://www.speedrun.com/api/v1/games?moderator=e8envo80"
+        },
+        {
+          "rel": "personal-bests",
+          "uri": "https://www.speedrun.com/api/v1/users/e8envo80/personal-bests"
+        }
+      ]
+    }
+  ],
+  "pagination": { "offset": 0, "max": 20, "size": 1, "links": [] }
+}

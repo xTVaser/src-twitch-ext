@@ -1,5 +1,6 @@
 /// Common Functions
 
+// TODO - pagination seems to not be a thing
 // TODO - all fetches should go into a function that handles backoff and retry
 async function getPersonalBests(srcID, trackedGames, personalBests, bypassFilter = false) {
     var response = await fetch(`https://www.speedrun.com/api/v1/users/${srcID}/personal-bests?embed=game,category.variables,level.variables`);

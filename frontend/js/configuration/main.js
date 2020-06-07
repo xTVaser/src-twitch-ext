@@ -7,9 +7,7 @@ var srcName = null;
 var gameList = [];
 
 // Detect if we are running locally (dev) or in a deployed env.
-var DEV_URL = "http://localhost:8081";
 var DEV_ENV = window.location.href.startsWith("http://localhost");
-
 var PROD_URL = "https://extension.xtvaser.xyz";
 
 // Templates
@@ -34,12 +32,12 @@ if (DEV_ENV) {
         };
         renderConfigPage();
     });
+} else {
+    window.Twitch.ext.onAuthorized(function (auth) {
+        authObject = auth;
+        renderConfigPage();
+    });
 }
-
-window.Twitch.ext.onAuthorized(function (auth) {
-    authObject = auth;
-    renderConfigPage();
-});
 
 async function renderConfigPage() {
     if (loaded == true) {
@@ -57,7 +55,7 @@ async function renderConfigPage() {
     $("#searchBtn").attr('class', 'btn-disabled');
 
     // Get previous settings
-    var backendFetchUrl = DEV_ENV ? `${DEV_URL}/fetch` : `${PROD_URL}/fetch`;
+    var backendFetchUrl = `${PROD_URL}/fetch`;
     var response = await fetch(backendFetchUrl, {
         method: "POST",
         headers: {
@@ -76,7 +74,8 @@ async function renderConfigPage() {
         }
         // Auto populate srcname with twitch name by default
         // TODO - mock twitch environment
-        if (savedData == null && !DEV_ENV) {
+        // TODO - odd place for this to be in, since the server should return a 404 if nothing is there
+        if (savedData == null) {
             var twitchResponse = await fetch(`https://api.twitch.tv/helix/users?id=${authObject.channelId}`, {
                 method: "GET",
                 headers: {
@@ -219,7 +218,7 @@ async function addGameToList(game, removeBoxChecked, expandBoxChecked) {
 
 function populateGameList(personalBests) {
     // TODO support pagination for people who have an absurd number of runs
-    Object.keys(personalBests).forEach(function(gameID) {
+    Object.keys(personalBests).forEach(function (gameID) {
         var runsInGame = personalBests[gameID];
         // Ensure the game has not been added yet
         if (gameList.findIndex(x => x.id === gameID) <= -1) {
@@ -339,6 +338,7 @@ async function findGames(runnerName) {
     // Otherwise, we are fine to continue
     srcID = runnerData[0].id;
     var personalBests = [];
+    // TODO - What about insane numbers of PBs?
     await getPersonalBests(srcID, null, personalBests, true);
     populateGameList(personalBests);
 }
@@ -490,7 +490,7 @@ $("#saveBtn").click(function () {
 function sendResult(gamesToSend, settings) {
     $.ajax({
         type: "POST",
-        url: DEV_ENV ? "http://localhost:8081/save" : "https://extension.xtvaser.xyz/save",
+        url: `${PROD_URL}/save`,
         headers: {
             'x-extension-jwt': authObject.token,
         },

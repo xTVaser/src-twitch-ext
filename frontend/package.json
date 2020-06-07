@@ -4,8 +4,8 @@
   "description": "Shows up-to-date PBs and WRs for the games you do runs in via speedrun.com",
   "main": "index.js",
   "scripts": {
-    "local-server": "http-server ./",
-    "test": "mocha test/unit/**/*.js",
+    "serve": "http-server ./",
+    "unit-test": "mocha test/unit/**/*.js",
     "integration-tests": "mocha test/integration/**/*.js --timeout 50000"
   },
   "repository": {
@@ -27,5 +27,8 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
     "selenium-webdriver": "^4.0.0-alpha.1"
+  },
+  "devDependencies": {
+    "cypress": "^4.7.0"
   }
 }

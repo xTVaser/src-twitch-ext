@@ -1,5 +1,12 @@
 version: 2.1
 
+orbs:
+  # "cypress-io/cypress@1" installs the latest published
+  # version "1.x.y" of the orb. We recommend you then use
+  # the strict explicit version "cypress-io/cypress@1.x.y"
+  # to lock the version and prevent unexpected CI changes
+  cypress: cypress-io/cypress@1.24.0
+
 commands:
   early_return_for_forked_pull_requests:
     description: >-
@@ -15,74 +22,54 @@ commands:
             fi
 
 jobs:
-  checkout_code:
+  setup:
     docker:
-      - image: circleci/node:10-browsers
-    working_directory: ~/build
+      - image: cypress/base:8
+        environment:
+          ## this enables colors in the output
+          TERM: xterm
+    working_directory: ~/build/frontend
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+            - v1-deps-{{ .Branch }}
+            - v1-deps
+      - run:
+          name: Install Dependencies
+          command: npm ci
       - save_cache:
-          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+          # cache NPM modules and the folder with the Cypress binary
           paths:
-            - ~/build
+            - ~/.npm
+            - ~/.cache
   firefox_integration_tests:
     docker:
-      - image: circleci/node:10-browsers
-    working_directory: ~/build
+      - image: cypress/base:8
+        environment:
+          ## this enables colors in the output
+          TERM: xterm
+    working_directory: ~/build/frontend
     steps:
       - restore_cache:
           keys:
-            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-      # TODO - switch to cypress.io from selenium
-      - run: cd ./mock-backend && npm install
-      - run:
-          command: cd ./mock-backend && node ./server.js
-          background: true
-      - run: cd ./frontend && npm install
-      - run:
-          command: cd ./frontend && npm run local-server
-          background: true
-      - run: wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 10 http://localhost:8080/config
-      - run: cd ./frontend && npm run integration-tests
-  chrome_integration_tests:
-    docker:
-      - image: circleci/node:10-browsers
-    environment:
-      BROWSER: "chrome"
-    working_directory: ~/build
-    steps:
-      - restore_cache:
-          keys:
-            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-      # TODO - switch to cypress.io from selenium
-      - run: cd ./mock-backend && npm install
-      - run:
-          command: cd ./mock-backend && node ./server.js
-          background: true
-      - run: cd ./frontend && npm install
-      - run:
-          command: cd ./frontend && npm run local-server
-          background: true
-      - run: wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 10 http://localhost:8080/config
-      - run: cd ./frontend && npm run integration-tests
+            - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+            - v1-deps-{{ .Branch }}
+            - v1-deps
+      - run: $(npm bin)/cypress run --browser firefox --record --key $CYPRESS_RECORD_KEY
 
 workflows:
-  version: 2.1
   extension_workflow:
     jobs:
-      - checkout_code:
+      - setup:
           filters:
             tags:
               only: /.*/
       - firefox_integration_tests:
           requires:
-            - checkout_code
-          filters:
-            tags:
-              only: /.*/
-      - chrome_integration_tests:
-          requires:
-            - checkout_code
+            - setup
           filters:
             tags:
               only: /.*/
