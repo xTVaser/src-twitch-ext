@@ -74,6 +74,24 @@ jobs:
           command: npm run serve
           background: true
       - run: npx cypress run --browser firefox --record --key $CYPRESS_RECORD_KEY
+  chrome_integration_tests:
+    docker:
+      - image: cypress/browsers:node12.16.2-chrome81-ff75
+        environment:
+          ## this enables colors in the output
+          TERM: xterm
+    working_directory: ~/repo/frontend
+    steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          keys:
+            - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+      - run:
+          command: npm run serve
+          background: true
+      - run: npx cypress run --browser chrome --record --key $CYPRESS_RECORD_KEY
 
 workflows:
   extension_workflow:
@@ -89,6 +107,12 @@ workflows:
             tags:
               only: /.*/
       - firefox_integration_tests:
+          requires:
+            - dependencies
+          filters:
+            tags:
+              only: /.*/
+      - chrome_integration_tests:
           requires:
             - dependencies
           filters:
