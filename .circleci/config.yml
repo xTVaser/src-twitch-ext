@@ -42,6 +42,7 @@ jobs:
     steps:
       - restore_cache:
           keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
             - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
           name: Install Dependencies
