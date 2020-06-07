@@ -70,6 +70,7 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+      - run: npm run serve &
       - run: npx cypress run --browser firefox --record --key $CYPRESS_RECORD_KEY
 
 workflows:
