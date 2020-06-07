@@ -64,6 +64,8 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          keys:
             - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
       - run: $(npm bin)/cypress run --browser firefox --record --key $CYPRESS_RECORD_KEY
 
