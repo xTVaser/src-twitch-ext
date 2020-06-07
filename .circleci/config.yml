@@ -58,7 +58,7 @@ jobs:
             - ./node_modules
   firefox_integration_tests:
     docker:
-      - image: cypress/base:10
+      - image: cypress/browsers:node12.16.2-chrome81-ff75
         environment:
           ## this enables colors in the output
           TERM: xterm
