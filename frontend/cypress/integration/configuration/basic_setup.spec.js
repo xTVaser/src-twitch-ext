@@ -30,11 +30,11 @@ describe('Basic Panel Setup', () => {
       })
 
       // TODO - current server doesnt return a 404 when it should
-      cy.route({ method: 'POST', url: 'http://localhost:8081/fetch', status: 404, response: {} }).as('getNewUserData');
+      cy.route({ method: 'POST', url: 'https://extension.xtvaser.xyz/fetch', status: 404, response: {} }).as('getNewUserData');
       cy.route('GET', `https://www.speedrun.com/api/v1/users?lookup=${expectations.srcName}`, 'fixture:speedruncom/users/xtvaser.json').as('getSrcUser');
       // TODO - I need to create a piece of fixture data that has all the types of runs / categories / etc
       cy.route('GET', `https://www.speedrun.com/api/v1/users/e8envo80/personal-bests?embed=game,category.variables,level.variables`, 'fixture:speedruncom/personal-bests/xtvaser.json').as('getSrcUserPersonalBests');
-      cy.route('POST', 'http://localhost:8081/save', 'fixture:backend/save/success.json').as('saveUserData');
+      cy.route('POST', 'https://extension.xtvaser.xyz/save', 'fixture:backend/save/success.json').as('saveUserData');
     })
 
     it('Configuration Page Loads', () => {
@@ -85,7 +85,7 @@ describe('Basic Panel Setup', () => {
         win.fetch = win.unfetch
       })
 
-      cy.route('POST', 'http://localhost:8081/fetch', 'fixture:backend/fetch/new_user.json').as('getNewUserData');
+      cy.route('POST', 'https://extension.xtvaser.xyz/fetch', 'fixture:backend/fetch/new_user.json').as('getNewUserData');
     })
 
     it('Reload Page', () => {
