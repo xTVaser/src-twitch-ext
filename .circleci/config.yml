@@ -20,7 +20,7 @@ commands:
 jobs:
   checkout_code:
     docker:
-      - image: cypress/base:8
+      - image: cypress/base:10
         environment:
           ## this enables colors in the output
           TERM: xterm
@@ -34,7 +34,7 @@ jobs:
             - ~/repo
   dependencies:
     docker:
-      - image: cypress/base:8
+      - image: cypress/base:10
         environment:
           ## this enables colors in the output
           TERM: xterm
@@ -43,6 +43,8 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          keys:
             - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
           name: Install Dependencies
@@ -52,10 +54,11 @@ jobs:
           # cache NPM modules and the folder with the Cypress binary
           paths:
             - ~/.npm
-            - ~/.cache\
+            - ~/.cache
+            - ./node_modules
   firefox_integration_tests:
     docker:
-      - image: cypress/base:8
+      - image: cypress/base:10
         environment:
           ## this enables colors in the output
           TERM: xterm
@@ -67,7 +70,7 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
-      - run: $(npm bin)/cypress run --browser firefox --record --key $CYPRESS_RECORD_KEY
+      - run: npx cypress run --browser firefox --record --key $CYPRESS_RECORD_KEY
 
 workflows:
   extension_workflow:
