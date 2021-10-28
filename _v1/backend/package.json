@@ -1,7 +1,7 @@
 {
   "author": "Tyler Wilding",
   "dependencies": {
-    "@google-cloud/datastore": "^1.1.0",
+    "@google-cloud/datastore": "^6.3.1",
     "body-parser": "^1.18.0",
     "dotenv": "^4.0.0",
     "express": "^4.15.4",
