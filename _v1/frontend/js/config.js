@@ -33,20 +33,6 @@ window.Twitch.ext.onAuthorized(function(auth) {
             if (savedData != null) {
                 restorePreviousSettings(savedData)
             }
-            // Auto populate srcname with twitch name by default
-            if (savedData == null) {
-                $.ajax({
-                    type: "GET",
-                    url: `https://api.twitch.tv/helix/users?id=${authObject.channelId}`,
-                    headers: {
-                        'Client-ID': authObject.clientId,
-                        'Authorization': `Bearer ${authObject.token}`
-                    },
-                    success: function(userObject) {
-                        $('#srcName').val(userObject.data[0].display_name)
-                    }
-                })
-            }
 
             $('#saveBtn').prop("disabled", false)
             $("#saveBtn").attr('class', 'btn-warning');
