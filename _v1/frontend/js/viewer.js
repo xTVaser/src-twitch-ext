@@ -221,36 +221,12 @@ $(document).on('click', '.gameTitle', function(e) {
     });
 });
 
-function addFontFamily(setting) {
-    if (setting == null) {
-        return "Roboto Condensed"
-    }
-    return `${setting}, Roboto Condensed`
+function addFontFamily() {
+    return "Roboto Condensed"
 }
 
 /// Renders the Panel with the given settings
 function renderPersonalBests() {
-
-    // Pull down all fonts early
-    if (settings.hasOwnProperty('panelTitleFontFamily')) {
-        WebFont.load({
-            google: {
-                families: [
-                    settings.panelTitleFontFamily,
-                    settings.categoryHeaderFontFamily,
-                    settings.pbHeaderFontFamily,
-                    settings.wrHeaderFontFamily,
-                    settings.gameTitleFontFamily,
-                    settings.gameCategoryFontFamily,
-                    settings.pbFontFamily,
-                    settings.wrFontFamily,
-                    settings.miscHeaderFontFamily,
-                    settings.ilHeaderFontFamily
-                ]
-            },
-            timeout: 2000
-        });
-    }
 
     // Disable the spinner
     $('.spinnerWrapper').remove();
@@ -446,11 +422,7 @@ function renderPersonalBests() {
     }
     $("#viewerPanelTitle").css("font-size", `${settings.panelTitleFontSize}px`)
     $("#viewerPanelTitle").css("color", settings.panelTitleFontColor)
-    if (!settings.hasOwnProperty('panelTitleFontFamily')) {
-        dropSecond = settings.panelTitleFont.split(',')[0]
-        settings.panelTitleFontFamily = dropSecond.substring(1, dropSecond.length-1)
-    }
-    $("#viewerPanelTitle").css("font-family", addFontFamily(settings.panelTitleFontFamily))
+    $("#viewerPanelTitle").css("font-family", addFontFamily())
     if (settings.hasOwnProperty('panelTitleHeightPercentage')) {
         $("#titleContainerRow").css("height", `${settings.panelTitleHeightPercentage}%`)
     }
@@ -462,7 +434,6 @@ function renderPersonalBests() {
         settings.categoryHeaderFontSize = settings.categoryHeaderFontItalic = settings.categoryHeaderFontItalic = settings.panelHeaderFontSize
         settings.categoryHeaderFontColor = settings.categoryHeaderFontColor = settings.categoryHeaderFontColor = settings.panelHeaderFontColor
         dropSecond = settings.panelHeaderFont.split(',')[0]
-        settings.categoryHeaderFontFamily = settings.pbHeaderFontFamily = settings.wrHeaderFontFamily = dropSecond.substring(1, dropSecond.length-1)
     }
     if (settings.categoryHeaderFontBold == false) { // Bold by default, so false
         $("#categoryHeader").css("font-weight", "400")
@@ -472,7 +443,7 @@ function renderPersonalBests() {
     }
     $("#categoryHeader").css("font-size", `${settings.categoryHeaderFontSize}px`)
     $("#categoryHeader").css("color", settings.categoryHeaderFontColor)
-    $("#categoryHeader").css("font-family", addFontFamily(settings.categoryHeaderFontFamily))
+    $("#categoryHeader").css("font-family", addFontFamily())
 
     // Personal Best Header Settings
     if (settings.pbHeaderFontBold == false) { // Bold by default, so false
@@ -483,7 +454,7 @@ function renderPersonalBests() {
     }
     $("#pbHeader").css("font-size", `${settings.pbHeaderFontSize}px`)
     $("#pbHeader").css("color", settings.pbHeaderFontColor)
-    $("#pbHeader").css("font-family", addFontFamily(settings.pbHeaderFontFamily))
+    $("#pbHeader").css("font-family", addFontFamily())
 
     // World Record Header Settings
     if (settings.wrHeaderFontBold == false) { // Bold by default, so false
@@ -494,7 +465,7 @@ function renderPersonalBests() {
     }
     $("#wrHeader").css("font-size", `${settings.wrHeaderFontSize}px`)
     $("#wrHeader").css("color", settings.wrHeaderFontColor)
-    $("#wrHeader").css("font-family", addFontFamily(settings.wrHeaderFontFamily))
+    $("#wrHeader").css("font-family", addFontFamily())
     // WR Rainbow Cycling
     if (settings.wrRainbow == true) {
         $(".wrTime").css("animation", "rainbowText 10s linear infinite")
@@ -516,11 +487,7 @@ function renderPersonalBests() {
     }
     $(".gameTitle").css("font-size", `${settings.gameTitleFontSize}px`)
     $(".gameTitle").css("color", settings.gameTitleFontColor)
-    if (!settings.hasOwnProperty('gameTitleFontFamily')) {
-        dropSecond = settings.gameTitleFont.split(',')[0]
-        settings.gameTitleFontFamily = dropSecond.substring(1, dropSecond.length-1)
-    }
-    $(".gameTitle").css("font-family", addFontFamily(settings.gameTitleFontFamily))
+    $(".gameTitle").css("font-family", addFontFamily())
 
     // Expand / Collapse Icon Settings
     if (settings.hasOwnProperty('expandContractColor')) {
@@ -536,11 +503,7 @@ function renderPersonalBests() {
     }
     $(".categoryName").css("font-size", `${settings.gameCategoryFontSize}px`)
     $(".categoryName").css("color", settings.gameCategoryFontColor)
-    if (!settings.hasOwnProperty('gameCategoryFontFamily')) {
-        dropSecond = settings.gameCategoryFont.split(',')[0]
-        settings.gameCategoryFontFamily = dropSecond.substring(1, dropSecond.length-1)
-    }
-    $(".categoryName").css("font-family", addFontFamily(settings.gameCategoryFontFamily))
+    $(".categoryName").css("font-family", addFontFamily())
     if (settings.hasOwnProperty('gameCategoryBottomMargin')) {
         $(".categoryRow").css("margin-bottom", `${settings.gameCategoryBottomMargin}px`)
     }
@@ -554,18 +517,13 @@ function renderPersonalBests() {
     }
     $(".pbTime").css("font-size", `${settings.pbFontSize}px`)
     $(".pbTime").css("color", settings.pbFontColor)
-    if (!settings.hasOwnProperty('pbFontFamily')) {
-        dropSecond = settings.pbFont.split(',')[0]
-        settings.pbFontFamily = dropSecond.substring(1, dropSecond.length-1)
-    }
-    $(".pbTime").css("font-family", addFontFamily(settings.pbFontFamily))
+    $(".pbTime").css("font-family", addFontFamily())
 
     // World Record Time Settings
     if (!settings.hasOwnProperty('wrFontBold')) {
         settings.wrFontBold = settings.pbFontBold
         settings.wrFontItalic = settings.pbFontItalic
         settings.wrFontColor = '#f3e221'
-        settings.wrFontFamily = settings.pbFontFamily
     }
     if (settings.wrFontBold == true) {
         $(".wrTime").css("font-weight", "700")
@@ -575,7 +533,7 @@ function renderPersonalBests() {
     }
     $(".wrTime").css("font-size", `${settings.wrFontSize}px`)
     $(".wrTime").css("color", settings.wrFontColor)
-    $(".wrTime").css("font-family", addFontFamily(settings.wrFontFamily))
+    $(".wrTime").css("font-family", addFontFamily())
 
     // Misc Header Settings
     if (!settings.hasOwnProperty('miscHeaderFontBold')) {
@@ -584,7 +542,6 @@ function renderPersonalBests() {
         settings.miscHeaderFontSize = settings.ilHeaderFontSize = settings.timeHeaderFontSize
         settings.miscHeaderFontColor = settings.ilHeaderFontColor = settings.timeHeaderFontColor
         dropSecond = settings.timeHeaderFont.split(',')[0]
-        settings.miscHeaderFontFamily = settings.ilHeaderFontFamily = dropSecond.substring(1, dropSecond.length-1)
         settings.miscHeaderBottomMargin = settings.ilHeaderBottomMargin = 0
     }
     if (settings.miscHeaderFontBold == true) {
@@ -595,7 +552,7 @@ function renderPersonalBests() {
     }
     $(".miscHeader").css("font-size", `${settings.miscHeaderFontSize}px`)
     $(".miscHeader").css("color", settings.miscHeaderFontColor)
-    $(".miscHeader").css("font-family", addFontFamily(settings.miscHeaderFontFamily))
+    $(".miscHeader").css("font-family", addFontFamily())
     $(".miscRowContainer").css("margin-bottom", `${settings.miscHeaderBottomMargin}px`)
 
     // IL Header Settings
@@ -607,7 +564,7 @@ function renderPersonalBests() {
     }
     $(".ilHeader").css("font-size", `${settings.ilHeaderFontSize}px`)
     $(".ilHeader").css("color", settings.ilHeaderFontColor)
-    $(".ilHeader").css("font-family", addFontFamily(settings.ilHeaderFontFamily))
+    $(".ilHeader").css("font-family", addFontFamily())
     $(".ilRowContainer").css("margin-bottom", `${settings.ilHeaderBottomMargin}px`);
 
     // Game Divider Settings
