@@ -1,4 +1,5 @@
 *.zip
+!frontend_1.1.3.zip
 *.code-workspace
 token
 node_modules/
