@@ -1,6 +1,6 @@
-import App from "@components/App.svelte";
+import Panel from "@components/Panel.svelte";
 
-const app = new App({
+const app = new Panel({
   target: document.body,
   props: {
     name: "world",
