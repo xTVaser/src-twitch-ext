@@ -1,59 +1,60 @@
-import type { PersonalBestCollection, SubcategoryInfo } from "./src-api";
+import type { PersonalBest } from "./src-api";
 
 class GameDataGeneralSettings {
-  showWorldRecord: boolean = true;
-  showRainbowWorldRecord: boolean = true;
+  showWorldRecord: boolean = false;
+  showRainbowWorldRecord: boolean = false;
   showMilliseconds: boolean = false;
   showSeconds: boolean = true;
 }
 
 class GameDataEntrySettings {
-  srcCategoryName: string;
-  srcLevelName: string;
-  hasSubcategories: boolean = false;
-  srcSubcategoryInfo: SubcategoryInfo[] = [];
-  isLevel: boolean = false;
-  isMisc: boolean = false;
+  dataId: string; // The ID used to join with live data
   isDisabled: boolean = false;
   titleTemplateOverride: string = undefined;
 }
 
 class GameDataGamesSettings {
-  srcId: string;
-  title: string;
-  isDisabled: boolean = false;
-  overrideDefaults: boolean = false;
-  showMilliseconds: boolean = false;
-  showSeconds: boolean = true;
-  titleTemplateOverride: string = undefined;
-  entries: GameDataEntrySettings[] = [];
+  public isDisabled: boolean = false;
+  public overrideDefaults: boolean = false;
+  public showMilliseconds: boolean = false;
+  public showSeconds: boolean = true;
+  public titleTemplateOverride: string = undefined;
+  public autoExpanded: boolean = false;
+  public entries: GameDataEntrySettings[] = [];
+  constructor(public srcId: string, public title: string) {}
 }
 
 export class GameData {
-  srcId: string;
-  srcName: string;
+  userSrcId: string;
+  userSrcName: string;
   general: GameDataGeneralSettings;
   games: GameDataGamesSettings[] = [];
 
-  static initFromPersonalBestData(data: PersonalBestCollection[]): GameData {
+  static initFromPersonalBestData(pbData: Map<string, PersonalBest>): GameData {
     let newGameData = new GameData();
-    for (const game of data) {
-      let newGame = <GameDataGamesSettings>{
-        srcId: game.srcGameId,
-        title: game.srcGameName,
-        entries: [],
-      };
-      for (const entry of game.entries) {
-        newGame.entries.push(<GameDataEntrySettings>{
-          srcCategoryName: entry.srcCategoryName,
-          srcLevelName: entry.srcLevelName,
-          hasSubcategories: entry.hasSubcategories,
-          srcSubcategoryInfo: entry.subcategoryInfo,
-          isLevel: entry.isLevel,
-          isMisc: entry.srcIsMiscCategory,
-        });
+    // This setup is a little inefficient, we want to store everything here
+    // in an ordered fashion (so no maps)
+    //
+    // In normal operation, data is retrieved in the opposite manner (we have this data
+    // and we lookup in the live data)
+    for (const [dataId, pb] of pbData) {
+      // Find the game, create it if we havn't reached it yet
+      let game = newGameData.games.find((game) => game.srcId === pb.srcGameId);
+      if (game === undefined) {
+        game = new GameDataGamesSettings(pb.srcGameId, pb.srcGameName);
+        newGameData.games.push(game);
       }
-      newGameData.games.push(newGame);
+      // Append new PB
+      game.entries.push(<GameDataEntrySettings>{
+        dataId: dataId,
+      });
+    }
+    // Order games by title
+    newGameData.games.sort((a, b) => a.title.localeCompare(b.title));
+    // Do a rough ordering by the data id, this will roughly put things into groups
+    // TODO - improve this
+    for (let game of newGameData.games) {
+      game.entries.sort((a, b) => a.dataId.localeCompare(b.dataId));
     }
     return newGameData;
   }

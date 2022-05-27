@@ -1,33 +1,9 @@
 // TODO - not yet supported:
-// - miscellaneous subcategories
+// - miscellaneous subcategories (seems to be a thing...)
 
 export interface SpeedrunComUser {
   id: string;
   name: string;
-}
-
-export interface SubcategoryInfo {
-  srcVariableId: string;
-  srcVariableValueId: string;
-  srcVariableValueVal: string;
-}
-
-export interface PersonalBest {
-  srcRunId: string;
-  srcCategoryId: string | undefined;
-  srcCategoryName: string | undefined;
-  srcIsMiscCategory: boolean;
-  srcLevelId: string | undefined;
-  srcLevelName: string | undefined;
-  isLevel: boolean;
-  hasSubcategories: boolean;
-  subcategoryInfo: SubcategoryInfo[];
-}
-
-export class PersonalBestCollection {
-  srcGameId: string;
-  srcGameName: string;
-  entries: PersonalBest[] = [];
 }
 
 export async function lookupUserByName(
@@ -56,6 +32,53 @@ export async function lookupUserByName(
     id: userMeta.id,
     name: userMeta.names.international,
   };
+}
+
+export interface SubcategoryInfo {
+  srcVariableId: string;
+  srcVariableValueId: string;
+  srcVariableValueVal: string;
+}
+
+export class PersonalBest {
+  constructor(
+    public srcGameId: string,
+    public srcGameName: string,
+    public srcRunId: string,
+    public srcCategoryId: string | undefined,
+    public srcCategoryName: string | undefined,
+    public srcIsMiscCategory: boolean,
+    public srcLevelId: string | undefined,
+    public srcLevelName: string | undefined,
+    public isLevel: boolean,
+    public hasSubcategories: boolean,
+    public subcategoryInfo: SubcategoryInfo[]
+  ) {}
+
+  public getId(): string {
+    // This ID should be unique for each category-etc combination
+    // it is used to join the user's saved data with the data pulled down from SRC (live data)
+    //
+    // Normally this could be done with just the runID -- but the idea of the extension is to
+    // remove the need to update everytime you get a new run
+    let id = `${this.srcGameId}-${this.srcCategoryId}`;
+    if (isLevel) {
+      id += `-${this.srcLevelId}`;
+    }
+    // Subcategories are annoying because they are are not returned in a manner that can be trusted
+    // for purposes like this (in the same order)
+    //
+    // Therefore, we sort them ourselves first by the variable ids
+    if (hasSubcategories) {
+      let variableTuples = [];
+      this.subcategoryInfo.forEach((info) => {
+        variableTuples.push(`${info.srcVariableId}-${info.srcVariableValueId}`);
+      });
+      variableTuples.sort();
+      id += `-${variableTuples.join("-")}`;
+    }
+    return id;
+  }
 }
 
 function isLevel(pbData: any) {
@@ -108,6 +131,8 @@ function getSubcategories(pbData: any) {
 }
 
 function resolveSubcategoryName(pb: PersonalBest): string {
+  // The order from SRC is probably somewhat deterministic, but i can't rely on it
+  // lexiographically sort
   if (pb.hasSubcategories) {
     return ` - ${pb.subcategoryInfo
       .map((elem) => elem.srcVariableValueVal)
@@ -125,90 +150,62 @@ function resolveLevelOrCategoryName(pb: PersonalBest): string {
 
 export async function getUsersPersonalBests(
   srcUserId: string
-): Promise<PersonalBestCollection[]> {
-  // https://www.speedrun.com/api/v1/users/e8envo80/personal-bests?embed=category.variables,level.variables&max=200
+): Promise<Map<string, PersonalBest>> {
+  // https://www.speedrun.com/api/v1/users/e8envo80/personal-bests?embed=game,category.variables,level.variables&max=200
   const url = `https://www.speedrun.com/api/v1/users/${srcUserId}/personal-bests?embed=game,category.variables,level.variables&max=200`;
-  let personalBests = new Map<string, PersonalBestCollection>();
+  let personalBests = new Map<string, PersonalBest>();
   let pbData = [];
-  let pbBuckets = new Map<string, any>();
 
   try {
     let resp = await fetch(url);
     pbData = (await resp.json()).data;
 
-    // TODO - pagination
+    // TODO - pagination - check for 'pagination' entry on `resp`
     for (const pb of pbData) {
-      const gameId = pb.game.data.id;
-      if (!personalBests.has(gameId)) {
-        let newColl = new PersonalBestCollection();
-        newColl.srcGameId = gameId;
-        newColl.srcGameName = pb.game.data.names.international;
-        personalBests.set(newColl.srcGameId, newColl);
-        pbBuckets.set(newColl.srcGameId, {
-          normalCategories: {
-            main: [],
-            misc: [],
-          },
-          individualLevels: {
-            main: [],
-            misc: [],
-          },
-        });
-      }
+      let newEntry = new PersonalBest(
+        pb.game.data.id,
+        pb.game.data.names.international,
+        pb.run.id,
+        pb.category.data.id,
+        pb.category.data.name,
+        pb.category.data.miscellaneous,
+        isLevel(pb) ? pb.level.data.id : undefined,
+        isLevel(pb) ? pb.level.data.name : undefined,
+        isLevel(pb),
+        hasSubcategories(pb),
+        getSubcategories(pb)
+      );
 
-      let newEntry = <PersonalBest>{
-        srcRunId: pb.run.id,
-        srcCategoryId: pb.category.data.id,
-        srcCategoryName: pb.category.data.name,
-        srcIsMiscCategory: pb.category.data.miscellaneous,
-        srcLevelId: isLevel(pb) ? pb.level.data.id : undefined,
-        srcLevelName: isLevel(pb) ? pb.level.data.name : undefined,
-        isLevel: isLevel(pb),
-        hasSubcategories: hasSubcategories(pb),
-        subcategoryInfo: getSubcategories(pb),
-      };
-
-      if (newEntry.isLevel) {
-        if (newEntry.srcIsMiscCategory) {
-          pbBuckets.get(gameId).individualLevels.misc.push(newEntry);
-        } else {
-          pbBuckets.get(gameId).individualLevels.main.push(newEntry);
-        }
-      } else {
-        if (newEntry.srcIsMiscCategory) {
-          pbBuckets.get(gameId).normalCategories.misc.push(newEntry);
-        } else {
-          pbBuckets.get(gameId).normalCategories.main.push(newEntry);
-        }
-      }
+      personalBests.set(newEntry.getId(), newEntry);
     }
   } catch (error) {
     // TODO - logging and such
     console.log(error);
-    return [];
+    return null;
   }
 
   // Sort by names
-  for (const [gameId, data] of pbBuckets.entries()) {
-    data.normalCategories.main.sort((a, b) =>
-      resolveLevelOrCategoryName(a).localeCompare(resolveLevelOrCategoryName(b))
-    );
-    data.normalCategories.misc.sort((a, b) =>
-      resolveLevelOrCategoryName(a).localeCompare(resolveLevelOrCategoryName(b))
-    );
-    data.individualLevels.main.sort((a, b) =>
-      resolveLevelOrCategoryName(a).localeCompare(resolveLevelOrCategoryName(b))
-    );
-    data.individualLevels.misc.sort((a, b) =>
-      resolveLevelOrCategoryName(a).localeCompare(resolveLevelOrCategoryName(b))
-    );
-    // Combine the buckets into the collections
-    personalBests.get(gameId).entries = data.normalCategories.main.concat(
-      data.normalCategories.misc,
-      data.individualLevels.main,
-      data.individualLevels.misc
-    );
-  }
+  // TODO - not the place to do this, needs to be moved
+  // for (const [gameId, data] of pbBuckets.entries()) {
+  //   data.normalCategories.main.sort((a, b) =>
+  //     resolveLevelOrCategoryName(a).localeCompare(resolveLevelOrCategoryName(b))
+  //   );
+  //   data.normalCategories.misc.sort((a, b) =>
+  //     resolveLevelOrCategoryName(a).localeCompare(resolveLevelOrCategoryName(b))
+  //   );
+  //   data.individualLevels.main.sort((a, b) =>
+  //     resolveLevelOrCategoryName(a).localeCompare(resolveLevelOrCategoryName(b))
+  //   );
+  //   data.individualLevels.misc.sort((a, b) =>
+  //     resolveLevelOrCategoryName(a).localeCompare(resolveLevelOrCategoryName(b))
+  //   );
+  //   // Combine the buckets into the collections
+  //   personalBests.get(gameId).entries = data.normalCategories.main.concat(
+  //     data.normalCategories.misc,
+  //     data.individualLevels.main,
+  //     data.individualLevels.misc
+  //   );
+  // }
 
-  return Array.from(personalBests.values());
+  return personalBests;
 }

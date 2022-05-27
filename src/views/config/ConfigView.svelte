@@ -4,13 +4,15 @@
   import {
     lookupUserByName,
     getUsersPersonalBests,
-    PersonalBestCollection,
+PersonalBest
   } from "@src/lib/src-api";
 import { ConfigData, GameData, LocalConfigService } from "@src/lib/config";
+import { get } from "svelte/store";
 
   let configService = new LocalConfigService();
   let srcName = undefined;
   let srcId = undefined;
+  let liveData : Map<string, PersonalBest> = undefined;
   let configData = new ConfigData();
 
   let loadingData = false;
@@ -34,9 +36,13 @@ import { ConfigData, GameData, LocalConfigService } from "@src/lib/config";
       }
     }
 
+    // TODO - need a reset to defaults button in places (maybe)
     loadingData = true;
-    let data = await getUsersPersonalBests(srcId);
-    configData.gameData = GameData.initFromPersonalBestData(data);
+    // Get the live data from speedrun.com, this can be joined via the id
+    // to the saved settings data
+    liveData = await getUsersPersonalBests(srcId);
+    // TODO - merge new stuff in if they already have something saved
+    configData.gameData = GameData.initFromPersonalBestData(liveData);
     loadingData = false;
   }
 
@@ -102,8 +108,8 @@ import { ConfigData, GameData, LocalConfigService } from "@src/lib/config";
       <div class="pure-g">
         <div class="pure-u">
           <h2>Default Game Settings</h2>
-          <sl-switch>Display WR</sl-switch>
-          <sl-switch>Rainbow WR</sl-switch>
+          <!-- <sl-switch>Display WR</sl-switch>
+          <sl-switch>Rainbow WR</sl-switch> -->
           <sl-switch>Hide Milliseconds</sl-switch>
           <sl-switch>Hide Seconds</sl-switch>
         </div>
@@ -117,8 +123,8 @@ import { ConfigData, GameData, LocalConfigService } from "@src/lib/config";
             </div>
             <sl-switch>Disable Game</sl-switch>
             <sl-switch>Override Defaults</sl-switch>
-            <sl-switch>Display WR</sl-switch>
-            <sl-switch>Rainbow WR</sl-switch>
+            <!-- <sl-switch>Display WR</sl-switch>
+            <sl-switch>Rainbow WR</sl-switch> -->
             <sl-switch>Hide Milliseconds</sl-switch>
             <sl-switch>Hide Seconds</sl-switch>
             <sl-input
@@ -127,7 +133,7 @@ import { ConfigData, GameData, LocalConfigService } from "@src/lib/config";
             />
             <sl-input label="Default Category Name Template" value="words" />
             <div class="pure-g">
-              {#each game.entries as pb, index (`${game.srcId}-${index}`)}
+              {#each game.entries as entry, index (`${game.srcId}-${index}`)}
                 <div class="pure-u-1-3"
                   draggable="true"
                   animate:flip
@@ -138,22 +144,22 @@ import { ConfigData, GameData, LocalConfigService } from "@src/lib/config";
                   class:is-active={hovering === index}>
                   <sl-card class="card-header">
                     <div slot="header">
-                      {#if pb.isLevel}
-                        {pb.srcLevelName}
+                      {#if liveData.get(entry.dataId).isLevel}
+                        {liveData.get(entry.dataId).srcLevelName}
                         <sl-badge variant="success" pill>Level</sl-badge>
-                      {:else if pb.hasSubcategories}
-                        {pb.srcCategoryName}
-                        {#each pb.srcSubcategoryInfo as subcat}
+                      {:else if liveData.get(entry.dataId).hasSubcategories}
+                        {liveData.get(entry.dataId).srcCategoryName}
+                        {#each liveData.get(entry.dataId).subcategoryInfo as subcat}
                           - {subcat.srcVariableValueVal}
                         {/each}
                       {:else}
-                        {pb.srcCategoryName}
+                        {liveData.get(entry.dataId).srcCategoryName}
                       {/if}
-                      {#if pb.hasSubcategories}
+                      {#if liveData.get(entry.dataId).hasSubcategories}
                         <sl-badge variant="warning" pill>Subcategories</sl-badge
                         >
                       {/if}
-                      {#if pb.isMisc}
+                      {#if liveData.get(entry.dataId).srcIsMiscCategory}
                         <sl-badge variant="neutral" pill>Misc</sl-badge>
                       {/if}
                     </div>
