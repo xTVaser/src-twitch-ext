@@ -8,9 +8,10 @@ class GameDataGeneralSettings {
 }
 
 class GameDataEntrySettings {
-  dataId: string; // The ID used to join with live data
-  isDisabled: boolean = false;
-  titleTemplateOverride: string = undefined;
+  public isDisabled: boolean = false;
+  public titleTemplateOverride: string = undefined;
+  // The ID used to join with live data
+  constructor(public dataId: string) {}
 }
 
 class GameDataGamesSettings {
@@ -45,9 +46,7 @@ export class GameData {
         newGameData.games.push(game);
       }
       // Append new PB
-      game.entries.push(<GameDataEntrySettings>{
-        dataId: dataId,
-      });
+      game.entries.push(new GameDataEntrySettings(dataId));
     }
     // Order games by title
     newGameData.games.sort((a, b) => a.title.localeCompare(b.title));

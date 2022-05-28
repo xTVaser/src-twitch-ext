@@ -1,97 +1,54 @@
 <script lang="ts">
-import { GameData, LocalConfigService } from "@src/lib/config";
-import { getUsersPersonalBests, PersonalBestCollection } from "@src/lib/src-api";
+import { ConfigData, GameData, LocalConfigService } from "@src/lib/config";
+import { getUsersPersonalBests, PersonalBest } from "@src/lib/src-api";
 import { onMount } from "svelte";
+import { get } from "svelte/store";
 
   let configService = new LocalConfigService();
-  let configData;
-  let pbData;
-
-  // Filter and Properly Order Personal Bests
-  function preparePersonalBests(pbData: PersonalBestCollection[], gameData : GameData) : PersonalBestCollection[] {
-    let filteredData = [];
-
-    for (const game of gameData.games) {
-      // If the game is disabled
-      game.titleTemplateOverride
-      if (game.isDisabled) {
-        continue;
-      }
-    }
-
-    return filteredData;
-  }
+  let configData : ConfigData;
+  let pbData : Map<string, PersonalBest>;
 
   onMount(async () => {
 		// Get the user's configuration
     configData = configService.getBroadcasterConfig();
     // TODO - handle nothing being found
     // Request SRC for all PBs, not all information is stored in the config settings (times, cover art, etc)
-    pbData = await getUsersPersonalBests(configData.gameData.srcId);
+    pbData = await getUsersPersonalBests(configData.gameData.userSrcId);
     // Filter out the Games/Categories we don't care about to make simplify rendering
 	});
+
+  // TODO - split up component
+
+  function getLiveData(dataId: string) : PersonalBest {
+    return pbData.get(dataId);
+  }
 </script>
 
 <main>
-  {#each configData.gameData as game}
-  <sl-details class="game-pane">
-    <div slot="summary" class="game-header">
-      <img src="https://www.speedrun.com/gameasset/ok6qlo1g/cover?v=c8fb842" class="game-cover">
-      <div class="game-header-text-wrapper">
-        <span class="game-name" title="FULL THING"><a href="https://www.google.com" target="_blank" rel="noopener noreferrer">Jak II</a></span>
-        <br>
-        <span class="game-entry-count">X Runs</span>
+  {#if configData && pbData}
+    {#each configData.gameData.games as game}
+    <sl-details class="game-pane">
+      <div slot="summary" class="game-header">
+        <img src={getLiveData(game.entries[0].dataId).srcGameCoverUrl} alt="todo" class="game-cover">
+        <div class="game-header-text-wrapper">
+          <span class="game-name" title={game.title}><a href={getLiveData(game.entries[0].dataId).srcGameUrl} target="_blank" rel="noopener noreferrer">{game.title}</a></span>
+          <br>
+          <span class="game-entry-count">{game.entries.length} Runs</span>
+        </div>
       </div>
-    </div>
-  </sl-details>
-  {/each}
-
-
-  <!--
-	<sl-details  class="game-pane">
-    <div slot="summary" class="game-header">
-      <img src="https://www.speedrun.com/gameasset/ok6qlo1g/cover?v=c8fb842" class="game-cover">
-      <div class="game-header-text-wrapper">
-        <span class="game-name" title="FULL THING"><a href="https://www.google.com" target="_blank" rel="noopener noreferrer">Jak II</a></span>
-        <br>
-        <span class="game-entry-count">X Runs</span>
-      </div>
-    </div>
-    <div class="pure-g game-entry">
-      <div class="pure-u-3-5 entry-name">
-        <span><a href="https://www.google.com" target="_blank" rel="noopener noreferrer">Category Nameeeeeeeeeeeeeeeeeeeeee</a></span>
-      </div>
-      <div class="pure-u-1-5 entry-time">
-        <span><a href="http://www.google.com" target="_blank" rel="noopener noreferrer">00:00:00</a></span>
-      </div>
-      <div class="pure-u-1-5 entry-time">
-        <span><a href="http://www.google.com" target="_blank" rel="noopener noreferrer">00:00:00</a></span>
-      </div>
-    </div>
-    <div class="pure-g game-entry">
-      <div class="pure-u-3-5">
-        <span>Category Name</span>
-      </div>
-      <div class="pure-u-1-5 entry-time">
-        <span>00:00:00</span>
-      </div>
-      <div class="pure-u-1-5 entry-time">
-        <span>00:00:00</span>
-      </div>
-    </div>
-    <div class="pure-g game-entry">
-      <div class="pure-u-3-5">
-        <span>Category Name</span>
-      </div>
-      <div class="pure-u-1-5 entry-time">
-        <span>00:00:00</span>
-      </div>
-      <div class="pure-u-1-5 entry-time">
-        <span>00:00:00</span>
-      </div>
-    </div>
-  </sl-details>
-  -->
+      {#each game.entries as entry}
+        <div class="pure-g game-entry">
+          <div class="pure-u-4-5 entry-name">
+            <span><a href={getLiveData(entry.dataId).srcRunUrl} target="_blank" rel="noopener noreferrer">{getLiveData(entry.dataId).srcCategoryName}</a></span>
+          </div>
+          <div class="pure-u-1-5 entry-time">
+            <span>{getLiveData(entry.dataId).srcRunTime}</span>
+          </div>
+        </div>
+      {/each}
+    </sl-details>
+    {/each}
+  {/if}
 </main>
 
 <style>
@@ -137,6 +94,15 @@ import { onMount } from "svelte";
     margin-left: 10px;
   }
 
+  .game-name a {
+    text-decoration: none;
+    color: #FFFFFF;
+  }
+
+  .game-name a:hover {
+    color: red;
+  }
+
   .game-entry-count {
     margin-left: 10px;
     color: #A299B0;
@@ -163,8 +129,19 @@ import { onMount } from "svelte";
     text-overflow: ellipsis;
   }
 
+  .entry-name a {
+    text-decoration: none;
+    color: #FFFFFF;
+  }
+
+  .entry-name a:hover {
+    color: red;
+  }
+
   .entry-time {
     font-size: 9pt;
+    display: flex;
+    justify-content: right;
   }
 
   .game-pane {

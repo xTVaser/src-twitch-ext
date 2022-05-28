@@ -15,3 +15,8 @@ body {
 .container {
 	padding: 2em;
 }
+
+:host,
+.sl-theme-dark {
+  --sl-font-sans: 'Rubik', sans-serif;
+}

@@ -43,6 +43,8 @@ import { get } from "svelte/store";
     liveData = await getUsersPersonalBests(srcId);
     // TODO - merge new stuff in if they already have something saved
     configData.gameData = GameData.initFromPersonalBestData(liveData);
+    configData.gameData.userSrcId = srcId;
+    configData.gameData.userSrcName = srcName;
     loadingData = false;
   }
 
@@ -178,6 +180,14 @@ import { get } from "svelte/store";
 </div>
 
 <style>
+  main {
+    font-family: 'Rubik', sans-serif;
+  }
+
+  .pure-g [class*="pure-u"] {
+    font-family: 'Rubik', sans-serif;
+  }
+
   sl-card {
     width: 100%;
     padding: 0.5em;

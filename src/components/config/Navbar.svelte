@@ -28,6 +28,13 @@
 </nav>
 
 <style>
+main {
+  font-family: 'Rubik', sans-serif;
+}
+
+.pure-g [class*="pure-u"] {
+  font-family: 'Rubik', sans-serif;
+}
 .navbar {
   background-color: rgb(39, 20, 20);
   height: 100vh;

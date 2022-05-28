@@ -44,7 +44,11 @@ export class PersonalBest {
   constructor(
     public srcGameId: string,
     public srcGameName: string,
+    public srcGameCoverUrl: string,
+    public srcGameUrl: string,
     public srcRunId: string,
+    public srcRunUrl: string,
+    public srcRunTime: number,
     public srcCategoryId: string | undefined,
     public srcCategoryName: string | undefined,
     public srcIsMiscCategory: boolean,
@@ -165,7 +169,11 @@ export async function getUsersPersonalBests(
       let newEntry = new PersonalBest(
         pb.game.data.id,
         pb.game.data.names.international,
+        pb.game.data.assets["cover-tiny"].uri,
+        pb.game.data.weblink,
         pb.run.id,
+        pb.run.weblink,
+        pb.run.times.primary_t,
         pb.category.data.id,
         pb.category.data.name,
         pb.category.data.miscellaneous,
