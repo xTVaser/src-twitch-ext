@@ -83,6 +83,26 @@ export class PersonalBest {
     }
     return id;
   }
+
+  public getCategoryOrLevelName(): string {
+    let name = "";
+    if (this.isLevel) {
+      name = `${this.srcLevelName} - ${this.srcCategoryName}`;
+    } else {
+      name = this.srcCategoryName;
+    }
+
+    // Append subcategories - sort them to get things consistent
+    if (hasSubcategories) {
+      let variableValues = [];
+      this.subcategoryInfo.forEach((info) => {
+        variableValues.push(info.srcVariableValueVal);
+      });
+      variableValues.sort();
+      name += ` - ${variableValues.join(" - ")}`;
+    }
+    return name;
+  }
 }
 
 function isLevel(pbData: any) {

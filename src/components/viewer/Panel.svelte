@@ -1,8 +1,7 @@
 <script lang="ts">
-import { ConfigData, GameData, LocalConfigService } from "@src/lib/config";
+import { ConfigData, LocalConfigService } from "@src/lib/config";
 import { getUsersPersonalBests, PersonalBest } from "@src/lib/src-api";
 import { onMount } from "svelte";
-import { get } from "svelte/store";
 
   let configService = new LocalConfigService();
   let configData : ConfigData;
@@ -20,6 +19,7 @@ import { get } from "svelte/store";
   // TODO - split up component
 
   function getLiveData(dataId: string) : PersonalBest {
+    // TODO - handle nothing being found!
     return pbData.get(dataId);
   }
 </script>
@@ -27,9 +27,10 @@ import { get } from "svelte/store";
 <main>
   {#if configData && pbData}
     {#each configData.gameData.games as game}
+    <!-- TODO - handle no entries! -->
     <sl-details class="game-pane">
       <div slot="summary" class="game-header">
-        <img src={getLiveData(game.entries[0].dataId).srcGameCoverUrl} alt="todo" class="game-cover">
+        <img src={getLiveData(game.entries[0].dataId).srcGameCoverUrl} alt="Cover art for {game.title}" class="game-cover">
         <div class="game-header-text-wrapper">
           <span class="game-name" title={game.title}><a href={getLiveData(game.entries[0].dataId).srcGameUrl} target="_blank" rel="noopener noreferrer">{game.title}</a></span>
           <br>

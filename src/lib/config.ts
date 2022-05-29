@@ -9,7 +9,8 @@ class GameDataGeneralSettings {
 
 class GameDataEntrySettings {
   public isDisabled: boolean = false;
-  public titleTemplateOverride: string = undefined;
+  public overrideDefaults: boolean = false;
+  public titleOverride: string = undefined;
   // The ID used to join with live data
   constructor(public dataId: string) {}
 }
@@ -19,16 +20,16 @@ class GameDataGamesSettings {
   public overrideDefaults: boolean = false;
   public showMilliseconds: boolean = false;
   public showSeconds: boolean = true;
-  public titleTemplateOverride: string = undefined;
+  public titleOverride: string = undefined;
   public autoExpanded: boolean = false;
   public entries: GameDataEntrySettings[] = [];
   constructor(public srcId: string, public title: string) {}
 }
 
 export class GameData {
-  userSrcId: string;
-  userSrcName: string;
-  general: GameDataGeneralSettings;
+  userSrcId: string = undefined;
+  userSrcName: string = undefined;
+  general: GameDataGeneralSettings = new GameDataGeneralSettings();
   games: GameDataGamesSettings[] = [];
 
   static initFromPersonalBestData(pbData: Map<string, PersonalBest>): GameData {
@@ -64,12 +65,12 @@ class ThemeData {}
 export class ConfigData {
   gameData: GameData = new GameData();
   currentTheme: ThemeData = new ThemeData();
-  savedThemes: ThemeData[];
+  savedThemes: ThemeData[] = [];
 }
 
 abstract class ConfigService {
   abstract developerConfigExists(): boolean;
-  abstract getBroadcasterConfig(): ConfigData;
+  abstract getBroadcasterConfig(): ConfigData | undefined;
   abstract getDeveloperConfig(): any;
   abstract setBroadcasterConfig(data: ConfigData);
   abstract setDeveloperConfig(data: any);
@@ -79,8 +80,12 @@ export class LocalConfigService extends ConfigService {
   developerConfigExists(): boolean {
     return localStorage.getItem("src-twitch-ext") !== null;
   }
-  getBroadcasterConfig(): ConfigData {
-    return JSON.parse(localStorage.getItem("src-twitch-ext"));
+  getBroadcasterConfig(): ConfigData | undefined {
+    let data = localStorage.getItem("src-twitch-ext");
+    if (data == null) {
+      return undefined;
+    }
+    return JSON.parse(data);
   }
   getDeveloperConfig() {
     throw new Error("Method not implemented.");

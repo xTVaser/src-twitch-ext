@@ -1,6 +1,10 @@
 body {
-  background-color: var(--sl-color-neutral-0);
-  color: var(--sl-color-neutral-900);
+  background-color: #0e0e10;
+  color: #e5e3e8;
+}
+
+a {
+	color: #e2dbf0;
 }
 
 .justify-content-center {
@@ -19,4 +23,8 @@ body {
 :host,
 .sl-theme-dark {
   --sl-font-sans: 'Rubik', sans-serif;
+}
+
+.pure-g [class*="pure-u"] {
+	font-family: var(--sl-font-sans);
 }
