@@ -36,6 +36,10 @@ main {
   color: #6441A4;
 }
 
+.nav-link.active {
+  color: #6441A4;
+}
+
 .nav-link sl-icon-button::part(base) {
   color: #e2dbf0;
 }
@@ -44,7 +48,7 @@ main {
   color: #e2dbf0;
 }
 
-.nav-link.active sl-icon-button::part(base):hover {
+.nav-link.active sl-icon-button::part(base):hover  {
   color: #6441A4;
 }
 

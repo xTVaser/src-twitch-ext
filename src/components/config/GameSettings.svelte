@@ -80,12 +80,12 @@
     notify(`Settings Saved Successfully!`, "success", "check2-circle", 3000);
   }
 
-  let hovering = undefined;
+  let hoveringGameEntry = undefined;
 
-  const drop = (event, pbCollIndex, targetIndex) => {
+  function dropGameEntry(event, gameIdx, targetIndex) {
     event.dataTransfer.dropEffect = "move";
     const originIndex = parseInt(event.dataTransfer.getData("text/plain"));
-    const newTracklist = configData.gameData.games[pbCollIndex].entries;
+    const newTracklist = configData.gameData.games[gameIdx].entries;
 
     if (originIndex < targetIndex) {
       newTracklist.splice(targetIndex + 1, 0, newTracklist[originIndex]);
@@ -94,15 +94,39 @@
       newTracklist.splice(targetIndex, 0, newTracklist[originIndex]);
       newTracklist.splice(originIndex + 1, 1);
     }
-    configData.gameData.games[pbCollIndex].entries = newTracklist;
-    hovering = null;
-  };
+    configData.gameData.games[gameIdx].entries = newTracklist;
+    hoveringGameEntry = null;
+  }
 
-  const dragstart = (event, i) => {
+  function dragstartGameEntry(event, i) {
     event.dataTransfer.effectAllowed = "move";
     event.dataTransfer.dropEffect = "move";
     event.dataTransfer.setData("text/plain", i);
-  };
+  }
+
+  let hoveringGame = undefined;
+
+  function dropGame(event, gameIdx) {
+    event.dataTransfer.dropEffect = "move";
+    const originIndex = parseInt(event.dataTransfer.getData("text/plain"));
+    const newTracklist = configData.gameData.games;
+
+    if (originIndex < gameIdx) {
+      newTracklist.splice(gameIdx + 1, 0, newTracklist[originIndex]);
+      newTracklist.splice(originIndex, 1);
+    } else {
+      newTracklist.splice(gameIdx, 0, newTracklist[originIndex]);
+      newTracklist.splice(originIndex + 1, 1);
+    }
+    configData.gameData.games = newTracklist;
+    hoveringGameEntry = null;
+  }
+
+  function dragstartGame(event, i) {
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.dropEffect = "move";
+    event.dataTransfer.setData("text/plain", i);
+  }
 
   // Setting Change Handlers
   async function disableGame(val: boolean, gameIdx : number) {
@@ -201,8 +225,23 @@
         <sl-switch checked={configData.gameData.general.showMilliseconds}>Show Milliseconds</sl-switch>
       </div>
     </div>
-    <h2>Game List</h2>
-    <!-- TODO - allowing changing order of games -->
+    <h2>Game List <em class="normal-text">Drag to order</em></h2>
+    <div class="list">
+      {#each configData.gameData.games as game, gameIdx (gameIdx)}
+        <div
+          class="list-item"
+          draggable="true"
+          animate:flip
+          on:dragstart={(event) => dragstartGame(event, gameIdx)}
+          on:drop|preventDefault={(event) =>
+            dropGame(event, gameIdx)}
+          on:dragenter={() => (hoveringGame = gameIdx)}
+          on:dragover|preventDefault
+          class:is-active={hoveringGame === gameIdx}>
+           {game.title}
+        </div>
+      {/each}
+    </div>
     <div id="game-list">
       {#each configData.gameData.games as game, gameIdx (gameIdx)}
         <sl-details class="game-pane">
@@ -243,19 +282,18 @@
             </div>
           </div>
           {/if}
-          <h4 class="entry-heading">Entries (Drag to Reorder)</h4>
+          <h4 class="entry-heading">Entries <em class="normal-text">Drag to order</em></h4>
           <div class="pure-g">
             {#each game.entries as entry, entryIdx (`${game.srcId}-${entryIdx}`)}
               <div
                 class="pure-u-1-3"
                 draggable="true"
-                animate:flip
-                on:dragstart={(event) => dragstart(event, entryIdx)}
+                on:dragstart={(event) => dragstartGameEntry(event, entryIdx)}
                 on:drop|preventDefault={(event) =>
-                  drop(event, gameIdx, entryIdx)}
-                on:dragenter={() => (hovering = entryIdx)}
+                  dropGameEntry(event, gameIdx, entryIdx)}
+                on:dragenter={() => (hoveringGameEntry = entryIdx)}
                 on:dragover|preventDefault
-                class:is-active={hovering === entryIdx}
+                class:is-active={hoveringGameEntry === entryIdx}
               >
                 <sl-card class="game-entry">
                   <div slot="header">
@@ -292,6 +330,33 @@
 </div>
 
 <style>
+  .normal-text {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  em {
+    color: var(--sl-input-help-text-color);
+  }
+
+  .list {
+    margin-bottom: 2em;
+    width: auto;
+    display: inline-flex;
+    flex-direction: column;
+    border: 2px #6441a4 solid;
+    border-radius: 5px;
+  }
+
+  .list-item {
+    padding: 0.5em;
+    cursor: move;
+  }
+
+  .list-item:nth-child(even) {
+    background-color: rgb(24, 24, 27);
+  }
+
   .game-entry {
     width: 100%;
     height: 100%;
