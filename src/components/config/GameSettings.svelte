@@ -242,6 +242,7 @@
         </div>
       {/each}
     </div>
+    <h2>Game Options</h2>
     <div id="game-list">
       {#each configData.gameData.games as game, gameIdx (gameIdx)}
         <sl-details class="game-pane">
@@ -340,7 +341,7 @@
   }
 
   .list {
-    margin-bottom: 2em;
+    margin-bottom: 1em;
     width: auto;
     display: inline-flex;
     flex-direction: column;
@@ -351,6 +352,10 @@
   .list-item {
     padding: 0.5em;
     cursor: move;
+  }
+
+  .list-item:hover {
+    margin-left: 1em;
   }
 
   .list-item:nth-child(even) {

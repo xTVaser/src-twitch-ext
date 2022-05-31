@@ -149,6 +149,14 @@ import { onMount } from "svelte";
     margin-bottom: 0.25em;
   }
 
+  .game-pane::part(base) {
+    border-radius: 0;
+  }
+
+  .game-pane::part(content) {
+    padding: 0;
+  }
+
   .game-pane::part(header) {
     background-color: #322F37;
     padding: 10px;

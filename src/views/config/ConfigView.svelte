@@ -1,14 +1,24 @@
 <script lang="ts">
+  import { Route, Router } from "svelte-navigator";
   import Navbar from "@components/config/Navbar.svelte";
   import GameSettings from "@components/config/GameSettings.svelte";
+import ThemeSettings from "@components/config/ThemeSettings.svelte";
 </script>
 
-<div class="pure-g">
-  <Navbar />
-  <div class="pure-u-11-12 content scroll-y">
-    <GameSettings />
+<Router basepath="/config">
+  <div class="pure-g">
+    <Navbar />
+    <div class="pure-u-11-12 content scroll-y">
+      <ThemeSettings />
+      <!-- <Route path="games">
+        <GameSettings />
+      </Route>
+      <Route path="themes">
+        <ThemeSettings />
+      </Route> -->
+    </div>
   </div>
-</div>
+</Router>
 
 <style>
   .pure-g [class*="pure-u"] {

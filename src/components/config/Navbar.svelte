@@ -1,64 +1,53 @@
 <script lang="ts">
+  import { Link } from "svelte-navigator";
 </script>
 
 <nav class="pure-u-1-12 navbar">
   <div class="pure-g justify-content-center padding-1">
     <div class="pure-u">
-      Personal Best<br>Extension
+      Personal Best<br />Extension
     </div>
   </div>
   <div class="pure-g justify-content-center padding-1">
-    <a class="nav-link active" href="#">
+    <Link class="nav-link active" to="/games">
       <div class="pure-u">
-        <sl-icon-button name="joystick" label="Edit" style="font-size: 2.5rem;"></sl-icon-button>
-        <br>
+        <sl-icon-button
+          name="joystick"
+          label="Edit"
+          style="font-size: 2.5rem;"
+        />
+        <br />
         Games
       </div>
-    </a>
+    </Link>
   </div>
   <div class="pure-g justify-content-center padding-1">
-    <a class="nav-link" href="#">
-    <div class="pure-u">
-      <sl-icon-button name="palette" label="Edit" style="font-size: 2.5rem;"></sl-icon-button>
-      <br>
-      Theme
-    </div>
-  </a>
+    <Link class="nav-link" to="/themes">
+      <div class="pure-u">
+        <sl-icon-button
+          name="palette"
+          label="Edit"
+          style="font-size: 2.5rem;"
+        />
+        <br />
+        Theme
+      </div>
+    </Link>
   </div>
 </nav>
 
 <style>
-main {
-  font-family: 'Rubik', sans-serif;
-}
+  main {
+    font-family: "Rubik", sans-serif;
+  }
 
-.nav-link.active sl-icon-button::part(base) {
-  color: #6441A4;
-}
-
-.nav-link.active {
-  color: #6441A4;
-}
-
-.nav-link sl-icon-button::part(base) {
-  color: #e2dbf0;
-}
-
-.nav-link sl-icon-button::part(base):hover {
-  color: #e2dbf0;
-}
-
-.nav-link.active sl-icon-button::part(base):hover  {
-  color: #6441A4;
-}
-
-.pure-g [class*="pure-u"] {
-  font-family: 'Rubik', sans-serif;
-}
-.navbar {
-  background-color: #18181b;
-  height: 100vh;
-  border-right: 2px solid #6441A4;
-  box-sizing: border-box;
-}
+  .pure-g [class*="pure-u"] {
+    font-family: "Rubik", sans-serif;
+  }
+  .navbar {
+    background-color: #18181b;
+    height: 100vh;
+    border-right: 2px solid #6441a4;
+    box-sizing: border-box;
+  }
 </style>

@@ -28,3 +28,23 @@ a {
 .pure-g [class*="pure-u"] {
 	font-family: var(--sl-font-sans);
 }
+
+.nav-link.active sl-icon-button::part(base) {
+	color: #6441a4;
+}
+
+.nav-link.active {
+	color: #6441a4;
+}
+
+.nav-link sl-icon-button::part(base) {
+	color: #e2dbf0;
+}
+
+.nav-link sl-icon-button::part(base):hover {
+	color: #e2dbf0;
+}
+
+.nav-link.active sl-icon-button::part(base):hover {
+	color: #6441a4;
+}
