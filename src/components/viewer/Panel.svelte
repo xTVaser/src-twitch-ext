@@ -1,6 +1,6 @@
 <script lang="ts">
-import { ConfigData, LocalConfigService } from "@src/lib/config";
-import { getUsersPersonalBests, PersonalBest } from "@src/lib/src-api";
+import { ConfigData, LocalConfigService } from "@lib/config";
+import { getUsersPersonalBests, PersonalBest } from "@lib/src-api";
 import { onMount } from "svelte";
 
   let configService = new LocalConfigService();
@@ -54,10 +54,10 @@ import { onMount } from "svelte";
 
 <style>
   main {
-    font-family: 'Rubik', sans-serif;
-    height: 500px; /* Twitch says 496px */
+    font-family: "Rubik", sans-serif;
+    height: 500px; /* TODO - Twitch says 496px */
     width: 318px;
-    background-color: #212026;
+    background-color: var(--src-twitch-ext-color-mainBackground);
     overflow-y: scroll;
   }
 
@@ -85,35 +85,41 @@ import { onMount } from "svelte";
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: #DFDDE2;
   }
 
   .game-name {
     font-size: 12pt;
-    font-weight: 700;
-    color: #DFDDE2;
+    font-weight: var(--src-twitch-ext-font-weight-gameName);
+    font-style: var(--src-twitch-ext-font-style-gameName);
+    font-family: var(--src-twitch-ext-font-family-gameName), sans-serif;
+    color: var(--src-twitch-ext-font-color-gameName);
     margin-left: 10px;
   }
 
   .game-name a {
     text-decoration: none;
-    color: #FFFFFF;
+    color: var(--src-twitch-ext-font-color-gameName);
   }
 
   .game-name a:hover {
-    color: red;
+    color: var(--src-twitch-ext-color-gameNameLinkHover);
   }
 
   .game-entry-count {
     margin-left: 10px;
-    color: #A299B0;
+    color: var(--src-twitch-ext-font-color-gameNameSubheader);
+    font-family: var(--src-twitch-ext-font-family-gameNameSubheader), sans-serif;
+    font-weight: var(--src-twitch-ext-font-weight-gameNameSubheader);
+    font-style: var(--src-twitch-ext-font-style-gameNameSubheader);
     font-size: 10pt;
   }
 
   .game-entry {
     font-size: 10pt;
-    font-weight: 500;
-    color: #FFFFFF;
+    font-weight: var(--src-twitch-ext-font-weight-gameEntry);
+    font-style: var(--src-twitch-ext-font-style-gameEntry);
+    font-family: var(--src-twitch-ext-font-family-gameEntry), sans-serif;
+    color: var(--src-twitch-ext-font-color-gameEntry);
     padding-left: 10px;
     padding-right: 10px;
     padding-top: 8px;
@@ -121,26 +127,31 @@ import { onMount } from "svelte";
   }
 
   .game-entry:nth-child(odd) {
-    background-color: #111113;
+    background-color: var(--src-twitch-ext-color-gameEntriesAlternateRow);
   }
 
   .entry-name {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: var(--src-twitch-ext-font-color-gameEntry);
   }
 
   .entry-name a {
     text-decoration: none;
-    color: #FFFFFF;
+    color: var(--src-twitch-ext-font-color-gameEntry);
   }
 
   .entry-name a:hover {
-    color: red;
+    color: var(--src-twitch-ext-color-gameEntryLinkHover);
   }
 
   .entry-time {
     font-size: 9pt;
+    font-family: var(--src-twitch-ext-font-family-gameEntryTime), sans-serif;
+    font-weight: var(--src-twitch-ext-font-weight-gameEntryTime);
+    font-style: var(--src-twitch-ext-font-style-gameEntryTime);
+    color: var(--src-twitch-ext-font-color-gameEntryTime);
     display: flex;
     justify-content: right;
   }
@@ -158,7 +169,7 @@ import { onMount } from "svelte";
   }
 
   .game-pane::part(header) {
-    background-color: #322F37;
+    background-color: var(--src-twitch-ext-color-gameHeaderBackground);
     padding: 10px;
   }
 
@@ -167,10 +178,10 @@ import { onMount } from "svelte";
   }
 
   .game-pane::part(summary-icon) {
-    color: #DFDDE2;
+    color: var(--src-twitch-ext-color-gameExpandIcon);
   }
 
   .game-pane::part(content) {
-    background-color: #212026;
+    background-color: var(--src-twitch-ext-color-gameEntriesBackground);
   }
 </style>

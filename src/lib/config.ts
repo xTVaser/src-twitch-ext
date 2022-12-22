@@ -1,12 +1,5 @@
 import type { PersonalBest } from "./src-api";
 
-class GameDataGeneralSettings {
-  showWorldRecord: boolean = false;
-  showRainbowWorldRecord: boolean = false;
-  showMilliseconds: boolean = false;
-  showSeconds: boolean = true;
-}
-
 class GameDataEntrySettings {
   public isDisabled: boolean = false;
   public overrideDefaults: boolean = false;
@@ -29,7 +22,6 @@ class GameDataGamesSettings {
 export class GameData {
   userSrcId: string = undefined;
   userSrcName: string = undefined;
-  general: GameDataGeneralSettings = new GameDataGeneralSettings();
   games: GameDataGamesSettings[] = [];
 
   static initFromPersonalBestData(pbData: Map<string, PersonalBest>): GameData {
@@ -60,7 +52,86 @@ export class GameData {
   }
 }
 
-class ThemeData {}
+export class ThemeFontSettings {
+  public bold: boolean;
+  public italic: boolean;
+  public color: string;
+  public family: string; // TODO - enum of supported fonts?
+
+  public updateCSSVars(suffix: string) {
+    document.documentElement.style.setProperty(
+      `src-twitch-ext-font-weight-${suffix}`,
+      this.bold ? "700" : "400"
+    );
+    document.documentElement.style.setProperty(
+      `src-twitch-ext-font-style-${suffix}`,
+      this.italic ? "oblique" : "normal"
+    );
+    document.documentElement.style.setProperty(
+      `src-twitch-ext-font-color-${suffix}`,
+      this.color
+    );
+    document.documentElement.style.setProperty(
+      `src-twitch-ext-font-family-${suffix}`,
+      this.family
+    );
+  }
+}
+
+export class ThemeData {
+  // Flags
+  public hideExpandIcon: boolean;
+  public showRainbowWorldRecord: boolean;
+  public showWorldRecord: boolean;
+  // Colors
+  public mainBackgroundColor: string;
+  public gameHeaderBackgroundColor: string;
+  public gameEntriesBackgroundColor: string;
+  public gameEntriesAlternateRowColor: string;
+  public gameNameLinkHoverColor: string;
+  public gameEntryLinkHoverColor: string;
+  public gameExpandIconColor: string;
+  // Fonts
+  public gameNameFont: ThemeFontSettings;
+  public gameNameSubheaderFont: ThemeFontSettings;
+  public gameEntryFont: ThemeFontSettings;
+  public gameEntryTimeFont: ThemeFontSettings;
+
+  public updateCSSVars() {
+    document.documentElement.style.setProperty(
+      `--src-twitch-ext-color-mainBackground`,
+      this.mainBackgroundColor
+    );
+    document.documentElement.style.setProperty(
+      `--src-twitch-ext-color-gameHeaderBackground`,
+      this.gameHeaderBackgroundColor
+    );
+    document.documentElement.style.setProperty(
+      `--src-twitch-ext-color-gameEntriesBackground`,
+      this.gameEntriesBackgroundColor
+    );
+    document.documentElement.style.setProperty(
+      `--src-twitch-ext-color-gameEntriesAlternateRow`,
+      this.gameEntriesAlternateRowColor
+    );
+    document.documentElement.style.setProperty(
+      `--src-twitch-ext-color-gameNameLinkHover`,
+      this.gameNameLinkHoverColor
+    );
+    document.documentElement.style.setProperty(
+      `--src-twitch-ext-color-gameEntryLinkHover`,
+      this.gameEntryLinkHoverColor
+    );
+    document.documentElement.style.setProperty(
+      `--src-twitch-ext-color-gameExpandIcon`,
+      this.gameExpandIconColor
+    );
+    this.gameNameFont.updateCSSVars("gameName");
+    this.gameNameSubheaderFont.updateCSSVars("gameNameSubheader");
+    this.gameEntryFont.updateCSSVars("gameEntry");
+    this.gameEntryTimeFont.updateCSSVars("gameEntryTime");
+  }
+}
 
 export class ConfigData {
   gameData: GameData = new GameData();
@@ -68,15 +139,36 @@ export class ConfigData {
   savedThemes: ThemeData[] = [];
 }
 
-abstract class ConfigService {
-  abstract developerConfigExists(): boolean;
+interface TwitchConfigEntry {
+  content: string;
+  version: string;
+}
+
+interface TwitchConfigObject {
+  broadcaster?: TwitchConfigEntry;
+  developer?: TwitchConfigEntry;
+  global?: TwitchConfigEntry;
+}
+
+export abstract class ConfigService {
+  abstract broadcasterConfigExists(): boolean;
   abstract getBroadcasterConfig(): ConfigData | undefined;
-  abstract getDeveloperConfig(): any;
   abstract setBroadcasterConfig(data: ConfigData);
+  abstract developerConfigExists(): boolean;
+  abstract getDeveloperConfig(): any;
   abstract setDeveloperConfig(data: any);
 }
 
 export class LocalConfigService extends ConfigService {
+  broadcasterConfigExists(): boolean {
+    if (localStorage.getItem("src-twitch-ext") !== null) {
+      const data: TwitchConfigObject = JSON.parse(
+        localStorage.getItem("src-twitch-ext")
+      );
+      return data.broadcaster !== undefined;
+    }
+    return false;
+  }
   developerConfigExists(): boolean {
     return localStorage.getItem("src-twitch-ext") !== null;
   }
@@ -85,13 +177,32 @@ export class LocalConfigService extends ConfigService {
     if (data == null) {
       return undefined;
     }
-    return JSON.parse(data);
+    let config: TwitchConfigObject = JSON.parse(data);
+    if (config.broadcaster === undefined) {
+      return undefined;
+    }
+    return JSON.parse(config.broadcaster.content);
   }
   getDeveloperConfig() {
     throw new Error("Method not implemented.");
   }
   setBroadcasterConfig(data: ConfigData) {
-    localStorage.setItem("src-twitch-ext", JSON.stringify(data));
+    let config: TwitchConfigObject;
+    if (localStorage.getItem("src-twitch-ext") === null) {
+      config = {
+        broadcaster: {
+          version: "1.0.0",
+          content: JSON.stringify(data),
+        },
+      };
+    } else {
+      config = JSON.parse(localStorage.getItem("src-twitch-ext"));
+      config.broadcaster = {
+        version: "1.0.0",
+        content: JSON.stringify(data),
+      };
+    }
+    localStorage.setItem("src-twitch-ext", JSON.stringify(config));
   }
   setDeveloperConfig(data: any) {
     throw new Error("Method not implemented.");
@@ -99,18 +210,35 @@ export class LocalConfigService extends ConfigService {
 }
 
 export class TwitchConfigService extends ConfigService {
-  developerConfigExists(): boolean {
-    throw new Error("Method not implemented.");
+  private windowInstance: any;
+  constructor(windowInstance: any) {
+    super();
+    this.windowInstance = windowInstance;
+  }
+  broadcasterConfigExists(): boolean {
+    return (
+      this.windowInstance.Twitch.ext.configuration.broadcaster !== undefined
+    );
   }
   getBroadcasterConfig(): ConfigData {
+    return JSON.parse(
+      this.windowInstance.Twitch.ext.configuration.broadcaster.content
+    );
+  }
+  setBroadcasterConfig(data: any) {
+    this.windowInstance.Twitch.ext.configuration.set(
+      "broadcaster",
+      "1.0",
+      JSON.stringify(data)
+    );
+  }
+  developerConfigExists(): boolean {
     throw new Error("Method not implemented.");
   }
   getDeveloperConfig() {
     throw new Error("Method not implemented.");
   }
-  setBroadcasterConfig(data: any) {
-    throw new Error("Method not implemented.");
-  }
+
   setDeveloperConfig(data: any) {
     throw new Error("Method not implemented.");
   }

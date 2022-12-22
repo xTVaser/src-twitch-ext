@@ -1,3 +1,3 @@
-# Speedrun.com Twitch Extension
+# Speedrun.com Twitch Extension (unofficial)
 
 TODO

@@ -3,7 +3,35 @@
 </script>
 
 <div class="container">
-  <div class="pure-g mb-1 setting-row">
+  <div class="pure-g">
+    <div class="pure-u mr-1">
+      <Panel />
+    </div>
+    <div class="pure-u">
+      <sl-select value="default-dark" label="Theme Preset Selector" class="mb-1">
+        <sl-menu-label>Default Themes</sl-menu-label>
+        <sl-menu-item value="default-dark">Default Dark</sl-menu-item>
+        <sl-divider></sl-divider>
+        <sl-menu-label>Custom Themes</sl-menu-label>
+        <sl-menu-item value="my-theme">My Theme</sl-menu-item>
+      </sl-select>
+      <div class="pure-g center-row mb-1">
+        <div class="pure-u mr-1">
+          <sl-input label="New Preset Name" help-text="Enter a name, can't start with 'default'"></sl-input>
+        </div>
+        <div class="pure-u">
+          <sl-button variant="primary">Create New Preset</sl-button>
+        </div>
+      </div>
+      <br>
+      <sl-button variant="warning" class="mr-1">Revert Changes</sl-button>
+      <sl-button variant="success" class="mb-1">Save Changes to Current Preset</sl-button>
+      <br>
+      <sl-textarea label="Theme Data" help-text="Use this to backup or restore a preset" class="mb-1"></sl-textarea>
+      <sl-button variant="primary" class="mb-1">Restore Preset</sl-button>
+    </div>
+  </div>
+  <div class="pure-g mt-2 mb-1 setting-row">
     <div class="pure-u-1-3">
       <span>Hide Expand Icon</span>
     </div>
@@ -133,34 +161,6 @@
           <sl-switch checked>Italic</sl-switch>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="pure-g mt-2">
-    <div class="pure-u mr-1">
-      <Panel />
-    </div>
-    <div class="pure-u">
-      <sl-select value="default-dark" label="Theme Preset Selector" class="mb-1">
-        <sl-menu-label>Default Themes</sl-menu-label>
-        <sl-menu-item value="default-dark">Default Dark</sl-menu-item>
-        <sl-divider></sl-divider>
-        <sl-menu-label>Custom Themes</sl-menu-label>
-        <sl-menu-item value="my-theme">My Theme</sl-menu-item>
-      </sl-select>
-      <div class="pure-g center-row mb-1">
-        <div class="pure-u mr-1">
-          <sl-input label="New Preset Name" help-text="Enter a name, can't start with 'default'"></sl-input>
-        </div>
-        <div class="pure-u">
-          <sl-button variant="primary">Create New Preset</sl-button>
-        </div>
-      </div>
-      <br>
-      <sl-button variant="warning" class="mr-1">Revert Changes</sl-button>
-      <sl-button variant="success" class="mb-1">Save Changes to Current Preset</sl-button>
-      <br>
-      <sl-textarea label="Theme Data" help-text="Use this to backup or restore a preset" class="mb-1"></sl-textarea>
-      <sl-button variant="primary" class="mb-1">Restore Preset</sl-button>
     </div>
   </div>
 </div>

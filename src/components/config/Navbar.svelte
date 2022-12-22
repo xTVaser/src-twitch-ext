@@ -1,38 +1,44 @@
 <script lang="ts">
-  import { Link } from "svelte-navigator";
+  import {link} from 'svelte-spa-router'
 </script>
 
-<nav class="pure-u-1-12 navbar">
-  <div class="pure-g justify-content-center padding-1">
-    <div class="pure-u">
-      Personal Best<br />Extension
+<nav class="col-1 navbar is-marginless is-paddingless is-gutterless">
+  <div class="row pt-1 is-marginless">
+    <div class="col is-center text-center is-marginless">
+      <div class="pure-u">
+        Personal Best<br />Extension
+      </div>
     </div>
   </div>
-  <div class="pure-g justify-content-center padding-1">
-    <Link class="nav-link active" to="/games">
-      <div class="pure-u">
-        <sl-icon-button
-          name="joystick"
-          label="Edit"
-          style="font-size: 2.5rem;"
-        />
-        <br />
-        Games
-      </div>
-    </Link>
+  <div class="row pt-1 is-marginless">
+    <div class="col is-center text-center is-marginless">
+      <a class="nav-link active" href="/games" use:link>
+        <div class="pure-u">
+          <sl-icon-button
+            name="joystick"
+            label="Edit"
+            style="font-size: 2.5rem;"
+          />
+          <br />
+          Games
+        </div>
+      </a>
+    </div>
   </div>
-  <div class="pure-g justify-content-center padding-1">
-    <Link class="nav-link" to="/themes">
-      <div class="pure-u">
-        <sl-icon-button
-          name="palette"
-          label="Edit"
-          style="font-size: 2.5rem;"
-        />
-        <br />
-        Theme
-      </div>
-    </Link>
+  <div class="row pt-1 is-marginless">
+    <div class="col is-center text-center is-marginless">
+      <a class="nav-link" href="/themes" use:link>
+        <div class="pure-u">
+          <sl-icon-button
+            name="palette"
+            label="Edit"
+            style="font-size: 2.5rem;"
+          />
+          <br />
+          Theme
+        </div>
+      </a>
+    </div>
   </div>
 </nav>
 
@@ -41,9 +47,6 @@
     font-family: "Rubik", sans-serif;
   }
 
-  .pure-g [class*="pure-u"] {
-    font-family: "Rubik", sans-serif;
-  }
   .navbar {
     background-color: #18181b;
     height: 100vh;
