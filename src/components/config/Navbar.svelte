@@ -1,5 +1,5 @@
 <script lang="ts">
-  import {link} from 'svelte-spa-router'
+  import {link, location} from 'svelte-spa-router'
 </script>
 
 <nav class="col-1 navbar is-marginless is-paddingless is-gutterless">
@@ -12,7 +12,7 @@
   </div>
   <div class="row pt-1 is-marginless">
     <div class="col is-center text-center is-marginless">
-      <a class="nav-link active" href="/games" use:link>
+      <a class="nav-link" class:active="{$location === '/games' || $location === '/'}" href="/games" use:link>
         <div class="pure-u">
           <sl-icon-button
             name="joystick"
@@ -27,7 +27,7 @@
   </div>
   <div class="row pt-1 is-marginless">
     <div class="col is-center text-center is-marginless">
-      <a class="nav-link" href="/themes" use:link>
+      <a class="nav-link" class:active="{$location === '/themes'}" href="/themes" use:link>
         <div class="pure-u">
           <sl-icon-button
             name="palette"

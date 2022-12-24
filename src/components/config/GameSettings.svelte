@@ -14,6 +14,7 @@
   } from "@lib/src-api";
   import { onMount } from "svelte";
   import SpinnerRow from "@components/common/SpinnerRow.svelte";
+  import structuredClone from '@ungap/structured-clone';
 
   let configService: ConfigService;
 
@@ -23,15 +24,15 @@
 
   let liveData: Map<string, PersonalBest> = undefined;
   let configData = new ConfigData();
+  let originalConfigData = undefined;
 
-  let loadingUserData = false;
-  let loadingGameData = false;
+  let loadingUserData = true;
+  let loadingGameData = true;
 
-  let changesToSave = false;
+  $: changesToSave = originalConfigData !== undefined && JSON.stringify(configData) !== JSON.stringify(originalConfigData);
 
   onMount(async () => {
     // Get the user's configuration
-    loadingUserData = true;
     if (
       window.location.hostname === "127.0.0.1" ||
       window.location.hostname === "localhost"
@@ -64,7 +65,8 @@
     if (configService.broadcasterConfigExists()) {
       console.log("using existing broadcaster config");
       configData = configService.getBroadcasterConfig();
-      console.log(configData);
+      originalConfigData = structuredClone(configData);
+      loadingUserData = false;
       srcName = configData.gameData.userSrcName;
       srcId = configData.gameData.userSrcId;
       loadingGameData = true;
@@ -72,8 +74,9 @@
       loadingGameData = false;
     } else {
       console.log("could not find existing broadcaster config");
+      loadingUserData = false;
+      loadingGameData = false;
     }
-    loadingUserData = false;
   };
 
   const srcNameChanged = (event) => {
@@ -96,6 +99,7 @@
     }
 
     // TODO - need a reset to defaults button in places (maybe)
+    // TODO - refresh a particular game?
     loadingGameData = true;
     // Get the live data from speedrun.com, this can be joined via the id
     // to the saved settings data
@@ -105,14 +109,16 @@
     configData.gameData.userSrcId = srcId;
     configData.gameData.userSrcName = srcName;
     loadingGameData = false;
-
-    // TEMP
-    changesToSave = true;
   }
 
   async function saveSettings() {
     configService.setBroadcasterConfig(configData);
     notify(`Settings Saved Successfully!`, "success", "check2-circle", 3000);
+    originalConfigData = structuredClone(configData);
+  }
+
+  async function revertChanges() {
+    configData = structuredClone(originalConfigData);
   }
 
   let hoveringGameEntry = undefined;
@@ -169,7 +175,21 @@
       return;
     }
     configData.gameData.games[gameIdx].isDisabled = val;
-    changesToSave = true;
+    console.log(configData);
+    console.log(originalConfigData);
+  }
+
+  async function disableGameEntry(
+    val: boolean,
+    gameIdx: number,
+    entryIdx: number
+  ) {
+    if (
+      configData.gameData.games[gameIdx].entries[entryIdx].isDisabled == val
+    ) {
+      return;
+    }
+    configData.gameData.games[gameIdx].entries[entryIdx].isDisabled = val;
   }
 
   async function overrideGameDefaults(val: boolean, gameIdx: number) {
@@ -177,7 +197,6 @@
       return;
     }
     configData.gameData.games[gameIdx].overrideDefaults = val;
-    changesToSave = true;
   }
 
   async function overrideGameEntryDefaults(
@@ -192,7 +211,14 @@
       return;
     }
     configData.gameData.games[gameIdx].entries[entryIdx].overrideDefaults = val;
-    changesToSave = true;
+  }
+
+  async function setGameEntryTitleOverride(
+    val: string,
+    gameIdx: number,
+    entryIdx: number
+  ) {
+    configData.gameData.games[gameIdx].entries[entryIdx].titleOverride = val;
   }
 
   // Always escape HTML for text arguments!
@@ -228,7 +254,7 @@
   <SpinnerRow loadingMessage="Loading User Data" />
 {:else}
   <div class="row">
-    <div class="6 col">
+    <div class="col-6">
       <sl-input
         label="Speedrun.com Username"
         help-text="Enter your Speedrun.com username to search for personal bests!"
@@ -236,19 +262,16 @@
         on:sl-input={srcNameChanged}>{srcName}</sl-input
       >
     </div>
-    <div class="6 col">
+  </div>
+  <div class="row">
+    <div class="col" id="setting-controls">
       <sl-button
-        class="ml-2"
         variant="primary"
         on:click={refreshGameList}
         disabled={srcName === undefined || srcName === ""}
         >Refresh Games</sl-button
       >
-    </div>
-  </div>
-  <div class="row">
-    <div class="col" id="setting-controls">
-      <sl-button variant="warning" disabled={!changesToSave}
+      <sl-button variant="warning" disabled={!changesToSave} on:click={revertChanges}
         >Revert Changes</sl-button
       >
       <sl-button
@@ -286,11 +309,13 @@
     {#each configData.gameData.games as game, gameIdx (gameIdx)}
       <sl-details class="game-pane">
         <div slot="summary" class="game-header">
-          <div class="pure-g">
-            <div class="pure-u">
+          <div class="row">
+            <div class="col">
               <h3>{game.title}</h3>
             </div>
-            <div class="pure-u">
+          </div>
+          <div class="row">
+            <div class="col">
               {#if game.isDisabled}
                 <sl-badge variant="danger" pill>Disabled</sl-badge>
               {:else}
@@ -299,8 +324,8 @@
             </div>
           </div>
         </div>
-        <div class="pure-g">
-          <div class="pure-u-1-4">
+        <div class="row">
+          <div class="col">
             <sl-switch
               checked={game.isDisabled}
               on:sl-change={(event) =>
@@ -308,7 +333,7 @@
               >Disable Game</sl-switch
             >
           </div>
-          <div class="pure-u-1-4">
+          <div class="col">
             <sl-switch
               checked={game.overrideDefaults}
               on:sl-change={(event) =>
@@ -316,20 +341,22 @@
               >Override Defaults</sl-switch
             >
           </div>
-          {#if game.overrideDefaults}
-            <div class="pure-u-1-4">
+        </div>
+        {#if game.overrideDefaults}
+          <div class="row">
+            <div class="col">
               <sl-switch checked={game.showSeconds}>Show Seconds</sl-switch>
             </div>
-            <div class="pure-u-1-4">
+            <div class="col">
               <sl-switch checked={game.showMilliseconds}
                 >Show Milliseconds</sl-switch
               >
             </div>
-          {/if}
-        </div>
+          </div>
+        {/if}
         {#if game.overrideDefaults}
-          <div class="pure-g mt-1">
-            <div class="pure-u-1">
+          <div class="row">
+            <div class="col">
               <sl-input label="Game Title Override" value={game.title} />
             </div>
           </div>
@@ -337,10 +364,10 @@
         <h4 class="entry-heading">
           Entries <em class="normal-text">Drag to order</em>
         </h4>
-        <div class="pure-g">
+        <div class="row">
           {#each game.entries as entry, entryIdx (`${game.srcId}-${entryIdx}`)}
             <div
-              class="pure-u-1-3"
+              class="col-4"
               draggable="true"
               on:dragstart={(event) => dragstartGameEntry(event, entryIdx)}
               on:drop|preventDefault={(event) =>
@@ -355,8 +382,11 @@
                   {#if liveData.get(entry.dataId).isLevel || liveData.get(entry.dataId).hasSubcategories || liveData.get(entry.dataId).srcIsMiscCategory}
                     <br />
                     <div class="entry-types">
+                      {#if configData.gameData.games[gameIdx].entries[entryIdx].isDisabled}
+                        <sl-badge variant="danger" pill>Disabled</sl-badge>
+                      {/if}
                       {#if liveData.get(entry.dataId).isLevel}
-                        <sl-badge variant="success" pill>Level</sl-badge>
+                        <sl-badge variant="primary" pill>Level</sl-badge>
                       {/if}
                       {#if liveData.get(entry.dataId).hasSubcategories}
                         <sl-badge variant="warning" pill>Subcategories</sl-badge
@@ -368,12 +398,20 @@
                     </div>
                   {/if}
                 </div>
-                <div class="pure-g">
-                  <div class="6 col">
-                    <sl-switch>Disable Entry</sl-switch>
-                  </div>
-                  <div class="6 col">
+                <div class="row">
+                  <div class="col-6">
                     <sl-switch
+                      on:sl-change={(event) =>
+                        disableGameEntry(
+                          event.target.checked,
+                          gameIdx,
+                          entryIdx
+                        )}>Disable Entry</sl-switch
+                    >
+                  </div>
+                  <div class="col-6">
+                    <sl-switch
+                      checked={entry.overrideDefaults}
                       on:sl-change={(event) =>
                         overrideGameEntryDefaults(
                           event.target.checked,
@@ -384,7 +422,12 @@
                   </div>
                 </div>
                 {#if entry.overrideDefaults}
-                  <sl-input class="mt-1" label="Title Override" value="" />
+                  <sl-input
+                    class="mt-1"
+                    label="Title Override"
+                    value={entry.titleOverride}
+                    on:sl-input={(event) => setGameEntryTitleOverride(event.target.value, gameIdx, entryIdx)}
+                  />
                 {/if}
               </sl-card>
             </div>

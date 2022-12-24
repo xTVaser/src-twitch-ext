@@ -21,6 +21,7 @@
     "vite": "^3.1.0"
   },
   "dependencies": {
+    "@ungap/structured-clone": "^1.0.1",
     "@vitejs/plugin-basic-ssl": "^1.0.1"
   }
 }

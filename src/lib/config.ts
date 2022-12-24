@@ -3,7 +3,7 @@ import type { PersonalBest } from "./src-api";
 class GameDataEntrySettings {
   public isDisabled: boolean = false;
   public overrideDefaults: boolean = false;
-  public titleOverride: string = undefined;
+  public titleOverride: string = "";
   // The ID used to join with live data
   constructor(public dataId: string) {}
 }
@@ -13,7 +13,6 @@ class GameDataGamesSettings {
   public overrideDefaults: boolean = false;
   public showMilliseconds: boolean = false;
   public showSeconds: boolean = true;
-  public titleOverride: string = undefined;
   public autoExpanded: boolean = false;
   public entries: GameDataEntrySettings[] = [];
   constructor(public srcId: string, public title: string) {}

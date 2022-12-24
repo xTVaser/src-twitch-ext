@@ -24,25 +24,34 @@
 	--src-twitch-ext-font-color-gameEntry: #FFFFFF;
 	--src-twitch-ext-font-color-gameEntryTime: #FFFFFF;
 
-	--src-twitch-ext-font-family-gameName: "Rubik";
-	--src-twitch-ext-font-family-gameNameSubheader: "Rubik";
-	--src-twitch-ext-font-family-gameEntry: "Rubik";
-	--src-twitch-ext-font-family-gameEntryTime: "Rubik";
+	--src-twitch-ext-font-family-gameName: "Inter";
+	--src-twitch-ext-font-family-gameNameSubheader: "Inter";
+	--src-twitch-ext-font-family-gameEntry: "Inter";
+	--src-twitch-ext-font-family-gameEntryTime: "Inter";
+
+	/* Chota Overrides */
+	--font-family-sans: "Inter";
+	--font-family-mono: "Roboto Mono";
+	--font-size: 16px;
 }
 
 html {
 	overflow: hidden;
+	font-size: var(--font-size);
 }
 
 body {
   background-color: #0e0e10;
   color: #e5e3e8;
 	margin: 0;
-	font-family: "Rubik", sans-serif;
 }
 
-body * {
-	font-family: "Rubik", sans-serif;
+/* Chota Overrides */
+h2 {
+	font-size: 1.25rem;
+}
+h3 {
+	font-size: 1rem;
 }
 
 a {
@@ -59,7 +68,7 @@ a {
 
 :host,
 .sl-theme-dark {
-  --sl-font-sans: 'Rubik', sans-serif;
+  --sl-font-sans: 'Inter', sans-serif;
 }
 
 .nav-link.active sl-icon-button::part(base) {
