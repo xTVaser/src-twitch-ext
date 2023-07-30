@@ -26,17 +26,16 @@ export default defineConfig({
     rollupOptions: {
       plugins: [
         copy({
+          copyOnce: true,
           targets: [
             {
               src: resolve(
                 __dirname,
-                "node_modules/@shoelace-style/shoelace/dist/assets/icons"
+                "node_modules/@shoelace-style/shoelace/dist/assets"
               ),
               dest: resolve(__dirname, "dist/shoelace"),
             },
           ],
-          // https://github.com/vitejs/vite/issues/1231
-          hook: "writeBundle",
         }),
       ],
       input: {

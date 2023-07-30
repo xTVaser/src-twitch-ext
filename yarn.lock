@@ -451,6 +451,11 @@ chokidar@^3.4.1:
   optionalDependencies:
     fsevents "~2.3.2"
 
+chota@^0.9.2:
+  version "0.9.2"
+  resolved "https://registry.yarnpkg.com/chota/-/chota-0.9.2.tgz#0f9306619e9263efba0ee2fb581b3658129990dd"
+  integrity sha512-DmCHT/R+yMr/aYQuokkJeNIjknSgpMpM9mR0tDlqPu8A+lGo9TS/KFPpze5Q9PPrCWenp/VG7Y10usyNDoIygQ==
+
 ci-info@^3.2.0:
   version "3.8.0"
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-3.8.0.tgz#81408265a5380c929f0bc665d62256628ce9ef91"
