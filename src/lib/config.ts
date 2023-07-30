@@ -51,91 +51,118 @@ export class GameData {
   }
 }
 
-export class ThemeFontSettings {
-  public bold: boolean;
-  public italic: boolean;
-  public color: string;
-  public family: string; // TODO - enum of supported fonts?
-
-  public updateCSSVars(suffix: string) {
-    document.documentElement.style.setProperty(
-      `src-twitch-ext-font-weight-${suffix}`,
-      this.bold ? "700" : "400"
-    );
-    document.documentElement.style.setProperty(
-      `src-twitch-ext-font-style-${suffix}`,
-      this.italic ? "oblique" : "normal"
-    );
-    document.documentElement.style.setProperty(
-      `src-twitch-ext-font-color-${suffix}`,
-      this.color
-    );
-    document.documentElement.style.setProperty(
-      `src-twitch-ext-font-family-${suffix}`,
-      this.family
-    );
-  }
+export interface ThemeData {
+  defaultTheme: boolean;
+  // Flags
+  hideExpandIcon: boolean;
+  showRainbowWorldRecord: boolean;
+  showPlace: boolean;
+  // Colors
+  mainBackgroundColor: string;
+  gameHeaderBackgroundColor: string;
+  gameEntriesBackgroundColor: string;
+  gameEntriesAlternateRowColor: string;
+  gameNameLinkHoverColor: string;
+  gameEntryLinkHoverColor: string;
+  gameExpandIconColor: string;
+  // Fonts
+  gameNameFontColor: string;
+  gameNameSubheaderFontColor: string;
+  gameEntryFontColor: string;
+  gameEntryTimeFontColor: string;
 }
 
-export class ThemeData {
-  // Flags
-  public hideExpandIcon: boolean;
-  public showRainbowWorldRecord: boolean;
-  public showWorldRecord: boolean;
-  // Colors
-  public mainBackgroundColor: string;
-  public gameHeaderBackgroundColor: string;
-  public gameEntriesBackgroundColor: string;
-  public gameEntriesAlternateRowColor: string;
-  public gameNameLinkHoverColor: string;
-  public gameEntryLinkHoverColor: string;
-  public gameExpandIconColor: string;
-  // Fonts
-  public gameNameFont: ThemeFontSettings;
-  public gameNameSubheaderFont: ThemeFontSettings;
-  public gameEntryFont: ThemeFontSettings;
-  public gameEntryTimeFont: ThemeFontSettings;
+export function updateCSSVars(themeData: ThemeData) {
+  console.log("not blerg");
+  document.documentElement.style.setProperty(
+    `--src-twitch-ext-color-mainBackground`,
+    themeData.mainBackgroundColor
+  );
+  document.documentElement.style.setProperty(
+    `--src-twitch-ext-color-gameHeaderBackground`,
+    themeData.gameHeaderBackgroundColor
+  );
+  document.documentElement.style.setProperty(
+    `--src-twitch-ext-color-gameEntriesBackground`,
+    themeData.gameEntriesBackgroundColor
+  );
+  document.documentElement.style.setProperty(
+    `--src-twitch-ext-color-gameEntriesAlternateRow`,
+    themeData.gameEntriesAlternateRowColor
+  );
+  document.documentElement.style.setProperty(
+    `--src-twitch-ext-color-gameNameLinkHover`,
+    themeData.gameNameLinkHoverColor
+  );
+  document.documentElement.style.setProperty(
+    `--src-twitch-ext-color-gameEntryLinkHover`,
+    themeData.gameEntryLinkHoverColor
+  );
+  document.documentElement.style.setProperty(
+    `--src-twitch-ext-color-gameExpandIcon`,
+    themeData.gameExpandIconColor
+  );
+  document.documentElement.style.setProperty(
+    `--src-twitch-ext-gameExpandIconVisibility`,
+    themeData.hideExpandIcon ? "hidden" : "visible"
+  );
+  document.documentElement.style.setProperty(
+    `--src-twitch-ext-font-color-gameName`,
+    themeData.gameNameFontColor
+  );
+  document.documentElement.style.setProperty(
+    `--src-twitch-ext-font-color-gameNameSubheader`,
+    themeData.gameNameSubheaderFontColor
+  );
+  document.documentElement.style.setProperty(
+    `--src-twitch-ext-font-color-gameEntry`,
+    themeData.gameEntryFontColor
+  );
+  document.documentElement.style.setProperty(
+    `--src-twitch-ext-font-color-gameEntryTime`,
+    themeData.gameEntryTimeFontColor
+  );
+}
 
-  public updateCSSVars() {
-    document.documentElement.style.setProperty(
-      `--src-twitch-ext-color-mainBackground`,
-      this.mainBackgroundColor
-    );
-    document.documentElement.style.setProperty(
-      `--src-twitch-ext-color-gameHeaderBackground`,
-      this.gameHeaderBackgroundColor
-    );
-    document.documentElement.style.setProperty(
-      `--src-twitch-ext-color-gameEntriesBackground`,
-      this.gameEntriesBackgroundColor
-    );
-    document.documentElement.style.setProperty(
-      `--src-twitch-ext-color-gameEntriesAlternateRow`,
-      this.gameEntriesAlternateRowColor
-    );
-    document.documentElement.style.setProperty(
-      `--src-twitch-ext-color-gameNameLinkHover`,
-      this.gameNameLinkHoverColor
-    );
-    document.documentElement.style.setProperty(
-      `--src-twitch-ext-color-gameEntryLinkHover`,
-      this.gameEntryLinkHoverColor
-    );
-    document.documentElement.style.setProperty(
-      `--src-twitch-ext-color-gameExpandIcon`,
-      this.gameExpandIconColor
-    );
-    this.gameNameFont.updateCSSVars("gameName");
-    this.gameNameSubheaderFont.updateCSSVars("gameNameSubheader");
-    this.gameEntryFont.updateCSSVars("gameEntry");
-    this.gameEntryTimeFont.updateCSSVars("gameEntryTime");
+export const DefaultDarkTheme: ThemeData = {
+  defaultTheme: true,
+  hideExpandIcon: false,
+  showRainbowWorldRecord: true,
+  showPlace: false,
+  mainBackgroundColor: "#212026",
+  gameHeaderBackgroundColor: "#322F37",
+  gameEntriesBackgroundColor: "#212026",
+  gameEntriesAlternateRowColor: "#111113",
+  gameNameLinkHoverColor: "red", // TODO - change
+  gameEntryLinkHoverColor: "orange", // TODO - change
+  gameExpandIconColor: "#DFDDE2",
+  gameNameFontColor: "#DFDDE2",
+  gameNameSubheaderFontColor: "#A299B0",
+  gameEntryFontColor: "#FFFFFF",
+  gameEntryTimeFontColor: "#FFFFFF",
+};
+
+export function getDefaultTheme(themeName: string): ThemeData {
+  if (themeName === `_default-dark`) {
+    return DefaultDarkTheme;
   }
+  return DefaultDarkTheme;
 }
 
 export class ConfigData {
   gameData: GameData = new GameData();
-  currentTheme: ThemeData = new ThemeData();
-  savedThemes: ThemeData[] = [];
+  currentThemeName: string = "_default-dark";
+  customThemes: Map<string, ThemeData> = new Map<string, ThemeData>();
+}
+
+export function getThemeData(configData: ConfigData): ThemeData {
+  if (configData.currentThemeName.startsWith("_default-")) {
+    return getDefaultTheme(configData.currentThemeName);
+  }
+  if (configData.currentThemeName in configData.customThemes) {
+    return configData.customThemes[configData.currentThemeName];
+  }
+  return DefaultDarkTheme;
 }
 
 interface TwitchConfigEntry {

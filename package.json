@@ -7,11 +7,14 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "cypress:open": "yarn run cypress open"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.2",
     "@tsconfig/svelte": "^3.0.0",
+    "cypress": "^12.17.2",
+    "rollup-plugin-copy": "^3.4.0",
     "svelte": "^3.49.0",
     "svelte-check": "^2.8.1",
     "svelte-preprocess": "^4.10.7",
@@ -21,6 +24,7 @@
     "vite": "^3.1.0"
   },
   "dependencies": {
+    "@shoelace-style/shoelace": "^2.5.2",
     "@ungap/structured-clone": "^1.0.1",
     "@vitejs/plugin-basic-ssl": "^1.0.1"
   }

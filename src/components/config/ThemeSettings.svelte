@@ -1,177 +1,400 @@
 <script lang="ts">
   import Panel from "@components/viewer/Panel.svelte";
-</script>
+  import { DefaultDarkTheme, getThemeData } from "@lib/config";
+  import { configStore } from "@lib/stores/config";
+  import { notify } from "@lib/toast";
+  import { onMount } from "svelte";
+  import "@shoelace-style/shoelace/dist/components/select/select.js"
+  import "@shoelace-style/shoelace/dist/components/menu-item/menu-item.js"
+  import "@shoelace-style/shoelace/dist/components/menu-label/menu-label.js"
+  import "@shoelace-style/shoelace/dist/components/button/button.js"
+  import "@shoelace-style/shoelace/dist/components/divider/divider.js"
+  import "@shoelace-style/shoelace/dist/components/input/input.js"
+  import "@shoelace-style/shoelace/dist/components/switch/switch.js"
+  import "@shoelace-style/shoelace/dist/components/color-picker/color-picker.js"
 
-<div class="container">
-  <div class="pure-g">
-    <div class="pure-u mr-1">
-      <Panel />
-    </div>
-    <div class="pure-u">
-      <sl-select value="default-dark" label="Theme Preset Selector" class="mb-1">
-        <sl-menu-label>Default Themes</sl-menu-label>
-        <sl-menu-item value="default-dark">Default Dark</sl-menu-item>
-        <sl-divider></sl-divider>
-        <sl-menu-label>Custom Themes</sl-menu-label>
-        <sl-menu-item value="my-theme">My Theme</sl-menu-item>
-      </sl-select>
-      <div class="pure-g center-row mb-1">
-        <div class="pure-u mr-1">
-          <sl-input label="New Preset Name" help-text="Enter a name, can't start with 'default'"></sl-input>
-        </div>
-        <div class="pure-u">
-          <sl-button variant="primary">Create New Preset</sl-button>
-        </div>
-      </div>
-      <br>
-      <sl-button variant="warning" class="mr-1">Revert Changes</sl-button>
-      <sl-button variant="success" class="mb-1">Save Changes to Current Preset</sl-button>
-      <br>
-      <sl-textarea label="Theme Data" help-text="Use this to backup or restore a preset" class="mb-1"></sl-textarea>
-      <sl-button variant="primary" class="mb-1">Restore Preset</sl-button>
-    </div>
-  </div>
-  <div class="pure-g mt-2 mb-1 setting-row">
-    <div class="pure-u-1-3">
-      <span>Hide Expand Icon</span>
-    </div>
-    <div class="pure-u-2-3">
-      <sl-switch checked />
-    </div>
-  </div>
-  <div class="pure-g mb-1 setting-row">
-    <div class="pure-u-1-3">
-      <span>Main Background Color</span>
-    </div>
-    <div class="pure-u-2-3">
-      <sl-color-picker value="#4a90e2" />
-    </div>
-  </div>
-  <div class="pure-g mb-1 setting-row">
-    <div class="pure-u-1-3">
-      <span>Game Background Color</span>
-    </div>
-    <div class="pure-u-2-3">
-      <sl-color-picker value="#4a90e2" />
-    </div>
-  </div>
-  <div class="pure-g mb-1 setting-row">
-    <div class="pure-u-1-3">
-      <span>Game Entry Odd Row Color</span>
-    </div>
-    <div class="pure-u-2-3">
-      <sl-color-picker value="#4a90e2" />
-    </div>
-  </div>
-  <div class="pure-g mb-1 setting-row">
-    <div class="pure-u-1-3">
-      <span>Game Name Font Settings</span>
-    </div>
-    <div class="pure-u-2-3">
-      <div class="pure-g center-row">
-        <div class="pure-u mr-1">
-          <sl-select value="option-2" class="font-select">
-            <sl-menu-item value="option-1">Option 1</sl-menu-item>
-            <sl-menu-item value="option-2">Option 2</sl-menu-item>
-            <sl-menu-item value="option-3">Option 3</sl-menu-item>
-          </sl-select>
-        </div>
-        <div class="pure-u mr-1">
-          <sl-color-picker value="#4a90e2" />
-        </div>
-        <div class="pure-u mr-1">
-          <sl-switch checked>Bold</sl-switch>
-        </div>
-        <div class="pure-u">
-          <sl-switch checked>Italic</sl-switch>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="pure-g mb-1 setting-row">
-    <div class="pure-u-1-3">
-      <span>Game Name Subheader Font Settings</span>
-    </div>
-    <div class="pure-u-2-3">
-      <div class="pure-g center-row">
-        <div class="pure-u mr-1">
-          <sl-select value="option-2" class="font-select">
-            <sl-menu-item value="option-1">Option 1</sl-menu-item>
-            <sl-menu-item value="option-2">Option 2</sl-menu-item>
-            <sl-menu-item value="option-3">Option 3</sl-menu-item>
-          </sl-select>
-        </div>
-        <div class="pure-u mr-1">
-          <sl-color-picker value="#4a90e2" />
-        </div>
-        <div class="pure-u mr-1">
-          <sl-switch checked>Bold</sl-switch>
-        </div>
-        <div class="pure-u">
-          <sl-switch checked>Italic</sl-switch>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="pure-g mb-1 setting-row">
-    <div class="pure-u-1-3">
-      <span>Game Entry Font Settings</span>
-    </div>
-    <div class="pure-u-2-3">
-      <div class="pure-g center-row">
-        <div class="pure-u mr-1">
-          <sl-select value="option-2" class="font-select">
-            <sl-menu-item value="option-1">Option 1</sl-menu-item>
-            <sl-menu-item value="option-2">Option 2</sl-menu-item>
-            <sl-menu-item value="option-3">Option 3</sl-menu-item>
-          </sl-select>
-        </div>
-        <div class="pure-u mr-1">
-          <sl-color-picker value="#4a90e2" />
-        </div>
-        <div class="pure-u mr-1">
-          <sl-switch checked>Bold</sl-switch>
-        </div>
-        <div class="pure-u">
-          <sl-switch checked>Italic</sl-switch>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="pure-g mb-1 setting-row">
-    <div class="pure-u-1-3">
-      <span>Game Entry Time Font Settings</span>
-    </div>
-    <div class="pure-u-2-3">
-      <div class="pure-g center-row">
-        <div class="pure-u mr-1">
-          <sl-select value="option-2" class="font-select">
-            <sl-menu-item value="option-1">Option 1</sl-menu-item>
-            <sl-menu-item value="option-2">Option 2</sl-menu-item>
-            <sl-menu-item value="option-3">Option 3</sl-menu-item>
-          </sl-select>
-        </div>
-        <div class="pure-u mr-1">
-          <sl-color-picker value="#4a90e2" />
-        </div>
-        <div class="pure-u mr-1">
-          <sl-switch checked>Bold</sl-switch>
-        </div>
-        <div class="pure-u">
-          <sl-switch checked>Italic</sl-switch>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<style>
-  .font-select::part(base) {
-    max-width: 20em;
+  function isThemeCustom(themeName: string): boolean {
+    return themeName.startsWith("_custom-");
   }
 
-  .mt-2 {
-    margin-top: 2em;
+  $: cfg = $configStore;
+
+  let originalThemeData = undefined;
+  let newCustomThemeName = "";
+
+  $: changesToSave =
+    cfg.loaded &&
+    isThemeCustom(cfg.config.currentThemeName) &&
+    JSON.stringify(getThemeData(cfg.config)) !== JSON.stringify(originalThemeData);
+
+  onMount(async () => {
+    configStore.subscribe(async () => {
+      if (cfg.loaded && originalThemeData === undefined) {
+        console.log("updating original theme data");
+        originalThemeData = structuredClone(getThemeData(cfg.config));
+      }
+    });
+  });
+
+  function createNewTheme() {
+    const themeName = `_custom-${newCustomThemeName}`;
+    if (themeName in cfg.config.customThemes) {
+      notify(
+        "Theme with that name already exists",
+        "danger",
+        "exclamation-octagon",
+        3000
+      );
+    } else {
+      cfg.config.customThemes[themeName] = DefaultDarkTheme;
+      cfg.config.customThemes[themeName].defaultTheme = false;
+      cfg.config.currentThemeName = themeName;
+      cfg.service.setBroadcasterConfig(cfg.config);
+      notify(`New Theme Created!`, "success", "check2-circle", 1500);
+    }
+    newCustomThemeName = "";
+  }
+
+  function customThemeNames(names: String[]): String[] {
+    return names
+      .filter((name) => name.startsWith("_custom-"))
+      .map((name) => name.replace(/_custom-/, ""));
+  }
+
+  function deleteCurrentCustomTheme() {
+    delete cfg.config.customThemes[cfg.config.currentThemeName];
+    cfg.config.currentThemeName = "_default-dark";
+    cfg.service.setBroadcasterConfig(cfg.config);
+  }
+
+  function saveThemeChanges() {
+    configStore.commit();
+    originalThemeData = structuredClone(getThemeData(cfg.config));
+  }
+</script>
+
+{#if cfg.loaded}
+  <div class="row mb-1">
+    <div class="col mr-1">
+      <sl-select
+        value={cfg.config.currentThemeName}
+        label="Theme Selector"
+        class="mb-1"
+        data-cy="theme-selector"
+        on:sl-change={(event) => {
+          cfg.config.currentThemeName = event.target.value;
+          console.log(cfg.config.currentThemeName);
+        }}
+      >
+        <sl-menu-label>Default Themes</sl-menu-label>
+        <sl-menu-item value="_default-dark">Default Dark</sl-menu-item>
+        {#if Object.keys(cfg.config.customThemes).length > 0}
+          <sl-divider />
+          <sl-menu-label>Custom Themes</sl-menu-label>
+          {#each customThemeNames(Object.keys(cfg.config.customThemes)) as themeName}
+            <sl-menu-item value={`_custom-${themeName}`}
+              >{themeName}</sl-menu-item
+            >
+          {/each}
+        {/if}
+      </sl-select>
+      <div class="row is-vertically-aligned-end gap-1">
+        <div class="col">
+          <sl-input
+            label="New Theme Name"
+            value={newCustomThemeName}
+            data-cy="new-theme-input"
+            on:sl-input={(event) => {
+              newCustomThemeName = event.target.value.trim();
+            }}>{newCustomThemeName}</sl-input
+          >
+        </div>
+        <div class="col">
+          <sl-button
+            variant="primary"
+            disabled={newCustomThemeName === ""}
+            data-cy="create-theme-btn"
+            on:click={createNewTheme}>Create New Theme</sl-button
+          >
+        </div>
+      </div>
+      <br />
+      <div class="row gap-1">
+        {#if isThemeCustom(cfg.config.currentThemeName)}
+          <sl-button
+            variant="danger"
+            disabled={isThemeCustom(cfg.config.currentThemeName) ? undefined : true}
+            data-cy="delete-theme-btn"
+            on:click={deleteCurrentCustomTheme}>Delete Current Theme</sl-button
+          >
+        {/if}
+        {#if changesToSave}
+          <sl-button
+            variant="warning"
+            disabled={changesToSave ? undefined : true}
+            data-cy="revert-changes-btn">Revert Changes</sl-button
+          >
+          <sl-button
+            variant="success"
+            disabled={changesToSave ? undefined : true}
+            data-cy="save-changes-btn"
+            on:click={saveThemeChanges}>Save Changes</sl-button
+          >
+        {/if}
+      </div>
+    </div>
+    <div class="col">
+      <Panel />
+    </div>
+  </div>
+  {#if isThemeCustom(cfg.config.currentThemeName)}
+    {JSON.stringify(getThemeData(cfg.config))}
+    <div class="row setting-row">
+      <div class="col">
+        <span>Hide Expand Icon</span>
+      </div>
+      <div class="col">
+        <sl-switch
+          data-cy="hide-expand-icon-switch"
+          checked={getThemeData(cfg.config).hideExpandIcon ? true : undefined}
+          on:input={(event) => {
+            configStore.setValueOnCurrentTheme(
+              "hideExpandIcon",
+              event.target.checked
+            );
+          }}
+        />
+      </div>
+    </div>
+    <div class="row setting-row">
+      <div class="col">
+        <span>Rainbow World Record Time</span>
+      </div>
+      <div class="col">
+        <sl-switch
+        data-cy="rainbow-world-record-switch"
+          checked={getThemeData(cfg.config).showRainbowWorldRecord ? true : undefined}
+          on:input={(event) => {
+            configStore.setValueOnCurrentTheme(
+              "showRainbowWorldRecord",
+              event.target.checked
+            );
+          }}
+        />
+      </div>
+    </div>
+    <div class="row setting-row">
+      <div class="col">
+        <span>Show Leaderboard Place</span>
+      </div>
+      <div class="col">
+        <sl-switch
+          checked={getThemeData(cfg.config).showPlace ? true : undefined}
+          on:input={(event) => {
+            configStore.setValueOnCurrentTheme(
+              "showPlace",
+              event.target.checked
+            );
+          }}
+        />
+      </div>
+    </div>
+    <div class="row setting-row">
+      <div class="col">
+        <span>Expand Icon Color</span>
+      </div>
+      <div class="col">
+        <sl-color-picker
+          value={getThemeData(cfg.config).gameExpandIconColor}
+          on:blur={(event) => {
+            configStore.setValueOnCurrentTheme(
+              "gameExpandIconColor",
+              event.target.value
+            );
+          }}
+        />
+      </div>
+    </div>
+    <div class="row setting-row">
+      <div class="col">
+        <span>Main Background Color</span>
+      </div>
+      <div class="col">
+        <sl-color-picker
+          value={getThemeData(cfg.config).mainBackgroundColor}
+          on:blur={(event) => {
+            configStore.setValueOnCurrentTheme(
+              "mainBackgroundColor",
+              event.target.value
+            );
+          }}
+        />
+      </div>
+    </div>
+    <div class="row setting-row">
+      <div class="col">
+        <span>Game Header Background Color</span>
+      </div>
+      <div class="col">
+        <sl-color-picker
+          value={getThemeData(cfg.config).gameHeaderBackgroundColor}
+          on:blur={(event) => {
+            configStore.setValueOnCurrentTheme(
+              "gameHeaderBackgroundColor",
+              event.target.value
+            );
+          }}
+        />
+      </div>
+    </div>
+    <div class="row setting-row">
+      <div class="col">
+        <span>Game Entry Background Color</span>
+      </div>
+      <div class="col">
+        <sl-color-picker
+          value={getThemeData(cfg.config).gameEntriesBackgroundColor}
+          on:blur={(event) => {
+            configStore.setValueOnCurrentTheme(
+              "gameEntriesBackgroundColor",
+              event.target.value
+            );
+          }}
+        />
+      </div>
+    </div>
+    <div class="row setting-row">
+      <div class="col">
+        <span>Game Entry Odd Row Background Color</span>
+      </div>
+      <div class="col">
+        <sl-color-picker
+          value={getThemeData(cfg.config).gameEntriesAlternateRowColor}
+          on:blur={(event) => {
+            configStore.setValueOnCurrentTheme(
+              "gameEntriesAlternateRowColor",
+              event.target.value
+            );
+          }}
+        />
+      </div>
+    </div>
+    <div class="row setting-row">
+      <div class="col">
+        <span>Game Name Link Hover Color</span>
+      </div>
+      <div class="col">
+        <sl-color-picker
+          value={getThemeData(cfg.config).gameNameLinkHoverColor}
+          on:blur={(event) => {
+            configStore.setValueOnCurrentTheme(
+              "gameNameLinkHoverColor",
+              event.target.value
+            );
+          }}
+        />
+      </div>
+    </div>
+    <div class="row setting-row">
+      <div class="col">
+        <span>Game Entry Link Hover Color</span>
+      </div>
+      <div class="col">
+        <sl-color-picker
+          value={getThemeData(cfg.config).gameEntryLinkHoverColor}
+          on:blur={(event) => {
+            configStore.setValueOnCurrentTheme(
+              "gameEntryLinkHoverColor",
+              event.target.value
+            );
+          }}
+        />
+      </div>
+    </div>
+    <div class="row setting-row">
+      <div class="col">
+        <span>Game Name Font</span>
+      </div>
+      <div class="col">
+        <div class="row is-vertical-align">
+          <sl-color-picker
+            class="mr-1"
+            value={getThemeData(cfg.config).gameNameFontColor}
+            on:blur={(event) => {
+              configStore.setValueOnCurrentTheme(
+                "gameNameFontColor",
+                event.target.value
+              );
+            }}
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row setting-row">
+      <div class="col">
+        <span>Game Name Subheader Font</span>
+      </div>
+      <div class="col">
+        <div class="row is-vertical-align">
+          <sl-color-picker
+            class="mr-1"
+            value={getThemeData(cfg.config).gameNameSubheaderFontColor}
+            on:blur={(event) => {
+              configStore.setValueOnCurrentTheme(
+                "gameNameSubheaderFontColor",
+                event.target.value
+              );
+            }}
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row setting-row">
+      <div class="col">
+        <span>Game Entry Font</span>
+      </div>
+      <div class="col">
+        <div class="row is-vertical-align">
+          <sl-color-picker
+            class="mr-1"
+            value={getThemeData(cfg.config).gameEntryFontColor}
+            on:blur={(event) => {
+              configStore.setValueOnCurrentTheme(
+                "gameEntryFontColor",
+                event.target.value
+              );
+            }}
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row setting-row">
+      <div class="col">
+        <span>Game Entry Time Font</span>
+      </div>
+      <div class="col">
+        <div class="row is-vertical-align">
+          <sl-color-picker
+            class="mr-1"
+            value={getThemeData(cfg.config).gameEntryTimeFontColor}
+            on:blur={(event) => {
+              configStore.setValueOnCurrentTheme(
+                "gameEntryTimeFontColor",
+                event.target.value
+              );
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  {/if}
+{:else}
+  TODO
+{/if}
+
+<style>
+  .is-vertically-aligned-end {
+    align-items: flex-end;
   }
 
   .mb-1 {
@@ -182,8 +405,8 @@
     margin-right: 1em;
   }
 
-  .center-row {
-    align-items: center;
+  .gap-1 {
+    gap: 1em;
   }
 
   .setting-row {

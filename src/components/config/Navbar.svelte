@@ -1,18 +1,23 @@
 <script lang="ts">
-  import {link, location} from 'svelte-spa-router'
+  import { link, location } from "svelte-spa-router";
 </script>
 
 <nav class="col-1 navbar is-marginless is-paddingless is-gutterless">
   <div class="row pt-1 is-marginless">
     <div class="col is-center text-center is-marginless">
       <div class="pure-u">
-        Personal Best<br />Extension
+        <strong>Personal Best<br />Extension</strong>
       </div>
     </div>
   </div>
   <div class="row pt-1 is-marginless">
     <div class="col is-center text-center is-marginless">
-      <a class="nav-link" class:active="{$location === '/games' || $location === '/'}" href="/games" use:link>
+      <a
+        class="nav-link"
+        class:active={$location === "/games" || $location === "/"}
+        href="/games"
+        use:link
+      >
         <div class="pure-u">
           <sl-icon-button
             name="joystick"
@@ -20,14 +25,19 @@
             style="font-size: 2.5rem;"
           />
           <br />
-          Games
+          <strong>Games</strong>
         </div>
       </a>
     </div>
   </div>
   <div class="row pt-1 is-marginless">
     <div class="col is-center text-center is-marginless">
-      <a class="nav-link" class:active="{$location === '/themes'}" href="/themes" use:link>
+      <a
+        class="nav-link"
+        class:active={$location === "/themes"}
+        href="/themes"
+        use:link
+      >
         <div class="pure-u">
           <sl-icon-button
             name="palette"
@@ -35,7 +45,7 @@
             style="font-size: 2.5rem;"
           />
           <br />
-          Theme
+          <strong>Theme</strong>
         </div>
       </a>
     </div>

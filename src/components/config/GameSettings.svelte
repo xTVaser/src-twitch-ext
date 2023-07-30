@@ -1,12 +1,6 @@
 <script lang="ts">
   import { flip } from "svelte/animate";
-  import {
-    ConfigData,
-    ConfigService,
-    GameData,
-    LocalConfigService,
-    TwitchConfigService,
-  } from "@lib/config";
+  import { GameData } from "@lib/config";
   import {
     getUsersPersonalBests,
     lookupUserByName,
@@ -14,70 +8,46 @@
   } from "@lib/src-api";
   import { onMount } from "svelte";
   import SpinnerRow from "@components/common/SpinnerRow.svelte";
-  import structuredClone from '@ungap/structured-clone';
+  import structuredClone from "@ungap/structured-clone";
+  import { configStore } from "@lib/stores/config";
+  import { notify } from "@lib/toast";
 
-  let configService: ConfigService;
+  $: cfg = $configStore;
 
   // State
   let srcName = "";
   let srcId = undefined;
 
   let liveData: Map<string, PersonalBest> = undefined;
-  let configData = new ConfigData();
   let originalConfigData = undefined;
 
   let loadingUserData = true;
   let loadingGameData = true;
 
-  $: changesToSave = originalConfigData !== undefined && JSON.stringify(configData) !== JSON.stringify(originalConfigData);
+  $: changesToSave =
+    (originalConfigData === undefined &&
+      cfg.config !== undefined &&
+      cfg.config.gameData.games.length > 0) ||
+    (originalConfigData !== undefined &&
+      JSON.stringify(cfg.config) !== JSON.stringify(originalConfigData));
 
   onMount(async () => {
-    // Get the user's configuration
-    if (
-      window.location.hostname === "127.0.0.1" ||
-      window.location.hostname === "localhost"
-    ) {
-      console.log("using local host config");
-      configService = new LocalConfigService();
-      configReady();
-    } else if (window.Twitch && window.Twitch.ext) {
-      // Twitch's extension helper makes heavy use of the window object
-      // so this is a little clunky to work with unfortunately
-      console.log("on twitch!");
-      configService = new TwitchConfigService(window);
-      // Setup Twitch callbacks
-      window.Twitch.ext.configuration.onChanged(() => {
-        configReady();
-      });
-      window.Twitch.ext.onAuthorized((auth) => {
-        console.log("authed!");
-        // there isn't much to do here because we aren't using our own EBS anymore
-        // TODO - mark component as ready
-      });
-      // TODO - register `onContext` to react to things like theme changes
-    } else {
-      console.log("unable to determine the config source");
-    }
+    configStore.subscribe(async () => {
+      if (cfg.loaded) {
+        if (cfg.service.broadcasterConfigExists()) {
+          originalConfigData = structuredClone(cfg.config);
+          srcName = cfg.config.gameData.userSrcName;
+          srcId = cfg.config.gameData.userSrcId;
+          loadingGameData = true;
+          liveData = await getUsersPersonalBests(srcId);
+          loadingGameData = false;
+        } else {
+          loadingGameData = false;
+        }
+        loadingUserData = false;
+      }
+    });
   });
-
-  const configReady = async () => {
-    console.log("config ready");
-    if (configService.broadcasterConfigExists()) {
-      console.log("using existing broadcaster config");
-      configData = configService.getBroadcasterConfig();
-      originalConfigData = structuredClone(configData);
-      loadingUserData = false;
-      srcName = configData.gameData.userSrcName;
-      srcId = configData.gameData.userSrcId;
-      loadingGameData = true;
-      liveData = await getUsersPersonalBests(srcId);
-      loadingGameData = false;
-    } else {
-      console.log("could not find existing broadcaster config");
-      loadingUserData = false;
-      loadingGameData = false;
-    }
-  };
 
   const srcNameChanged = (event) => {
     srcName = event.target.value.trim();
@@ -105,20 +75,22 @@
     // to the saved settings data
     liveData = await getUsersPersonalBests(srcId);
     // TODO - merge new stuff in if they already have something saved
-    configData.gameData = GameData.initFromPersonalBestData(liveData);
-    configData.gameData.userSrcId = srcId;
-    configData.gameData.userSrcName = srcName;
+    cfg.config.gameData = GameData.initFromPersonalBestData(liveData);
+    cfg.config.gameData.userSrcId = srcId;
+    cfg.config.gameData.userSrcName = srcName;
+    console.log(cfg.config);
+    console.log(originalConfigData);
     loadingGameData = false;
   }
 
   async function saveSettings() {
-    configService.setBroadcasterConfig(configData);
+    cfg.service.setBroadcasterConfig(cfg.config);
     notify(`Settings Saved Successfully!`, "success", "check2-circle", 3000);
-    originalConfigData = structuredClone(configData);
+    originalConfigData = structuredClone(cfg.config);
   }
 
   async function revertChanges() {
-    configData = structuredClone(originalConfigData);
+    cfg.config = structuredClone(originalConfigData);
   }
 
   let hoveringGameEntry = undefined;
@@ -126,7 +98,7 @@
   function dropGameEntry(event, gameIdx, targetIndex) {
     event.dataTransfer.dropEffect = "move";
     const originIndex = parseInt(event.dataTransfer.getData("text/plain"));
-    const newTracklist = configData.gameData.games[gameIdx].entries;
+    const newTracklist = cfg.config.gameData.games[gameIdx].entries;
 
     if (originIndex < targetIndex) {
       newTracklist.splice(targetIndex + 1, 0, newTracklist[originIndex]);
@@ -135,7 +107,7 @@
       newTracklist.splice(targetIndex, 0, newTracklist[originIndex]);
       newTracklist.splice(originIndex + 1, 1);
     }
-    configData.gameData.games[gameIdx].entries = newTracklist;
+    cfg.config.gameData.games[gameIdx].entries = newTracklist;
     hoveringGameEntry = null;
   }
 
@@ -150,7 +122,7 @@
   function dropGame(event, gameIdx) {
     event.dataTransfer.dropEffect = "move";
     const originIndex = parseInt(event.dataTransfer.getData("text/plain"));
-    const newTracklist = configData.gameData.games;
+    const newTracklist = cfg.config.gameData.games;
 
     if (originIndex < gameIdx) {
       newTracklist.splice(gameIdx + 1, 0, newTracklist[originIndex]);
@@ -159,7 +131,7 @@
       newTracklist.splice(gameIdx, 0, newTracklist[originIndex]);
       newTracklist.splice(originIndex + 1, 1);
     }
-    configData.gameData.games = newTracklist;
+    cfg.config.gameData.games = newTracklist;
     hoveringGameEntry = null;
   }
 
@@ -171,11 +143,11 @@
 
   // Setting Change Handlers
   async function disableGame(val: boolean, gameIdx: number) {
-    if (configData.gameData.games[gameIdx].isDisabled == val) {
+    if (cfg.config.gameData.games[gameIdx].isDisabled == val) {
       return;
     }
-    configData.gameData.games[gameIdx].isDisabled = val;
-    console.log(configData);
+    cfg.config.gameData.games[gameIdx].isDisabled = val;
+    console.log(cfg.config);
     console.log(originalConfigData);
   }
 
@@ -185,18 +157,18 @@
     entryIdx: number
   ) {
     if (
-      configData.gameData.games[gameIdx].entries[entryIdx].isDisabled == val
+      cfg.config.gameData.games[gameIdx].entries[entryIdx].isDisabled == val
     ) {
       return;
     }
-    configData.gameData.games[gameIdx].entries[entryIdx].isDisabled = val;
+    cfg.config.gameData.games[gameIdx].entries[entryIdx].isDisabled = val;
   }
 
   async function overrideGameDefaults(val: boolean, gameIdx: number) {
-    if (configData.gameData.games[gameIdx].overrideDefaults == val) {
+    if (cfg.config.gameData.games[gameIdx].overrideDefaults == val) {
       return;
     }
-    configData.gameData.games[gameIdx].overrideDefaults = val;
+    cfg.config.gameData.games[gameIdx].overrideDefaults = val;
   }
 
   async function overrideGameEntryDefaults(
@@ -205,12 +177,12 @@
     entryIdx: number
   ) {
     if (
-      configData.gameData.games[gameIdx].entries[entryIdx].overrideDefaults ==
+      cfg.config.gameData.games[gameIdx].entries[entryIdx].overrideDefaults ==
       val
     ) {
       return;
     }
-    configData.gameData.games[gameIdx].entries[entryIdx].overrideDefaults = val;
+    cfg.config.gameData.games[gameIdx].entries[entryIdx].overrideDefaults = val;
   }
 
   async function setGameEntryTitleOverride(
@@ -218,35 +190,7 @@
     gameIdx: number,
     entryIdx: number
   ) {
-    configData.gameData.games[gameIdx].entries[entryIdx].titleOverride = val;
-  }
-
-  // Always escape HTML for text arguments!
-  function escapeHtml(html) {
-    const div = document.createElement("div");
-    div.textContent = html;
-    return div.innerHTML;
-  }
-
-  // Custom function to emit toast notifications
-  function notify(
-    message,
-    variant = "primary",
-    icon = "info-circle",
-    duration = 3000
-  ) {
-    const alert = Object.assign(document.createElement("sl-alert"), {
-      variant,
-      closable: true,
-      duration: duration,
-      innerHTML: `
-        <sl-icon name="${icon}" slot="icon"></sl-icon>
-        ${escapeHtml(message)}
-      `,
-    });
-
-    document.body.append(alert);
-    return alert.toast();
+    cfg.config.gameData.games[gameIdx].entries[entryIdx].titleOverride = val;
   }
 </script>
 
@@ -271,8 +215,10 @@
         disabled={srcName === undefined || srcName === ""}
         >Refresh Games</sl-button
       >
-      <sl-button variant="warning" disabled={!changesToSave} on:click={revertChanges}
-        >Revert Changes</sl-button
+      <sl-button
+        variant="warning"
+        disabled={!changesToSave}
+        on:click={revertChanges}>Revert Changes</sl-button
       >
       <sl-button
         variant="success"
@@ -284,29 +230,27 @@
 {/if}
 {#if loadingGameData}
   <SpinnerRow loadingMessage="Loading Game Data" />
-{:else}
+{:else if cfg.config !== undefined && cfg.config.gameData.games.length > 0}
   <h2>Game List <em class="normal-text">Drag to order</em></h2>
-  {#if configData.gameData.games.length > 0}
-    <div class="list">
-      {#each configData.gameData.games as game, gameIdx (gameIdx)}
-        <div
-          class="list-item"
-          draggable="true"
-          animate:flip
-          on:dragstart={(event) => dragstartGame(event, gameIdx)}
-          on:drop|preventDefault={(event) => dropGame(event, gameIdx)}
-          on:dragenter={() => (hoveringGame = gameIdx)}
-          on:dragover|preventDefault
-          class:is-active={hoveringGame === gameIdx}
-        >
-          {game.title}
-        </div>
-      {/each}
-    </div>
-  {/if}
+  <div class="list">
+    {#each cfg.config.gameData.games as game, gameIdx (gameIdx)}
+      <div
+        class="list-item"
+        draggable="true"
+        animate:flip
+        on:dragstart={(event) => dragstartGame(event, gameIdx)}
+        on:drop|preventDefault={(event) => dropGame(event, gameIdx)}
+        on:dragenter={() => (hoveringGame = gameIdx)}
+        on:dragover|preventDefault
+        class:is-active={hoveringGame === gameIdx}
+      >
+        {game.title}
+      </div>
+    {/each}
+  </div>
   <h2>Game Options</h2>
   <div id="game-list">
-    {#each configData.gameData.games as game, gameIdx (gameIdx)}
+    {#each cfg.config.gameData.games as game, gameIdx (gameIdx)}
       <sl-details class="game-pane">
         <div slot="summary" class="game-header">
           <div class="row">
@@ -382,7 +326,7 @@
                   {#if liveData.get(entry.dataId).isLevel || liveData.get(entry.dataId).hasSubcategories || liveData.get(entry.dataId).srcIsMiscCategory}
                     <br />
                     <div class="entry-types">
-                      {#if configData.gameData.games[gameIdx].entries[entryIdx].isDisabled}
+                      {#if cfg.config.gameData.games[gameIdx].entries[entryIdx].isDisabled}
                         <sl-badge variant="danger" pill>Disabled</sl-badge>
                       {/if}
                       {#if liveData.get(entry.dataId).isLevel}
@@ -426,7 +370,12 @@
                     class="mt-1"
                     label="Title Override"
                     value={entry.titleOverride}
-                    on:sl-input={(event) => setGameEntryTitleOverride(event.target.value, gameIdx, entryIdx)}
+                    on:sl-input={(event) =>
+                      setGameEntryTitleOverride(
+                        event.target.value,
+                        gameIdx,
+                        entryIdx
+                      )}
                   />
                 {/if}
               </sl-card>

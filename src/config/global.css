@@ -29,6 +29,9 @@
 	--src-twitch-ext-font-family-gameEntry: "Inter";
 	--src-twitch-ext-font-family-gameEntryTime: "Inter";
 
+	/* Misc Features */
+	--src-twitch-ext-gameExpandIconVisibility: "visible";
+
 	/* Chota Overrides */
 	--font-family-sans: "Inter";
 	--font-family-mono: "Roboto Mono";
