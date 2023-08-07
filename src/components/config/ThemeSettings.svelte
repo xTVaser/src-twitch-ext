@@ -4,14 +4,13 @@
   import { configStore } from "@lib/stores/config";
   import { notify } from "@lib/toast";
   import { onMount } from "svelte";
-  import "@shoelace-style/shoelace/dist/components/select/select.js"
-  import "@shoelace-style/shoelace/dist/components/menu-item/menu-item.js"
-  import "@shoelace-style/shoelace/dist/components/menu-label/menu-label.js"
-  import "@shoelace-style/shoelace/dist/components/button/button.js"
-  import "@shoelace-style/shoelace/dist/components/divider/divider.js"
-  import "@shoelace-style/shoelace/dist/components/input/input.js"
-  import "@shoelace-style/shoelace/dist/components/switch/switch.js"
-  import "@shoelace-style/shoelace/dist/components/color-picker/color-picker.js"
+  import "@shoelace-style/shoelace/dist/components/select/select.js";
+  import "@shoelace-style/shoelace/dist/components/option/option.js";
+  import "@shoelace-style/shoelace/dist/components/button/button.js";
+  import "@shoelace-style/shoelace/dist/components/divider/divider.js";
+  import "@shoelace-style/shoelace/dist/components/input/input.js";
+  import "@shoelace-style/shoelace/dist/components/switch/switch.js";
+  import "@shoelace-style/shoelace/dist/components/color-picker/color-picker.js";
 
   function isThemeCustom(themeName: string): boolean {
     return themeName.startsWith("_custom-");
@@ -25,7 +24,8 @@
   $: changesToSave =
     cfg.loaded &&
     isThemeCustom(cfg.config.currentThemeName) &&
-    JSON.stringify(getThemeData(cfg.config)) !== JSON.stringify(originalThemeData);
+    JSON.stringify(getThemeData(cfg.config)) !==
+      JSON.stringify(originalThemeData);
 
   onMount(async () => {
     configStore.subscribe(async () => {
@@ -43,7 +43,7 @@
         "Theme with that name already exists",
         "danger",
         "exclamation-octagon",
-        3000
+        3000,
       );
     } else {
       cfg.config.customThemes[themeName] = DefaultDarkTheme;
@@ -86,15 +86,13 @@
           console.log(cfg.config.currentThemeName);
         }}
       >
-        <sl-menu-label>Default Themes</sl-menu-label>
-        <sl-menu-item value="_default-dark">Default Dark</sl-menu-item>
+        <small>Default Themes</small>
+        <sl-option value="_default-dark">Default Dark</sl-option>
         {#if Object.keys(cfg.config.customThemes).length > 0}
           <sl-divider />
-          <sl-menu-label>Custom Themes</sl-menu-label>
+          <small>Custom Themes</small>
           {#each customThemeNames(Object.keys(cfg.config.customThemes)) as themeName}
-            <sl-menu-item value={`_custom-${themeName}`}
-              >{themeName}</sl-menu-item
-            >
+            <sl-option value={`_custom-${themeName}`}>{themeName}</sl-option>
           {/each}
         {/if}
       </sl-select>
@@ -123,7 +121,9 @@
         {#if isThemeCustom(cfg.config.currentThemeName)}
           <sl-button
             variant="danger"
-            disabled={isThemeCustom(cfg.config.currentThemeName) ? undefined : true}
+            disabled={isThemeCustom(cfg.config.currentThemeName)
+              ? undefined
+              : true}
             data-cy="delete-theme-btn"
             on:click={deleteCurrentCustomTheme}>Delete Current Theme</sl-button
           >
@@ -160,7 +160,7 @@
           on:input={(event) => {
             configStore.setValueOnCurrentTheme(
               "hideExpandIcon",
-              event.target.checked
+              event.target.checked,
             );
           }}
         />
@@ -172,12 +172,14 @@
       </div>
       <div class="col">
         <sl-switch
-        data-cy="rainbow-world-record-switch"
-          checked={getThemeData(cfg.config).showRainbowWorldRecord ? true : undefined}
+          data-cy="rainbow-world-record-switch"
+          checked={getThemeData(cfg.config).showRainbowWorldRecord
+            ? true
+            : undefined}
           on:input={(event) => {
             configStore.setValueOnCurrentTheme(
               "showRainbowWorldRecord",
-              event.target.checked
+              event.target.checked,
             );
           }}
         />
@@ -189,11 +191,12 @@
       </div>
       <div class="col">
         <sl-switch
+          data-cy="show-lb-place-switch"
           checked={getThemeData(cfg.config).showPlace ? true : undefined}
           on:input={(event) => {
             configStore.setValueOnCurrentTheme(
               "showPlace",
-              event.target.checked
+              event.target.checked,
             );
           }}
         />
@@ -205,11 +208,13 @@
       </div>
       <div class="col">
         <sl-color-picker
+          data-cy="expand-icon-color"
           value={getThemeData(cfg.config).gameExpandIconColor}
           on:blur={(event) => {
+            console.log("blurred");
             configStore.setValueOnCurrentTheme(
               "gameExpandIconColor",
-              event.target.value
+              event.target.value,
             );
           }}
         />
@@ -221,11 +226,12 @@
       </div>
       <div class="col">
         <sl-color-picker
+          data-cy="main-bg-color"
           value={getThemeData(cfg.config).mainBackgroundColor}
           on:blur={(event) => {
             configStore.setValueOnCurrentTheme(
               "mainBackgroundColor",
-              event.target.value
+              event.target.value,
             );
           }}
         />
@@ -237,11 +243,12 @@
       </div>
       <div class="col">
         <sl-color-picker
+          data-cy="game-header-bg-color"
           value={getThemeData(cfg.config).gameHeaderBackgroundColor}
           on:blur={(event) => {
             configStore.setValueOnCurrentTheme(
               "gameHeaderBackgroundColor",
-              event.target.value
+              event.target.value,
             );
           }}
         />
@@ -253,11 +260,12 @@
       </div>
       <div class="col">
         <sl-color-picker
+          data-cy="game-entry-bg-color"
           value={getThemeData(cfg.config).gameEntriesBackgroundColor}
           on:blur={(event) => {
             configStore.setValueOnCurrentTheme(
               "gameEntriesBackgroundColor",
-              event.target.value
+              event.target.value,
             );
           }}
         />
@@ -269,11 +277,12 @@
       </div>
       <div class="col">
         <sl-color-picker
+          data-cy="game-entry-odd-bg-color"
           value={getThemeData(cfg.config).gameEntriesAlternateRowColor}
           on:blur={(event) => {
             configStore.setValueOnCurrentTheme(
               "gameEntriesAlternateRowColor",
-              event.target.value
+              event.target.value,
             );
           }}
         />
@@ -285,11 +294,12 @@
       </div>
       <div class="col">
         <sl-color-picker
+          data-cy="game-name-link-hover-color"
           value={getThemeData(cfg.config).gameNameLinkHoverColor}
           on:blur={(event) => {
             configStore.setValueOnCurrentTheme(
               "gameNameLinkHoverColor",
-              event.target.value
+              event.target.value,
             );
           }}
         />
@@ -301,11 +311,12 @@
       </div>
       <div class="col">
         <sl-color-picker
+          data-cy="game-entry-link-hover-color"
           value={getThemeData(cfg.config).gameEntryLinkHoverColor}
           on:blur={(event) => {
             configStore.setValueOnCurrentTheme(
               "gameEntryLinkHoverColor",
-              event.target.value
+              event.target.value,
             );
           }}
         />
@@ -318,12 +329,12 @@
       <div class="col">
         <div class="row is-vertical-align">
           <sl-color-picker
-            class="mr-1"
+            data-cy="game-name-font-color"
             value={getThemeData(cfg.config).gameNameFontColor}
             on:blur={(event) => {
               configStore.setValueOnCurrentTheme(
                 "gameNameFontColor",
-                event.target.value
+                event.target.value,
               );
             }}
           />
@@ -337,12 +348,12 @@
       <div class="col">
         <div class="row is-vertical-align">
           <sl-color-picker
-            class="mr-1"
+            data-cy="game-name-subheader-font-color"
             value={getThemeData(cfg.config).gameNameSubheaderFontColor}
             on:blur={(event) => {
               configStore.setValueOnCurrentTheme(
                 "gameNameSubheaderFontColor",
-                event.target.value
+                event.target.value,
               );
             }}
           />
@@ -356,12 +367,12 @@
       <div class="col">
         <div class="row is-vertical-align">
           <sl-color-picker
-            class="mr-1"
+            data-cy="game-entry-font-color"
             value={getThemeData(cfg.config).gameEntryFontColor}
             on:blur={(event) => {
               configStore.setValueOnCurrentTheme(
                 "gameEntryFontColor",
-                event.target.value
+                event.target.value,
               );
             }}
           />
@@ -375,12 +386,12 @@
       <div class="col">
         <div class="row is-vertical-align">
           <sl-color-picker
-            class="mr-1"
+            data-cy="game-entry-time-font-color"
             value={getThemeData(cfg.config).gameEntryTimeFontColor}
             on:blur={(event) => {
               configStore.setValueOnCurrentTheme(
                 "gameEntryTimeFontColor",
-                event.target.value
+                event.target.value,
               );
             }}
           />

@@ -11,7 +11,7 @@
         "videos": {
           "links": [{ "uri": "https://www.youtube.com/watch?v=HYTg_dNDdv8" }]
         },
-        "comment": null,
+        "comment": "MOCKED",
         "status": {
           "status": "verified",
           "examiner": "j9rzpp7j",
