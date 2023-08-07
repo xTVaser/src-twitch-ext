@@ -1,3 +1,6 @@
+import "@shoelace-style/shoelace/dist/components/alert/alert.js";
+import "@shoelace-style/shoelace/dist/components/icon/icon.js";
+
 // Always escape HTML for text arguments!
 function escapeHtml(html) {
   const div = document.createElement("div");
@@ -10,7 +13,7 @@ export function notify(
   message,
   variant = "primary",
   icon = "info-circle",
-  duration = 3000
+  duration = 3000,
 ) {
   const alert = Object.assign(document.createElement("sl-alert"), {
     variant,

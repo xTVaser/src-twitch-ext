@@ -3,6 +3,7 @@
   import { getUsersPersonalBests, PersonalBest } from "@lib/src-api";
   import { configStore } from "@lib/stores/config";
   import { onMount } from "svelte";
+  import "@shoelace-style/shoelace/dist/components/details/details.js";
 
   $: cfg = $configStore;
 
@@ -56,7 +57,7 @@
           <img
             src={getLiveData(game.entries[0].dataId).srcGameCoverUrl.replace(
               "gameasset/",
-              "static/game/"
+              "static/game/",
             )}
             alt="Cover art for {game.title}"
             class="game-cover"
@@ -94,7 +95,8 @@
             <div
               class="col entry-time"
               class:rainbow-cycle={getThemeData(cfg.config)
-                .showRainbowWorldRecord && getLiveData(entry.dataId).srcLeaderboardPlace === 1}
+                .showRainbowWorldRecord &&
+                getLiveData(entry.dataId).srcLeaderboardPlace === 1}
             >
               <span>{formatTime(getLiveData(entry.dataId).srcRunTime)}</span>
             </div>

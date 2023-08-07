@@ -1,95 +1,95 @@
 :root {
-	/* Colors */
-	--src-twitch-ext-color-mainBackground: #212026;
-	--src-twitch-ext-color-gameHeaderBackground: #322F37;
-	--src-twitch-ext-color-gameEntriesBackground: #212026;
-	--src-twitch-ext-color-gameEntriesAlternateRow: #111113;
-	--src-twitch-ext-color-gameNameLinkHover: red;
-	--src-twitch-ext-color-gameEntryLinkHover: orange;
-	--src-twitch-ext-color-gameExpandIcon: #DFDDE2;
+  /* Colors */
+  --src-twitch-ext-color-mainBackground: #212026;
+  --src-twitch-ext-color-gameHeaderBackground: #322f37;
+  --src-twitch-ext-color-gameEntriesBackground: #212026;
+  --src-twitch-ext-color-gameEntriesAlternateRow: #111113;
+  --src-twitch-ext-color-gameNameLinkHover: red;
+  --src-twitch-ext-color-gameEntryLinkHover: orange;
+  --src-twitch-ext-color-gameExpandIcon: #dfdde2;
 
-	/* Fonts */
-	--src-twitch-ext-font-weight-gameName: 700;
-	--src-twitch-ext-font-weight-gameNameSubheader: 400;
-	--src-twitch-ext-font-weight-gameEntry: 500;
-	--src-twitch-ext-font-weight-gameEntryTime: 400;
+  /* Fonts */
+  --src-twitch-ext-font-weight-gameName: 700;
+  --src-twitch-ext-font-weight-gameNameSubheader: 400;
+  --src-twitch-ext-font-weight-gameEntry: 500;
+  --src-twitch-ext-font-weight-gameEntryTime: 400;
 
-	--src-twitch-ext-font-style-gameName: normal;
-	--src-twitch-ext-font-style-gameNameSubheader: normal;
-	--src-twitch-ext-font-style-gameEntry: normal;
-	--src-twitch-ext-font-style-gameEntryTime: normal;
+  --src-twitch-ext-font-style-gameName: normal;
+  --src-twitch-ext-font-style-gameNameSubheader: normal;
+  --src-twitch-ext-font-style-gameEntry: normal;
+  --src-twitch-ext-font-style-gameEntryTime: normal;
 
-	--src-twitch-ext-font-color-gameName: #DFDDE2;
-	--src-twitch-ext-font-color-gameNameSubheader: #A299B0;
-	--src-twitch-ext-font-color-gameEntry: #FFFFFF;
-	--src-twitch-ext-font-color-gameEntryTime: #FFFFFF;
+  --src-twitch-ext-font-color-gameName: #dfdde2;
+  --src-twitch-ext-font-color-gameNameSubheader: #a299b0;
+  --src-twitch-ext-font-color-gameEntry: #ffffff;
+  --src-twitch-ext-font-color-gameEntryTime: #ffffff;
 
-	--src-twitch-ext-font-family-gameName: "Inter";
-	--src-twitch-ext-font-family-gameNameSubheader: "Inter";
-	--src-twitch-ext-font-family-gameEntry: "Inter";
-	--src-twitch-ext-font-family-gameEntryTime: "Inter";
+  --src-twitch-ext-font-family-gameName: "Inter";
+  --src-twitch-ext-font-family-gameNameSubheader: "Inter";
+  --src-twitch-ext-font-family-gameEntry: "Inter";
+  --src-twitch-ext-font-family-gameEntryTime: "Inter";
 
-	/* Misc Features */
-	--src-twitch-ext-gameExpandIconVisibility: "visible";
+  /* Misc Features */
+  --src-twitch-ext-gameExpandIconVisibility: "visible";
 
-	/* Chota Overrides */
-	--font-family-sans: "Inter";
-	--font-family-mono: "Roboto Mono";
-	--font-size: 16px;
+  /* Chota Overrides */
+  --font-family-sans: "Inter";
+  --font-family-mono: "Roboto Mono";
+  --font-size: 16px;
 }
 
 html {
-	overflow: hidden;
-	font-size: var(--font-size);
+  overflow: hidden;
+  font-size: var(--font-size);
 }
 
 body {
   background-color: #0e0e10;
   color: #e5e3e8;
-	margin: 0;
+  margin: 0;
 }
 
 /* Chota Overrides */
 h2 {
-	font-size: 1.25rem;
+  font-size: 1.25rem;
 }
 h3 {
-	font-size: 1rem;
+  font-size: 1rem;
 }
 
 a {
-	color: #e2dbf0;
+  color: #e2dbf0;
 }
 
 .pt-1 {
-	padding-top: 1em;
+  padding-top: 1em;
 }
 
 .is-gutterless {
-	--grid-gutter: 0%;
+  --grid-gutter: 0%;
 }
 
 :host,
 .sl-theme-dark {
-  --sl-font-sans: 'Inter', sans-serif;
+  --sl-font-sans: "Inter", sans-serif;
 }
 
 .nav-link.active sl-icon-button::part(base) {
-	color: #a06bff;
+  color: #a06bff;
 }
 
 .nav-link.active {
-	color: #a06bff;
+  color: #a06bff;
 }
 
 .nav-link sl-icon-button::part(base) {
-	color: #e2dbf0;
+  color: #e2dbf0;
 }
 
 .nav-link sl-icon-button::part(base):hover {
-	color: #e2dbf0;
+  color: #e2dbf0;
 }
 
 .nav-link.active sl-icon-button::part(base):hover {
-	color: #a06bff;
+  color: #a06bff;
 }

@@ -15,7 +15,10 @@ class GameDataGamesSettings {
   public showSeconds: boolean = true;
   public autoExpanded: boolean = false;
   public entries: GameDataEntrySettings[] = [];
-  constructor(public srcId: string, public title: string) {}
+  constructor(
+    public srcId: string,
+    public title: string,
+  ) {}
 }
 
 export class GameData {
@@ -76,51 +79,51 @@ export function updateCSSVars(themeData: ThemeData) {
   console.log("not blerg");
   document.documentElement.style.setProperty(
     `--src-twitch-ext-color-mainBackground`,
-    themeData.mainBackgroundColor
+    themeData.mainBackgroundColor,
   );
   document.documentElement.style.setProperty(
     `--src-twitch-ext-color-gameHeaderBackground`,
-    themeData.gameHeaderBackgroundColor
+    themeData.gameHeaderBackgroundColor,
   );
   document.documentElement.style.setProperty(
     `--src-twitch-ext-color-gameEntriesBackground`,
-    themeData.gameEntriesBackgroundColor
+    themeData.gameEntriesBackgroundColor,
   );
   document.documentElement.style.setProperty(
     `--src-twitch-ext-color-gameEntriesAlternateRow`,
-    themeData.gameEntriesAlternateRowColor
+    themeData.gameEntriesAlternateRowColor,
   );
   document.documentElement.style.setProperty(
     `--src-twitch-ext-color-gameNameLinkHover`,
-    themeData.gameNameLinkHoverColor
+    themeData.gameNameLinkHoverColor,
   );
   document.documentElement.style.setProperty(
     `--src-twitch-ext-color-gameEntryLinkHover`,
-    themeData.gameEntryLinkHoverColor
+    themeData.gameEntryLinkHoverColor,
   );
   document.documentElement.style.setProperty(
     `--src-twitch-ext-color-gameExpandIcon`,
-    themeData.gameExpandIconColor
+    themeData.gameExpandIconColor,
   );
   document.documentElement.style.setProperty(
     `--src-twitch-ext-gameExpandIconVisibility`,
-    themeData.hideExpandIcon ? "hidden" : "visible"
+    themeData.hideExpandIcon ? "hidden" : "visible",
   );
   document.documentElement.style.setProperty(
     `--src-twitch-ext-font-color-gameName`,
-    themeData.gameNameFontColor
+    themeData.gameNameFontColor,
   );
   document.documentElement.style.setProperty(
     `--src-twitch-ext-font-color-gameNameSubheader`,
-    themeData.gameNameSubheaderFontColor
+    themeData.gameNameSubheaderFontColor,
   );
   document.documentElement.style.setProperty(
     `--src-twitch-ext-font-color-gameEntry`,
-    themeData.gameEntryFontColor
+    themeData.gameEntryFontColor,
   );
   document.documentElement.style.setProperty(
     `--src-twitch-ext-font-color-gameEntryTime`,
-    themeData.gameEntryTimeFontColor
+    themeData.gameEntryTimeFontColor,
   );
 }
 
@@ -189,7 +192,7 @@ export class LocalConfigService extends ConfigService {
   broadcasterConfigExists(): boolean {
     if (localStorage.getItem("src-twitch-ext") !== null) {
       const data: TwitchConfigObject = JSON.parse(
-        localStorage.getItem("src-twitch-ext")
+        localStorage.getItem("src-twitch-ext"),
       );
       return data.broadcaster !== undefined;
     }
@@ -248,14 +251,14 @@ export class TwitchConfigService extends ConfigService {
   }
   getBroadcasterConfig(): ConfigData {
     return JSON.parse(
-      this.windowInstance.Twitch.ext.configuration.broadcaster.content
+      this.windowInstance.Twitch.ext.configuration.broadcaster.content,
     );
   }
   setBroadcasterConfig(data: any) {
     this.windowInstance.Twitch.ext.configuration.set(
       "broadcaster",
       "1.0",
-      JSON.stringify(data)
+      JSON.stringify(data),
     );
   }
   developerConfigExists(): boolean {

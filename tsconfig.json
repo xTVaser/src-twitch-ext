@@ -21,9 +21,9 @@
      * Note that setting allowJs false does not prevent the use
      * of JS in `.svelte` files.
      */
-     "allowJs": true,
-     "checkJs": true,
-     "isolatedModules": true
+    "allowJs": true,
+    "checkJs": true,
+    "isolatedModules": true
   },
   "references": [{ "path": "./tsconfig.node.json" }]
 }

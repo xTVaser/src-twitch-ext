@@ -154,7 +154,7 @@
   async function disableGameEntry(
     val: boolean,
     gameIdx: number,
-    entryIdx: number
+    entryIdx: number,
   ) {
     if (
       cfg.config.gameData.games[gameIdx].entries[entryIdx].isDisabled == val
@@ -174,7 +174,7 @@
   async function overrideGameEntryDefaults(
     val: boolean,
     gameIdx: number,
-    entryIdx: number
+    entryIdx: number,
   ) {
     if (
       cfg.config.gameData.games[gameIdx].entries[entryIdx].overrideDefaults ==
@@ -188,7 +188,7 @@
   async function setGameEntryTitleOverride(
     val: string,
     gameIdx: number,
-    entryIdx: number
+    entryIdx: number,
   ) {
     cfg.config.gameData.games[gameIdx].entries[entryIdx].titleOverride = val;
   }
@@ -349,7 +349,7 @@
                         disableGameEntry(
                           event.target.checked,
                           gameIdx,
-                          entryIdx
+                          entryIdx,
                         )}>Disable Entry</sl-switch
                     >
                   </div>
@@ -360,7 +360,7 @@
                         overrideGameEntryDefaults(
                           event.target.checked,
                           gameIdx,
-                          entryIdx
+                          entryIdx,
                         )}>Override Defaults</sl-switch
                     >
                   </div>
@@ -374,7 +374,7 @@
                       setGameEntryTitleOverride(
                         event.target.value,
                         gameIdx,
-                        entryIdx
+                        entryIdx,
                       )}
                   />
                 {/if}

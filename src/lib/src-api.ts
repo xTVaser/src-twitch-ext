@@ -7,7 +7,7 @@ export interface SpeedrunComUser {
 }
 
 export async function lookupUserByName(
-  srcUserName: string
+  srcUserName: string,
 ): Promise<SpeedrunComUser> {
   const url = `https://www.speedrun.com/api/v1/users?lookup=${srcUserName}`;
   let userData = [];
@@ -16,7 +16,7 @@ export async function lookupUserByName(
     userData = (await resp.json()).data;
   } catch (error) {
     throw new Error(
-      "src: Unexpected error occurred when looking up the Speedrun.com User"
+      "src: Unexpected error occurred when looking up the Speedrun.com User",
     );
   }
 
@@ -57,7 +57,7 @@ export class PersonalBest {
     public srcLevelName: string | undefined,
     public isLevel: boolean,
     public hasSubcategories: boolean,
-    public subcategoryInfo: SubcategoryInfo[]
+    public subcategoryInfo: SubcategoryInfo[],
   ) {}
 
   public getId(): string {
@@ -174,7 +174,7 @@ function resolveLevelOrCategoryName(pb: PersonalBest): string {
 }
 
 export async function getUsersPersonalBests(
-  srcUserId: string
+  srcUserId: string,
 ): Promise<Map<string, PersonalBest>> {
   // https://www.speedrun.com/api/v1/users/e8envo80/personal-bests?embed=game,category.variables,level.variables&max=200
   const url = `https://www.speedrun.com/api/v1/users/${srcUserId}/personal-bests?embed=game,category.variables,level.variables&max=200`;
@@ -203,7 +203,7 @@ export async function getUsersPersonalBests(
         isLevel(pb) ? pb.level.data.name : undefined,
         isLevel(pb),
         hasSubcategories(pb),
-        getSubcategories(pb)
+        getSubcategories(pb),
       );
 
       personalBests.set(newEntry.getId(), newEntry);
