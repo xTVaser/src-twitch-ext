@@ -37,7 +37,7 @@ function createConfigStore() {
 
   return {
     subscribe,
-    init: () =>
+    init: (forConfig: boolean) =>
       update((val) => {
         if (
           window.location.hostname === "127.0.0.1" ||
@@ -46,6 +46,9 @@ function createConfigStore() {
           log("using local host config");
           val.service = new LocalConfigService();
           val.config = loadConfig(val.service);
+          if (val.config === undefined && forConfig) {
+            val.config = new ConfigData();
+          }
           const themeData = getThemeData(val.config);
           updateCSSVars(themeData);
           val.loaded = true;
@@ -57,6 +60,9 @@ function createConfigStore() {
           // Setup Twitch callbacks
           window.Twitch.ext.configuration.onChanged(() => {
             val.config = loadConfig(val.service);
+            if (val.config === undefined && forConfig) {
+              val.config = new ConfigData();
+            }
             const themeData = getThemeData(val.config);
             updateCSSVars(themeData);
             val.loaded = true;

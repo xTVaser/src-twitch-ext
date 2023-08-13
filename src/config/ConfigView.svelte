@@ -5,6 +5,7 @@
   import ThemeSettings from "@components/config/ThemeSettings.svelte";
   import { onMount } from "svelte";
   import { configStore } from "@lib/stores/config";
+  import { ConfigData } from "@lib/config";
 
   const routes = {
     // Using named parameters, with last being optional
@@ -19,7 +20,7 @@
   };
 
   onMount(async () => {
-    configStore.init();
+    configStore.init(true);
   });
 </script>
 

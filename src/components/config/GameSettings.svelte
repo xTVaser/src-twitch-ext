@@ -7,10 +7,15 @@
     PersonalBest,
   } from "@lib/src-api";
   import { onMount } from "svelte";
-  import SpinnerRow from "@components/common/SpinnerRow.svelte";
   import structuredClone from "@ungap/structured-clone";
   import { configStore } from "@lib/stores/config";
   import { notify } from "@lib/toast";
+  import "@shoelace-style/shoelace/dist/components/details/details.js";
+  import "@shoelace-style/shoelace/dist/components/badge/badge.js";
+  import "@shoelace-style/shoelace/dist/components/switch/switch.js";
+  import "@shoelace-style/shoelace/dist/components/input/input.js";
+  import "@shoelace-style/shoelace/dist/components/button/button.js";
+  import "@shoelace-style/shoelace/dist/components/card/card.js";
 
   $: cfg = $configStore;
 
@@ -18,7 +23,7 @@
   let srcName = "";
   let srcId = undefined;
 
-  let liveData: Map<string, PersonalBest> = undefined;
+  let liveData: Map<string, PersonalBest> | undefined = undefined;
   let originalConfigData = undefined;
 
   let loadingUserData = true;
@@ -40,10 +45,8 @@
           srcId = cfg.config.gameData.userSrcId;
           loadingGameData = true;
           liveData = await getUsersPersonalBests(srcId);
-          loadingGameData = false;
-        } else {
-          loadingGameData = false;
         }
+        loadingGameData = false;
         loadingUserData = false;
       }
     });
@@ -55,32 +58,53 @@
 
   async function refreshGameList() {
     if (srcName === undefined) {
-      // TODO - error
+      notify("Please enter a username", "danger", "exclamation-octagon", 3000);
       return;
     }
     // If we don't have their ID yet, go get it
     if (srcId === undefined) {
       try {
-        srcId = (await lookupUserByName(srcName)).id;
+        const lookupResponse = await lookupUserByName(srcName);
+        if ("errorMessage" in lookupResponse) {
+          notify(
+            lookupResponse.errorMessage,
+            "danger",
+            "exclamation-octagon",
+            3000,
+          );
+          return;
+        }
+        srcId = lookupResponse.id;
       } catch (error) {
-        // TODO - error
+        notify(
+          "Unexpected error occurred during user lookup",
+          "danger",
+          "exclamation-octagon",
+          3000,
+        );
         return;
       }
     }
-
-    // TODO - need a reset to defaults button in places (maybe)
-    // TODO - refresh a particular game?
-    loadingGameData = true;
     // Get the live data from speedrun.com, this can be joined via the id
     // to the saved settings data
+    loadingGameData = true;
     liveData = await getUsersPersonalBests(srcId);
-    // TODO - merge new stuff in if they already have something saved
-    cfg.config.gameData = GameData.initFromPersonalBestData(liveData);
-    cfg.config.gameData.userSrcId = srcId;
-    cfg.config.gameData.userSrcName = srcName;
-    console.log(cfg.config);
-    console.log(originalConfigData);
+    if (liveData === undefined) {
+      notify(
+        "Unable to retrieve data from Speedrun.com",
+        "danger",
+        "exclamation-octagon",
+        3000,
+      );
+    } else {
+      console.log(cfg);
+      cfg.config.gameData = GameData.initFromPersonalBestData(liveData);
+      cfg.config.gameData.userSrcId = srcId;
+      cfg.config.gameData.userSrcName = srcName;
+    }
     loadingGameData = false;
+    loadingGameData = false;
+    // TODO - merge new stuff in if they already have something saved
   }
 
   async function saveSettings() {
@@ -195,11 +219,12 @@
 </script>
 
 {#if loadingUserData}
-  <SpinnerRow loadingMessage="Loading User Data" />
+  TODO Loading User Data
 {:else}
-  <div class="row">
+  <div class="row" data-cy="config_games_src-username-form">
     <div class="col-6">
       <sl-input
+        data-cy="config_games_src-username-input"
         label="Speedrun.com Username"
         help-text="Enter your Speedrun.com username to search for personal bests!"
         value={srcName}
@@ -207,20 +232,23 @@
       >
     </div>
   </div>
-  <div class="row">
+  <div class="row" data-cy="config_games_controls">
     <div class="col" id="setting-controls">
       <sl-button
+        data-cy="config_games_refresh-btn"
         variant="primary"
         on:click={refreshGameList}
         disabled={srcName === undefined || srcName === ""}
         >Refresh Games</sl-button
       >
       <sl-button
+        data-cy="config_games_revert-btn"
         variant="warning"
-        disabled={!changesToSave}
+        disabled={!changesToSave || originalConfigData === undefined}
         on:click={revertChanges}>Revert Changes</sl-button
       >
       <sl-button
+        data-cy="config_games_save-btn"
         variant="success"
         disabled={!changesToSave}
         on:click={saveSettings}>Save Changes</sl-button
@@ -229,12 +257,13 @@
   </div>
 {/if}
 {#if loadingGameData}
-  <SpinnerRow loadingMessage="Loading Game Data" />
+  TODO Loading Game Data
 {:else if cfg.config !== undefined && cfg.config.gameData.games.length > 0}
   <h2>Game List <em class="normal-text">Drag to order</em></h2>
-  <div class="list">
+  <div class="list" data-cy="config_games-game-list">
     {#each cfg.config.gameData.games as game, gameIdx (gameIdx)}
       <div
+        data-cy="config_games-game-list-entry"
         class="list-item"
         draggable="true"
         animate:flip
@@ -251,7 +280,7 @@
   <h2>Game Options</h2>
   <div id="game-list">
     {#each cfg.config.gameData.games as game, gameIdx (gameIdx)}
-      <sl-details class="game-pane">
+      <sl-details class="game-pane" data-cy="config_games-game-options">
         <div slot="summary" class="game-header">
           <div class="row">
             <div class="col">
@@ -261,9 +290,17 @@
           <div class="row">
             <div class="col">
               {#if game.isDisabled}
-                <sl-badge variant="danger" pill>Disabled</sl-badge>
+                <sl-badge
+                  variant="danger"
+                  pill
+                  data-cy="config_games-game-status">Disabled</sl-badge
+                >
               {:else}
-                <sl-badge variant="success" pill>Enabled</sl-badge>
+                <sl-badge
+                  variant="success"
+                  pill
+                  data-cy="config_games-game-status">Enabled</sl-badge
+                >
               {/if}
             </div>
           </div>
@@ -271,6 +308,7 @@
         <div class="row">
           <div class="col">
             <sl-switch
+              data-cy="config_games-game-status-switch"
               checked={game.isDisabled}
               on:sl-change={(event) =>
                 disableGame(event.target.checked, gameIdx)}
@@ -279,6 +317,7 @@
           </div>
           <div class="col">
             <sl-switch
+              data-cy="config_games-game-override-switch"
               checked={game.overrideDefaults}
               on:sl-change={(event) =>
                 overrideGameDefaults(event.target.checked, gameIdx)}
@@ -289,11 +328,15 @@
         {#if game.overrideDefaults}
           <div class="row">
             <div class="col">
-              <sl-switch checked={game.showSeconds}>Show Seconds</sl-switch>
+              <sl-switch
+                data-cy="config_games-game-show-seconds-switch"
+                checked={game.showSeconds}>Show Seconds</sl-switch
+              >
             </div>
             <div class="col">
-              <sl-switch checked={game.showMilliseconds}
-                >Show Milliseconds</sl-switch
+              <sl-switch
+                data-cy="config_games-game-show-milliseconds-switch"
+                checked={game.showMilliseconds}>Show Milliseconds</sl-switch
               >
             </div>
           </div>
@@ -320,7 +363,7 @@
               on:dragover|preventDefault
               class:is-active={hoveringGameEntry === entryIdx}
             >
-              <sl-card class="game-entry">
+              <sl-card class="game-entry" data-cy="config_games-game-entry">
                 <div slot="header">
                   {liveData.get(entry.dataId).getCategoryOrLevelName()}
                   {#if liveData.get(entry.dataId).isLevel || liveData.get(entry.dataId).hasSubcategories || liveData.get(entry.dataId).srcIsMiscCategory}
@@ -443,20 +486,8 @@
     margin-top: 0.5em;
   }
 
-  .center-row {
-    align-items: center;
-  }
-
-  .ml-2 {
-    margin-left: 2em;
-  }
-
   .mt-1 {
     margin-top: 1em;
-  }
-
-  .mt-2 {
-    margin-top: 2em;
   }
 
   #setting-controls sl-button:not(:last-child) {

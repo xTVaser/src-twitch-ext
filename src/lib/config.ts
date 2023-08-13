@@ -182,7 +182,7 @@ interface TwitchConfigObject {
 }
 
 export abstract class ConfigService {
-  abstract broadcasterConfigExists(): boolean;
+  abstract broadcasterConfigExists(): boolean | undefined;
   abstract getBroadcasterConfig(): ConfigData | undefined;
   abstract setBroadcasterConfig(data: ConfigData);
   abstract developerConfigExists(): boolean;

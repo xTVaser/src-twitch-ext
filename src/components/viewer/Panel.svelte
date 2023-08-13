@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { GameDataEntrySettings, GameDataGamesSettings, getThemeData } from "@lib/config";
+  import {
+    GameDataEntrySettings,
+    GameDataGamesSettings,
+    getThemeData,
+  } from "@lib/config";
   import { getUsersPersonalBests, PersonalBest } from "@lib/src-api";
   import { configStore } from "@lib/stores/config";
   import { onMount } from "svelte";
@@ -12,7 +16,7 @@
   let pbDataLoaded = false;
 
   onMount(async () => {
-    configStore.init();
+    configStore.init(false);
     configStore.subscribe(async () => {
       if (cfg.loaded && cfg.config !== undefined && !pbDataLoaded) {
         // Request SRC for all PBs, not all information is stored in the config settings (times, cover art, etc)
@@ -21,31 +25,40 @@
         // Append them to the end
         if (pbData !== undefined) {
           for (const [dataId, pbInfo] of pbData) {
-          // Check if it's a new game or entry
-          let isNewGame = true;
-          for (let game of cfg.config.gameData.games) {
-            if (game.srcId === pbInfo.srcGameId) {
-              isNewGame = false;
-              // It's the same game, check if the entry exists
-              if (game.entries.find((val) => {
-                return val.dataId === dataId
-              }) === undefined) {
-                console.log(`new dataId - could not find ${dataId} in ${game.entries.map((val) => val.dataId)}`)
-                // It's a new unknown entry in an existing game
-                game.entries.push(new GameDataEntrySettings(dataId));
+            // Check if it's a new game or entry
+            let isNewGame = true;
+            for (let game of cfg.config.gameData.games) {
+              if (game.srcId === pbInfo.srcGameId) {
+                isNewGame = false;
+                // It's the same game, check if the entry exists
+                if (
+                  game.entries.find((val) => {
+                    return val.dataId === dataId;
+                  }) === undefined
+                ) {
+                  console.log(
+                    `new dataId - could not find ${dataId} in ${game.entries.map(
+                      (val) => val.dataId,
+                    )}`,
+                  );
+                  // It's a new unknown entry in an existing game
+                  game.entries.push(new GameDataEntrySettings(dataId));
+                }
+                break;
               }
-              break;
+            }
+            if (isNewGame) {
+              // We were unable to find it, it's a new game, add a new game AND the category
+              let newGame = new GameDataGamesSettings(
+                pbInfo.srcGameId,
+                pbInfo.srcGameName,
+              );
+              newGame.entries.push(new GameDataEntrySettings(dataId));
+              cfg.config.gameData.games.push(newGame);
             }
           }
-          if (isNewGame) {
-            // We were unable to find it, it's a new game, add a new game AND the category
-            let newGame = new GameDataGamesSettings(pbInfo.srcGameId, pbInfo.srcGameName);
-            newGame.entries.push(new GameDataEntrySettings(dataId));
-            cfg.config.gameData.games.push(newGame);
-          }
         }
-        }
-        
+
         pbDataLoaded = true;
       }
     });

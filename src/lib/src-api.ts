@@ -4,6 +4,10 @@
 
 import { log } from "./logging";
 
+export interface SpeedrunComError {
+  errorMessage: string;
+}
+
 export interface SpeedrunComUser {
   id: string;
   name: string;
@@ -11,23 +15,32 @@ export interface SpeedrunComUser {
 
 export async function lookupUserByName(
   srcUserName: string,
-): Promise<SpeedrunComUser> {
+): Promise<SpeedrunComUser | SpeedrunComError> {
   const url = `https://www.speedrun.com/api/v1/users?lookup=${srcUserName}`;
   let userData = [];
   try {
     let resp = await fetch(url);
+    if (!resp.ok) {
+      throw new Error(`HTTP error! Status: ${resp.status}`);
+    }
     userData = (await resp.json()).data;
   } catch (error) {
-    throw new Error(
-      "src: Unexpected error occurred when looking up the Speedrun.com User",
-    );
+    console.error("Caught an error:", error);
+    return <SpeedrunComError>{
+      errorMessage:
+        "Unexpected error occurred when looking up the Speedrun.com User",
+    };
   }
 
   if (userData.length == 0) {
-    throw new Error("src: Found no users with that name");
+    return <SpeedrunComError>{
+      errorMessage: "Found no users with that name",
+    };
   }
   if (userData.length > 1) {
-    throw new Error("src: Found too many users with that name");
+    return <SpeedrunComError>{
+      errorMessage: "Found too many users with that name",
+    };
   }
 
   const userMeta = userData[0];
@@ -188,8 +201,10 @@ export async function getUsersPersonalBests(
 
   try {
     let resp = await fetch(url);
+    if (!resp.ok) {
+      return undefined;
+    }
     pbData = (await resp.json()).data;
-
     // TODO - pagination - check for 'pagination' entry on `resp`
     for (const pb of pbData) {
       let newEntry = new PersonalBest(
@@ -210,36 +225,12 @@ export async function getUsersPersonalBests(
         hasSubcategories(pb),
         getSubcategories(pb),
       );
-
       personalBests.set(newEntry.getId(), newEntry);
     }
   } catch (error) {
     log(`unexpected error when hitting speedrun.com's API ${error}`);
     return undefined;
   }
-
-  // Sort by names
-  // TODO - not the place to do this, needs to be moved
-  // for (const [gameId, data] of pbBuckets.entries()) {
-  //   data.normalCategories.main.sort((a, b) =>
-  //     resolveLevelOrCategoryName(a).localeCompare(resolveLevelOrCategoryName(b))
-  //   );
-  //   data.normalCategories.misc.sort((a, b) =>
-  //     resolveLevelOrCategoryName(a).localeCompare(resolveLevelOrCategoryName(b))
-  //   );
-  //   data.individualLevels.main.sort((a, b) =>
-  //     resolveLevelOrCategoryName(a).localeCompare(resolveLevelOrCategoryName(b))
-  //   );
-  //   data.individualLevels.misc.sort((a, b) =>
-  //     resolveLevelOrCategoryName(a).localeCompare(resolveLevelOrCategoryName(b))
-  //   );
-  //   // Combine the buckets into the collections
-  //   personalBests.get(gameId).entries = data.normalCategories.main.concat(
-  //     data.normalCategories.misc,
-  //     data.individualLevels.main,
-  //     data.individualLevels.misc
-  //   );
-  // }
 
   return personalBests;
 }

@@ -15,6 +15,7 @@ export function notify(
   icon = "info-circle",
   duration = 3000,
 ) {
+  // TODO - remove innerHTML usage
   const alert = Object.assign(document.createElement("sl-alert"), {
     variant,
     closable: true,
