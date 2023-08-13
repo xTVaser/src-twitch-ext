@@ -1,5 +1,8 @@
 // TODO - not yet supported:
 // - miscellaneous subcategories (seems to be a thing...)
+// TODO - storing "undefined" in the dataId (might be intentional)
+
+import { log } from "./logging";
 
 export interface SpeedrunComUser {
   id: string;
@@ -94,20 +97,22 @@ export class PersonalBest {
     }
 
     // Append subcategories - sort them to get things consistent
-    if (hasSubcategories) {
+    if (this.hasSubcategories) {
       let variableValues = [];
       this.subcategoryInfo.forEach((info) => {
         variableValues.push(info.srcVariableValueVal);
       });
       variableValues.sort();
-      name += ` - ${variableValues.join(" - ")}`;
+      if (variableValues.length > 0) {
+        name += ` - ${variableValues.join(" - ")}`;
+      }
     }
     return name;
   }
 }
 
 function isLevel(pbData: any) {
-  // SRC - 'data' is normally an object, but when it is absent it's an array? strange
+  // SRC Issue - 'data' is normally an object, but when it is absent it's an array? strange
   if (!("level" in pbData) || pbData.level.data.length === 0) {
     return false;
   }
@@ -175,7 +180,7 @@ function resolveLevelOrCategoryName(pb: PersonalBest): string {
 
 export async function getUsersPersonalBests(
   srcUserId: string,
-): Promise<Map<string, PersonalBest>> {
+): Promise<Map<string, PersonalBest> | undefined> {
   // https://www.speedrun.com/api/v1/users/e8envo80/personal-bests?embed=game,category.variables,level.variables&max=200
   const url = `https://www.speedrun.com/api/v1/users/${srcUserId}/personal-bests?embed=game,category.variables,level.variables&max=200`;
   let personalBests = new Map<string, PersonalBest>();
@@ -209,9 +214,8 @@ export async function getUsersPersonalBests(
       personalBests.set(newEntry.getId(), newEntry);
     }
   } catch (error) {
-    // TODO - logging and such
-    console.log(error);
-    return null;
+    log(`unexpected error when hitting speedrun.com's API ${error}`);
+    return undefined;
   }
 
   // Sort by names

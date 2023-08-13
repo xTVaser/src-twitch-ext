@@ -73,15 +73,20 @@ describe("no existing config", () => {
       cy.get('[data-cy="save-changes-btn"]').should("not.exist");
     });
   });
+});
+
+describe("existing configuration", () => {
+  beforeEach(() => {
+    cy.intercept("GET", "https://www.speedrun.com/api/**", {
+      fixture: "src-basic-personal-bests",
+    });
+    cy.fixture("config-with-games.json").then((value) => {
+      localStorage.setItem("src-twitch-ext", JSON.stringify(value));
+    });
+    cy.visit("https://localhost:5173/config/#/themes");
+  });
 
   describe("modify theme settings", () => {
-    beforeEach(() => {
-      cy.fixture("config-with-games.json").then((value) => {
-        localStorage.setItem("src-twitch-ext", JSON.stringify(value));
-      });
-      cy.visit("https://localhost:5173/config/#/themes");
-    });
-
     it("validate button states", () => {
       cy.get('[data-cy="create-theme-btn"]')
         .should("exist")

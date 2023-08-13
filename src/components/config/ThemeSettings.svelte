@@ -11,6 +11,8 @@
   import "@shoelace-style/shoelace/dist/components/input/input.js";
   import "@shoelace-style/shoelace/dist/components/switch/switch.js";
   import "@shoelace-style/shoelace/dist/components/color-picker/color-picker.js";
+  import "@shoelace-style/shoelace/dist/components/textarea/textarea.js";
+  import { log } from "@lib/logging";
 
   function isThemeCustom(themeName: string): boolean {
     return themeName.startsWith("_custom-");
@@ -83,7 +85,7 @@
         data-cy="theme-selector"
         on:sl-change={(event) => {
           cfg.config.currentThemeName = event.target.value;
-          console.log(cfg.config.currentThemeName);
+          log(cfg.config.currentThemeName);
         }}
       >
         <small>Default Themes</small>
@@ -92,10 +94,46 @@
           <sl-divider />
           <small>Custom Themes</small>
           {#each customThemeNames(Object.keys(cfg.config.customThemes)) as themeName}
-            <sl-option value={`_custom-${themeName}`}>{themeName}</sl-option>
+            <sl-option value={`_custom-${themeName.replace(" ", "_")}`}>{themeName}</sl-option>
           {/each}
         {/if}
       </sl-select>
+      {#if isThemeCustom(cfg.config.currentThemeName)}
+        <div class="row mb-1 gap-1">
+          <sl-button
+            variant="danger"
+            disabled={isThemeCustom(cfg.config.currentThemeName)
+              ? undefined
+              : true}
+            data-cy="delete-theme-btn"
+            on:click={deleteCurrentCustomTheme}>Delete Current Theme</sl-button
+          >
+          {#if changesToSave}
+            <sl-button
+              variant="warning"
+              disabled={changesToSave ? undefined : true}
+              data-cy="revert-changes-btn">Revert Changes</sl-button
+            >
+            <sl-button
+              variant="success"
+              disabled={changesToSave ? undefined : true}
+              data-cy="save-changes-btn"
+              on:click={saveThemeChanges}>Save Changes</sl-button
+            >
+          {/if}
+        </div>
+        <!-- TODO - import/export theme data -->
+        <!-- <div class="row mb-1">
+          <sl-textarea
+          spellcheck="false"
+            class="code-block"
+            label="Theme Data"
+            help-text="Backup or import your theme here."
+            resize="auto"
+            value={JSON.stringify(getThemeData(cfg.config), null, 2)}
+          ></sl-textarea>
+        </div> -->
+      {/if}
       <div class="row is-vertically-aligned-end gap-1">
         <div class="col">
           <sl-input
@@ -116,39 +154,12 @@
           >
         </div>
       </div>
-      <br />
-      <div class="row gap-1">
-        {#if isThemeCustom(cfg.config.currentThemeName)}
-          <sl-button
-            variant="danger"
-            disabled={isThemeCustom(cfg.config.currentThemeName)
-              ? undefined
-              : true}
-            data-cy="delete-theme-btn"
-            on:click={deleteCurrentCustomTheme}>Delete Current Theme</sl-button
-          >
-        {/if}
-        {#if changesToSave}
-          <sl-button
-            variant="warning"
-            disabled={changesToSave ? undefined : true}
-            data-cy="revert-changes-btn">Revert Changes</sl-button
-          >
-          <sl-button
-            variant="success"
-            disabled={changesToSave ? undefined : true}
-            data-cy="save-changes-btn"
-            on:click={saveThemeChanges}>Save Changes</sl-button
-          >
-        {/if}
-      </div>
     </div>
     <div class="col">
       <Panel />
     </div>
   </div>
   {#if isThemeCustom(cfg.config.currentThemeName)}
-    {JSON.stringify(getThemeData(cfg.config))}
     <div class="row setting-row">
       <div class="col">
         <span>Hide Expand Icon</span>
@@ -427,5 +438,14 @@
 
   .setting-row:nth-child(even) {
     background-color: #18181b;
+  }
+
+  .code-block {
+    width: 100%;
+  }
+
+  .code-block::part(textarea) {
+    font-size: 0.75rem;
+    font-family: monospace;
   }
 </style>

@@ -1,6 +1,6 @@
 import type { PersonalBest } from "./src-api";
 
-class GameDataEntrySettings {
+export class GameDataEntrySettings {
   public isDisabled: boolean = false;
   public overrideDefaults: boolean = false;
   public titleOverride: string = "";
@@ -8,7 +8,7 @@ class GameDataEntrySettings {
   constructor(public dataId: string) {}
 }
 
-class GameDataGamesSettings {
+export class GameDataGamesSettings {
   public isDisabled: boolean = false;
   public overrideDefaults: boolean = false;
   public showMilliseconds: boolean = false;
@@ -76,7 +76,6 @@ export interface ThemeData {
 }
 
 export function updateCSSVars(themeData: ThemeData) {
-  console.log("not blerg");
   document.documentElement.style.setProperty(
     `--src-twitch-ext-color-mainBackground`,
     themeData.mainBackgroundColor,
@@ -145,7 +144,7 @@ export const DefaultDarkTheme: ThemeData = {
   gameEntryTimeFontColor: "#FFFFFF",
 };
 
-export function getDefaultTheme(themeName: string): ThemeData {
+export function getDefaultTheme(themeName: string | undefined): ThemeData {
   if (themeName === `_default-dark`) {
     return DefaultDarkTheme;
   }
@@ -158,7 +157,10 @@ export class ConfigData {
   customThemes: Map<string, ThemeData> = new Map<string, ThemeData>();
 }
 
-export function getThemeData(configData: ConfigData): ThemeData {
+export function getThemeData(configData: ConfigData | undefined): ThemeData {
+  if (configData === undefined) {
+    return getDefaultTheme(undefined);
+  }
   if (configData.currentThemeName.startsWith("_default-")) {
     return getDefaultTheme(configData.currentThemeName);
   }
@@ -217,6 +219,7 @@ export class LocalConfigService extends ConfigService {
   }
   setBroadcasterConfig(data: ConfigData) {
     let config: TwitchConfigObject;
+    console.log(data);
     if (localStorage.getItem("src-twitch-ext") === null) {
       config = {
         broadcaster: {

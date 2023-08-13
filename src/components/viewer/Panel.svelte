@@ -1,31 +1,72 @@
 <script lang="ts">
-  import { getThemeData } from "@lib/config";
+  import { GameDataEntrySettings, GameDataGamesSettings, getThemeData } from "@lib/config";
   import { getUsersPersonalBests, PersonalBest } from "@lib/src-api";
   import { configStore } from "@lib/stores/config";
   import { onMount } from "svelte";
   import "@shoelace-style/shoelace/dist/components/details/details.js";
+  import "@shoelace-style/shoelace/dist/components/spinner/spinner.js";
 
   $: cfg = $configStore;
 
-  let pbData: Map<string, PersonalBest>;
+  let pbData: Map<string, PersonalBest> | undefined;
+  let pbDataLoaded = false;
 
   onMount(async () => {
+    configStore.init();
     configStore.subscribe(async () => {
-      console.log("Config changed");
-      if (cfg.loaded) {
-        console.log(cfg.config);
-        // TODO - handle nothing being found
+      if (cfg.loaded && cfg.config !== undefined && !pbDataLoaded) {
         // Request SRC for all PBs, not all information is stored in the config settings (times, cover art, etc)
         pbData = await getUsersPersonalBests(cfg.config.gameData.userSrcId);
-        // Filter out the Games/Categories we don't care about to make simplify rendering
+        // Grab any games and categories not defined in the configuration but the users has done
+        // Append them to the end
+        if (pbData !== undefined) {
+          for (const [dataId, pbInfo] of pbData) {
+          // Check if it's a new game or entry
+          let isNewGame = true;
+          for (let game of cfg.config.gameData.games) {
+            if (game.srcId === pbInfo.srcGameId) {
+              isNewGame = false;
+              // It's the same game, check if the entry exists
+              if (game.entries.find((val) => {
+                return val.dataId === dataId
+              }) === undefined) {
+                console.log(`new dataId - could not find ${dataId} in ${game.entries.map((val) => val.dataId)}`)
+                // It's a new unknown entry in an existing game
+                game.entries.push(new GameDataEntrySettings(dataId));
+              }
+              break;
+            }
+          }
+          if (isNewGame) {
+            // We were unable to find it, it's a new game, add a new game AND the category
+            let newGame = new GameDataGamesSettings(pbInfo.srcGameId, pbInfo.srcGameName);
+            newGame.entries.push(new GameDataEntrySettings(dataId));
+            cfg.config.gameData.games.push(newGame);
+          }
+        }
+        }
+        
+        pbDataLoaded = true;
       }
     });
   });
 
-  // TODO - split up component
+  function countGameEntries(entries: GameDataEntrySettings[]): number {
+    let count = 0;
+    for (const entry of entries) {
+      if (entry.isDisabled) {
+        continue;
+      }
+      count++;
+    }
+    return count;
+  }
+
+  function liveDataExists(dataId: string): boolean {
+    return pbData.has(dataId);
+  }
 
   function getLiveData(dataId: string): PersonalBest {
-    // TODO - handle nothing being found!
     return pbData.get(dataId);
   }
 
@@ -48,66 +89,116 @@
 </script>
 
 <main data-cy="extension-panel">
-  {#if cfg.loaded && pbData}
+  {#if pbDataLoaded && pbData !== undefined}
     {#each cfg.config.gameData.games as game}
-      <!-- TODO - handle no entries! -->
-      <sl-details class="game-pane">
-        <div slot="summary" class="game-header">
-          <!-- SRC ISSUE - https://github.com/speedruncomorg/api/issues/169 -->
-          <img
-            src={getLiveData(game.entries[0].dataId).srcGameCoverUrl.replace(
-              "gameasset/",
-              "static/game/",
-            )}
-            alt="Cover art for {game.title}"
-            class="game-cover"
-          />
-          <div class="game-header-text-wrapper">
-            <span class="game-name" title={game.title}
-              ><a
-                href={getLiveData(game.entries[0].dataId).srcGameUrl}
-                target="_blank"
-                rel="noopener noreferrer">{game.title}</a
-              ></span
-            >
-            <br />
-            <span class="game-entry-count">{game.entries.length} Runs</span>
-          </div>
-        </div>
-        {#each game.entries as entry}
-          <div class="row game-entry">
-            <div class="col-8 entry-name">
+      {#if !game.isDisabled && game.entries.length > 0 && liveDataExists(game.entries[0].dataId)}
+        <sl-details class="game-pane" data-cy="panel-game">
+          <div slot="summary" class="game-header">
+            <!-- SRC ISSUE - https://github.com/speedruncomorg/api/issues/169 -->
+            <img
+              src={getLiveData(game.entries[0].dataId).srcGameCoverUrl.replace(
+                "gameasset/",
+                "static/game/",
+              )}
+              alt="Cover art for {game.title}"
+              class="game-cover"
+              data-cy="panel-game-cover"
+            />
+            <div class="game-header-text-wrapper">
+              <!-- TODO - ellipsis not rendering properly -->
               <span
+                class="game-name"
+                title={game.title}
+                data-cy="panel-game-name"
                 ><a
-                  href={getLiveData(entry.dataId).srcRunUrl}
+                  href={getLiveData(game.entries[0].dataId).srcGameUrl}
                   target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {#if getThemeData(cfg.config).showPlace}
-                    <span class="entry-place"
-                      >[{getLiveData(entry.dataId).srcLeaderboardPlace}]</span
-                    >
-                  {/if}
-                  {getLiveData(entry.dataId).srcCategoryName}</a
+                  rel="noopener noreferrer">{game.title}</a
                 ></span
               >
-            </div>
-            <div
-              class="col entry-time"
-              class:rainbow-cycle={getThemeData(cfg.config)
-                .showRainbowWorldRecord &&
-                getLiveData(entry.dataId).srcLeaderboardPlace === 1}
-            >
-              <span>{formatTime(getLiveData(entry.dataId).srcRunTime)}</span>
+              <br />
+              <span data-cy="panel-game-count" class="game-entry-count"
+                >{countGameEntries(game.entries)} Runs</span
+              >
             </div>
           </div>
-        {/each}
-      </sl-details>
+          <!-- TODO - what if they get a new run (and in a different game) without saving their config -->
+          {#each game.entries as entry}
+            {#if !entry.isDisabled && liveDataExists(entry.dataId)}
+              <div data-cy="panel-game-entry" class="row game-entry">
+                <div class="col entry-name">
+                  <span
+                    ><a
+                      href={getLiveData(entry.dataId).srcRunUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {#if getThemeData(cfg.config).showPlace}
+                        <span class="entry-place"
+                          >[{getLiveData(entry.dataId)
+                            .srcLeaderboardPlace}]</span
+                        >
+                      {/if}
+                      {#if entry.titleOverride !== ""}
+                        {entry.titleOverride}
+                      {:else}
+                        {getLiveData(entry.dataId).getCategoryOrLevelName()}
+                      {/if}
+                    </a></span
+                  >
+                </div>
+                <div
+                  class="entry-time"
+                  class:rainbow-cycle={getThemeData(cfg.config)
+                    .showRainbowWorldRecord &&
+                    getLiveData(entry.dataId).srcLeaderboardPlace === 1}
+                >
+                  <span>{formatTime(getLiveData(entry.dataId).srcRunTime)}</span
+                  >
+                </div>
+              </div>
+            {/if}
+          {/each}
+        </sl-details>
+      {/if}
     {/each}
+  {:else if pbDataLoaded && pbData === undefined}
+    <div class="spinner-container" data-cy="panel-speedruncom-outage">
+      <h3>Unable to retrieve data from Speedrun.com</h3>
+    </div>
+  {:else if cfg.loaded && cfg.config === undefined}
+    <div class="spinner-container" data-cy="panel-nothing-to-load">
+      <h3>No Configuration Found</h3>
+    </div>
+  {:else}
+    <div class="spinner-container" data-cy="panel-loading-spinner">
+      <sl-spinner class="loading-spinner"></sl-spinner>
+      <h3>Loading...</h3>
+    </div>
   {/if}
 </main>
 
 <style>
+  .spinner-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .spinner-container h3 {
+    font-size: 1em;
+    color: white;
+  }
+
+  .loading-spinner {
+    font-size: 5rem;
+    --track-width: 5px;
+    --indicator-color: cyan;
+  }
+
   @keyframes rainbow-cycle {
     0%,
     100% {
@@ -200,6 +291,8 @@
     padding-right: 10px;
     padding-top: 8px;
     padding-bottom: 8px;
+    margin: 0;
+    align-items: center;
   }
 
   .game-entry:nth-child(odd) {
@@ -211,6 +304,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
     color: var(--src-twitch-ext-font-color-gameEntry);
+    margin: 0;
+    flex: 1;
   }
 
   .entry-name a {
@@ -235,6 +330,9 @@
     color: var(--src-twitch-ext-font-color-gameEntryTime);
     display: flex;
     justify-content: right;
+    margin: 0;
+    flex-shrink: 0;
+    margin-left: 1rem;
   }
 
   .rainbow-cycle {
@@ -251,6 +349,7 @@
 
   .game-pane::part(content) {
     padding: 0;
+    border: 0;
   }
 
   .game-pane::part(header) {
