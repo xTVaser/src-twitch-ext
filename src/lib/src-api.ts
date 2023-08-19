@@ -198,7 +198,9 @@ async function retrievePersonalBests(
   try {
     let resp = await fetch(url);
     if (!resp.ok) {
-      return undefined;
+      return <SpeedrunComError>{
+        errorMessage: `Unexpected error when retrieving Personal Best data from Speedrun.com. Status: ${resp.status}`,
+      };
     }
     let pbData = (await resp.json()).data;
     for (const pb of pbData) {

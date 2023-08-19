@@ -19,12 +19,13 @@
   onMount(async () => {
     configStore.init(false);
     configStore.subscribe(async () => {
-      if (cfg.loaded && cfg.config !== undefined && !pbDataLoaded) {
+      if (cfg.loaded && cfg.config !== undefined && !pbDataLoaded && !cfg.configInvalid && cfg.configError === undefined) {
         // Request SRC for all PBs, not all information is stored in the config settings (times, cover art, etc)
         const response = await getUsersPersonalBests(
           cfg.config.gameData.userSrcId,
         );
         if ("errorMessage" in response) {
+          log("error getting personal bests");
           pbDataLoaded = true;
           pbData = undefined;
         } else {
@@ -45,11 +46,6 @@
                     return val.dataId === dataId;
                   }) === undefined
                 ) {
-                  log(
-                    `new dataId - could not find ${dataId} in ${game.entries.map(
-                      (val) => val.dataId,
-                    )}`,
-                  );
                   // It's a new unknown entry in an existing game
                   game.entries.push(new GameDataEntrySettings(dataId));
                 }
@@ -204,6 +200,14 @@
         </sl-details>
       {/if}
     {/each}
+  {:else if cfg.configInvalid === true}
+    <div class="spinner-container" data-cy="panel-bad-config">
+      {#if cfg.configError}
+      <h3>{cfg.configError}</h3>
+      {:else}
+      <h3>Invalid Configuration</h3>
+      {/if}
+    </div>
   {:else if pbDataLoaded && pbData === undefined}
     <div class="spinner-container" data-cy="panel-speedruncom-outage">
       <h3>Unable to retrieve data from Speedrun.com</h3>
@@ -267,7 +271,7 @@
   }
 
   main {
-    font-family: "Rubik", sans-serif;
+    font-family: var(--font-family-sans), sans-serif;
     height: 500px; /* TODO - Twitch says 496px */
     width: 318px;
     background-color: var(--src-twitch-ext-color-mainBackground);
@@ -297,7 +301,7 @@
   }
 
   .game-name {
-    font-size: 12pt;
+    font-size: 10pt;
     font-weight: var(--src-twitch-ext-font-weight-gameName);
     font-style: var(--src-twitch-ext-font-style-gameName);
     font-family: var(--src-twitch-ext-font-family-gameName), sans-serif;
@@ -342,6 +346,7 @@
   }
 
   .entry-name {
+    font-size: 9pt;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

@@ -40,6 +40,7 @@ export default defineConfig({
   build: {
     outDir,
     emptyOutDir: true,
+    minify: false,
     rollupOptions: {
       plugins: [],
       input: {

@@ -1,4 +1,6 @@
+import { log } from "./logging";
 import type { PersonalBest } from "./src-api";
+import { z } from "zod";
 
 export class GameDataEntrySettings {
   public isDisabled: boolean = false;
@@ -22,8 +24,8 @@ export class GameDataGamesSettings {
 }
 
 export class GameData {
-  userSrcId: string = undefined;
-  userSrcName: string = undefined;
+  userSrcId: string | null = null;
+  userSrcName: string | null = null;
   games: GameDataGamesSettings[] = [];
 
   static initFromPersonalBestData(pbData: Map<string, PersonalBest>): GameData {
@@ -135,8 +137,8 @@ export const DefaultDarkTheme: ThemeData = {
   gameHeaderBackgroundColor: "#322F37",
   gameEntriesBackgroundColor: "#212026",
   gameEntriesAlternateRowColor: "#111113",
-  gameNameLinkHoverColor: "red", // TODO - change
-  gameEntryLinkHoverColor: "orange", // TODO - change
+  gameNameLinkHoverColor: "#a06bff",
+  gameEntryLinkHoverColor: "#a06bff",
   gameExpandIconColor: "#DFDDE2",
   gameNameFontColor: "#DFDDE2",
   gameNameSubheaderFontColor: "#A299B0",
@@ -152,9 +154,67 @@ export function getDefaultTheme(themeName: string | undefined): ThemeData {
 }
 
 export class ConfigData {
+  version: string = "1.0";
   gameData: GameData = new GameData();
   currentThemeName: string = "_default-dark";
   customThemes: Map<string, ThemeData> = new Map<string, ThemeData>();
+}
+
+const ConfigDataSchema = z.object({
+  version: z.string(),
+  gameData: z.object({
+    userSrcId: z.nullable(z.string()),
+    userSrcName: z.nullable(z.string()),
+    games: z.array(
+      z.object({
+        srcId: z.string(),
+        title: z.string(),
+        isDisabled: z.boolean(),
+        overrideDefaults: z.boolean(),
+        showMilliseconds: z.boolean(),
+        showSeconds: z.boolean(),
+        autoExpanded: z.boolean(),
+        entries: z.array(
+          z.object({
+            dataId: z.string(),
+            isDisabled: z.boolean(),
+            overrideDefaults: z.boolean(),
+            titleOverride: z.string(),
+          }),
+        ),
+      }),
+    ),
+  }),
+  currentThemeName: z.string(),
+  customThemes: z.record(
+    z.string(),
+    z.object({
+      defaultTheme: z.boolean(),
+      hideExpandIcon: z.boolean(),
+      showRainbowWorldRecord: z.boolean(),
+      showPlace: z.boolean(),
+      mainBackgroundColor: z.string(),
+      gameHeaderBackgroundColor: z.string(),
+      gameEntriesBackgroundColor: z.string(),
+      gameEntriesAlternateRowColor: z.string(),
+      gameNameLinkHoverColor: z.string(),
+      gameEntryLinkHoverColor: z.string(),
+      gameExpandIconColor: z.string(),
+      gameNameFontColor: z.string(),
+      gameNameSubheaderFontColor: z.string(),
+      gameEntryFontColor: z.string(),
+      gameEntryTimeFontColor: z.string(),
+    }),
+  ),
+});
+
+function isValidConfigData(jsonData: any): boolean {
+  try {
+    ConfigDataSchema.parse(jsonData);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 export function getThemeData(configData: ConfigData | undefined): ThemeData {
@@ -181,10 +241,16 @@ interface TwitchConfigObject {
   global?: TwitchConfigEntry;
 }
 
+export interface ConfigResponse {
+  data: ConfigData | undefined;
+  configInvalid: boolean;
+  error: string | undefined;
+}
+
 export abstract class ConfigService {
   abstract broadcasterConfigExists(): boolean | undefined;
-  abstract getBroadcasterConfig(): ConfigData | undefined;
-  abstract setBroadcasterConfig(data: ConfigData);
+  abstract getBroadcasterConfig(): ConfigResponse;
+  abstract setBroadcasterConfig(data: ConfigData | any);
   abstract developerConfigExists(): boolean;
   abstract getDeveloperConfig(): any;
   abstract setDeveloperConfig(data: any);
@@ -203,34 +269,61 @@ export class LocalConfigService extends ConfigService {
   developerConfigExists(): boolean {
     return localStorage.getItem("src-twitch-ext") !== null;
   }
-  getBroadcasterConfig(): ConfigData | undefined {
+  getBroadcasterConfig(): ConfigResponse {
     let data = localStorage.getItem("src-twitch-ext");
-    if (data == null) {
-      return undefined;
+    if (data === null) {
+      return <ConfigResponse>{
+        data: undefined,
+        configInvalid: false,
+        error: undefined,
+      };
     }
-    let config: TwitchConfigObject = JSON.parse(data);
-    if (config.broadcaster === undefined) {
-      return undefined;
+    try {
+      let config: TwitchConfigObject = JSON.parse(data);
+      if (!("broadcaster" in config) || config.broadcaster === undefined) {
+        return <ConfigResponse>{
+          data: undefined,
+          configInvalid: true,
+          error: "Retrieved invalid configuration",
+        };
+      }
+      let parsedData = JSON.parse(config.broadcaster.content);
+      if (!isValidConfigData(parsedData)) {
+        return <ConfigResponse>{
+          data: undefined,
+          configInvalid: true,
+          error: "Retrieved invalid configuration",
+        };
+      }
+      return <ConfigResponse>{
+        data: parsedData,
+        configInvalid: false,
+        error: undefined,
+      };
+    } catch (e) {
+      return <ConfigResponse>{
+        data: undefined,
+        configInvalid: true,
+        error: "Retrieved invalid configuration",
+      };
     }
-    return JSON.parse(config.broadcaster.content);
   }
   getDeveloperConfig() {
     throw new Error("Method not implemented.");
   }
   setBroadcasterConfig(data: ConfigData) {
     let config: TwitchConfigObject;
-    console.log(data);
     if (localStorage.getItem("src-twitch-ext") === null) {
       config = {
         broadcaster: {
-          version: "1.0.0",
+          version: "1.0",
           content: JSON.stringify(data),
         },
       };
     } else {
       config = JSON.parse(localStorage.getItem("src-twitch-ext"));
       config.broadcaster = {
-        version: "1.0.0",
+        version: "1.0",
         content: JSON.stringify(data),
       };
     }
@@ -252,10 +345,30 @@ export class TwitchConfigService extends ConfigService {
       this.windowInstance.Twitch.ext.configuration.broadcaster !== undefined
     );
   }
-  getBroadcasterConfig(): ConfigData {
-    return JSON.parse(
-      this.windowInstance.Twitch.ext.configuration.broadcaster.content,
-    );
+  getBroadcasterConfig(): ConfigResponse {
+    try {
+      let parsedData = JSON.parse(
+        this.windowInstance.Twitch.ext.configuration.broadcaster.content,
+      );
+      if (!isValidConfigData(parsedData)) {
+        return <ConfigResponse>{
+          data: undefined,
+          configInvalid: true,
+          error: "Invalid configuration found",
+        };
+      }
+      return <ConfigResponse>{
+        data: parsedData,
+        configInvalid: false,
+        error: undefined,
+      };
+    } catch (e) {
+      return <ConfigResponse>{
+        data: undefined,
+        configInvalid: true,
+        error: "Invalid configuration found",
+      };
+    }
   }
   setBroadcasterConfig(data: any) {
     this.windowInstance.Twitch.ext.configuration.set(
