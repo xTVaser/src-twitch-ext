@@ -234,20 +234,6 @@
     cfg.config.gameData.games[gameIdx].overrideDefaults = val;
   }
 
-  async function showMilliseconds(val: boolean, gameIdx: number) {
-    if (cfg.config.gameData.games[gameIdx].showMilliseconds == val) {
-      return;
-    }
-    cfg.config.gameData.games[gameIdx].showMilliseconds = val;
-  }
-
-  async function showSeconds(val: boolean, gameIdx: number) {
-    if (cfg.config.gameData.games[gameIdx].showSeconds == val) {
-      return;
-    }
-    cfg.config.gameData.games[gameIdx].showSeconds = val;
-  }
-
   async function overrideGameEntryDefaults(
     val: boolean,
     gameIdx: number,
@@ -260,6 +246,33 @@
       return;
     }
     cfg.config.gameData.games[gameIdx].entries[entryIdx].overrideDefaults = val;
+  }
+
+  async function changeGameEntryShowSeconds(
+    val: boolean,
+    gameIdx: number,
+    entryIdx: number,
+  ) {
+    if (
+      cfg.config.gameData.games[gameIdx].entries[entryIdx].showSeconds == val
+    ) {
+      return;
+    }
+    cfg.config.gameData.games[gameIdx].entries[entryIdx].showSeconds = val;
+  }
+
+  async function changeGameEntryShowMilliseconds(
+    val: boolean,
+    gameIdx: number,
+    entryIdx: number,
+  ) {
+    if (
+      cfg.config.gameData.games[gameIdx].entries[entryIdx].showMilliseconds ==
+      val
+    ) {
+      return;
+    }
+    cfg.config.gameData.games[gameIdx].entries[entryIdx].showMilliseconds = val;
   }
 
   async function setGameEntryTitleOverride(
@@ -384,31 +397,12 @@
           >
         </div>
         {#if game.overrideDefaults}
-          <div class="row">
+          <div class="row mt-1">
             <div class="col">
-              <sl-switch
-                data-cy="config_games-game-show-seconds-switch"
-                checked={game.showSeconds}
-                on:sl-change={(event) =>
-                  showSeconds(event.target.checked, gameIdx)}
-                >Show Seconds</sl-switch
-              >
-            </div>
-            <div class="col">
-              <sl-switch
-                data-cy="config_games-game-show-milliseconds-switch"
-                checked={game.showMilliseconds}
-                on:sl-change={(event) =>
-                  showMilliseconds(event.target.checked, gameIdx)}
-                >Show Milliseconds</sl-switch
-              >
-            </div>
-          </div>
-        {/if}
-        {#if game.overrideDefaults}
-          <div class="row">
-            <div class="col">
-              <sl-input label="Game Title Override" value={game.title} />
+              <sl-input
+                label="Game Title Override"
+                value={game.titleOverride}
+              />
             </div>
           </div>
         {/if}
@@ -473,17 +467,47 @@
                   </div>
                 </div>
                 {#if entry.overrideDefaults}
-                  <sl-input
-                    class="mt-1"
-                    label="Title Override"
-                    value={entry.titleOverride}
-                    on:sl-input={(event) =>
-                      setGameEntryTitleOverride(
-                        event.target.value,
-                        gameIdx,
-                        entryIdx,
-                      )}
-                  />
+                  <div class="row mt-1">
+                    <div class="col-6">
+                      <sl-switch
+                        data-cy="config_games-game-show-seconds-switch"
+                        checked={entry.showSeconds}
+                        on:sl-change={(event) =>
+                          changeGameEntryShowSeconds(
+                            event.target.checked,
+                            gameIdx,
+                            entryIdx,
+                          )}>Show Seconds</sl-switch
+                      >
+                    </div>
+                    <div class="col-6">
+                      <sl-switch
+                        data-cy="config_games-game-show-milliseconds-switch"
+                        checked={entry.showMilliseconds}
+                        on:sl-change={(event) =>
+                          changeGameEntryShowMilliseconds(
+                            event.target.checked,
+                            gameIdx,
+                            entryIdx,
+                          )}>Show Milliseconds</sl-switch
+                      >
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <sl-input
+                        class="mt-1"
+                        label="Title Override"
+                        value={entry.titleOverride}
+                        on:sl-input={(event) =>
+                          setGameEntryTitleOverride(
+                            event.target.value,
+                            gameIdx,
+                            entryIdx,
+                          )}
+                      />
+                    </div>
+                  </div>
                 {/if}
               </sl-card>
             </div>
@@ -573,7 +597,7 @@
   }
 
   .entry-heading {
-    margin-bottom: 1em;
+    margin-bottom: 0;
   }
 
   .game-entry::part(base) {

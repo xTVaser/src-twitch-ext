@@ -4,8 +4,8 @@
   --src-twitch-ext-color-gameHeaderBackground: #322f37;
   --src-twitch-ext-color-gameEntriesBackground: #212026;
   --src-twitch-ext-color-gameEntriesAlternateRow: #111113;
-  --src-twitch-ext-color-gameNameLinkHover: red;
-  --src-twitch-ext-color-gameEntryLinkHover: orange;
+  --src-twitch-ext-color-gameNameLinkHover: #a06bff;
+  --src-twitch-ext-color-gameEntryLinkHover: #a06bff;
   --src-twitch-ext-color-gameExpandIcon: #dfdde2;
 
   /* Fonts */
@@ -34,8 +34,12 @@
 
   /* Chota Overrides */
   --font-family-sans: "Inter";
-  --font-family-mono: "Roboto Mono";
   --font-size: 16px;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/Inter.ttf");
 }
 
 html {

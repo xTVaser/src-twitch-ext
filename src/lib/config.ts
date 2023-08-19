@@ -5,7 +5,9 @@ import { z } from "zod";
 export class GameDataEntrySettings {
   public isDisabled: boolean = false;
   public overrideDefaults: boolean = false;
-  public titleOverride: string = "";
+  public showMilliseconds: boolean = false;
+  public showSeconds: boolean = true;
+  public titleOverride: string | null = null;
   // The ID used to join with live data
   constructor(public dataId: string) {}
 }
@@ -13,8 +15,7 @@ export class GameDataEntrySettings {
 export class GameDataGamesSettings {
   public isDisabled: boolean = false;
   public overrideDefaults: boolean = false;
-  public showMilliseconds: boolean = false;
-  public showSeconds: boolean = true;
+  public titleOverride: string | null = null;
   public autoExpanded: boolean = false;
   public entries: GameDataEntrySettings[] = [];
   constructor(
