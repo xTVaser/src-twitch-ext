@@ -26,7 +26,7 @@
 
 <div class="row is-marginless is-paddingless">
   <Navbar />
-  <div class="col-11 content is-gutterless">
+  <div class="col content is-gutterless">
     <Router {routes} />
   </div>
 </div>
@@ -36,5 +36,6 @@
     padding: 2em;
     height: 100vh;
     overflow: auto;
+    flex: 1;
   }
 </style>

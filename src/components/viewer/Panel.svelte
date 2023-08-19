@@ -9,6 +9,7 @@
   import { onMount } from "svelte";
   import "@shoelace-style/shoelace/dist/components/details/details.js";
   import "@shoelace-style/shoelace/dist/components/spinner/spinner.js";
+  import { log } from "@lib/logging";
 
   $: cfg = $configStore;
 
@@ -20,7 +21,15 @@
     configStore.subscribe(async () => {
       if (cfg.loaded && cfg.config !== undefined && !pbDataLoaded) {
         // Request SRC for all PBs, not all information is stored in the config settings (times, cover art, etc)
-        pbData = await getUsersPersonalBests(cfg.config.gameData.userSrcId);
+        const response = await getUsersPersonalBests(
+          cfg.config.gameData.userSrcId,
+        );
+        if ("errorMessage" in response) {
+          pbDataLoaded = true;
+          pbData = undefined;
+        } else {
+          pbData = response;
+        }
         // Grab any games and categories not defined in the configuration but the users has done
         // Append them to the end
         if (pbData !== undefined) {
@@ -36,7 +45,7 @@
                     return val.dataId === dataId;
                   }) === undefined
                 ) {
-                  console.log(
+                  log(
                     `new dataId - could not find ${dataId} in ${game.entries.map(
                       (val) => val.dataId,
                     )}`,
@@ -83,7 +92,19 @@
     return pbData.get(dataId);
   }
 
-  function formatTime(original_seconds: number): string {
+  function extractMilliseconds(time: number): number | undefined {
+    if (time % 1 != 0) {
+      return (time % 1) * 1000;
+    }
+    return undefined;
+  }
+
+  function formatTime(
+    original_seconds: number,
+    show_seconds: boolean,
+    show_milliseconds: boolean,
+  ): string {
+    const milliseconds = extractMilliseconds(original_seconds);
     const hours = Math.floor(original_seconds / 3600);
     const minutes = Math.floor((original_seconds % 3600) / 60);
     const seconds = Math.floor(original_seconds % 60);
@@ -94,10 +115,13 @@
     if (minutes > 0) {
       result += `${minutes}m `;
     }
-    if (seconds > 0) {
+    if (show_seconds && seconds > 0) {
       result += `${seconds}s `;
     }
-    return result;
+    if (show_milliseconds && milliseconds !== undefined) {
+      result += `${milliseconds}ms `;
+    }
+    return result.trim();
   }
 </script>
 
@@ -166,7 +190,12 @@
                     .showRainbowWorldRecord &&
                     getLiveData(entry.dataId).srcLeaderboardPlace === 1}
                 >
-                  <span>{formatTime(getLiveData(entry.dataId).srcRunTime)}</span
+                  <span
+                    >{formatTime(
+                      getLiveData(entry.dataId).srcRunTime,
+                      game.showSeconds,
+                      game.showMilliseconds,
+                    )}</span
                   >
                 </div>
               </div>

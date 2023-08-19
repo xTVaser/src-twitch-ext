@@ -64,11 +64,11 @@ describe("stored configuration - basic panel", () => {
       cy.root().find('[data-cy="panel-game-count"]').should("have.length", 3);
     });
 
-    it('games can be expanded', () => {
+    it("games can be expanded", () => {
       cy.root().find('[data-cy="panel-game-entry"]').should("not.be.visible");
-      cy.get('[data-cy="panel-game-count"]').click({multiple: true});
+      cy.get('[data-cy="panel-game-count"]').click({ multiple: true });
       cy.root().find('[data-cy="panel-game-entry"]').should("be.visible");
-      cy.get('[data-cy="panel-game-count"]').click({multiple: true});
+      cy.get('[data-cy="panel-game-count"]').click({ multiple: true });
       cy.root().find('[data-cy="panel-game-entry"]').should("not.be.visible");
     });
   });
@@ -98,16 +98,15 @@ describe("stored configuration - game with no runs", () => {
       cy.root().find('[data-cy="panel-game-count"]').should("have.length", 2);
     });
 
-    it('games can be expanded', () => {
+    it("games can be expanded", () => {
       cy.root().find('[data-cy="panel-game-entry"]').should("not.be.visible");
-      cy.get('[data-cy="panel-game-count"]').click({multiple: true});
+      cy.get('[data-cy="panel-game-count"]').click({ multiple: true });
       cy.root().find('[data-cy="panel-game-entry"]').should("be.visible");
-      cy.get('[data-cy="panel-game-count"]').click({multiple: true});
+      cy.get('[data-cy="panel-game-count"]').click({ multiple: true });
       cy.root().find('[data-cy="panel-game-entry"]').should("not.be.visible");
     });
   });
 });
-
 
 describe("stored configuration - check ordering", () => {
   beforeEach(() => {
@@ -126,9 +125,18 @@ describe("stored configuration - check ordering", () => {
     });
 
     it("games are in the expected order", () => {
-      cy.root().find('[data-cy="panel-game-name"]').eq(0).should("contain", "Jak II");
-      cy.root().find('[data-cy="panel-game-name"]').eq(1).should("contain", "Jak and Daxter: Misc Category Extensions");
-      cy.root().find('[data-cy="panel-game-name"]').eq(2).should("contain", "Jak II Category Extension");
+      cy.root()
+        .find('[data-cy="panel-game-name"]')
+        .eq(0)
+        .should("contain", "Jak II");
+      cy.root()
+        .find('[data-cy="panel-game-name"]')
+        .eq(1)
+        .should("contain", "Jak and Daxter: Misc Category Extensions");
+      cy.root()
+        .find('[data-cy="panel-game-name"]')
+        .eq(2)
+        .should("contain", "Jak II Category Extension");
     });
   });
 });
@@ -150,9 +158,15 @@ describe("stored configuration - custom titles", () => {
     });
 
     it("entry titles can be customized", () => {
-      cy.root().find('[data-cy="panel-game-name"]').eq(0).should("contain", "Custom Game Title");
+      cy.root()
+        .find('[data-cy="panel-game-name"]')
+        .eq(0)
+        .should("contain", "Custom Game Title");
       cy.root().find('[data-cy="panel-game-count"]').eq(0).click();
-      cy.root().find('[data-cy="panel-game-entry"]').eq(0).should("contain", "Custom Entry Title");
+      cy.root()
+        .find('[data-cy="panel-game-entry"]')
+        .eq(0)
+        .should("contain", "Custom Entry Title");
     });
   });
 });
@@ -174,8 +188,16 @@ describe("stored configuration - disabled games and entries", () => {
     });
 
     it("entries can be disabled", () => {
-      cy.root().find('[data-cy="panel-game-count"]').eq(0).should('contain', '2 Runs').click();
-      cy.root().find('[data-cy="panel-game"]').eq(0).find('[data-cy="panel-game-entry"]').should("have.length", 2);
+      cy.root()
+        .find('[data-cy="panel-game-count"]')
+        .eq(0)
+        .should("contain", "2 Runs")
+        .click();
+      cy.root()
+        .find('[data-cy="panel-game"]')
+        .eq(0)
+        .find('[data-cy="panel-game-entry"]')
+        .should("have.length", 2);
     });
   });
 });
@@ -195,8 +217,17 @@ describe("stored configuration - extra game and categories", () => {
     it("game covers are rendered", () => {
       cy.root().find('[data-cy="panel-game-cover"]').should("have.length", 4);
       cy.root().find('[data-cy="panel-game-count"]').eq(2).click();
-      cy.root().find('[data-cy="panel-game"]').eq(2).find('[data-cy="panel-game-entry"]').should("have.length", 4);
-      cy.root().find('[data-cy="panel-game"]').eq(2).find('[data-cy="panel-game-entry"]').eq(3).should('contain', 'Fake New Category')
+      cy.root()
+        .find('[data-cy="panel-game"]')
+        .eq(2)
+        .find('[data-cy="panel-game-entry"]')
+        .should("have.length", 4);
+      cy.root()
+        .find('[data-cy="panel-game"]')
+        .eq(2)
+        .find('[data-cy="panel-game-entry"]')
+        .eq(3)
+        .should("contain", "Fake New Category");
     });
   });
 });

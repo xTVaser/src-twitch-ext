@@ -16,6 +16,7 @@
   import "@shoelace-style/shoelace/dist/components/input/input.js";
   import "@shoelace-style/shoelace/dist/components/button/button.js";
   import "@shoelace-style/shoelace/dist/components/card/card.js";
+  import { log } from "@lib/logging";
 
   $: cfg = $configStore;
 
@@ -27,7 +28,7 @@
   let originalConfigData = undefined;
 
   let loadingUserData = true;
-  let loadingGameData = true;
+  let loadingGameData = false;
 
   $: changesToSave =
     (originalConfigData === undefined &&
@@ -38,15 +39,27 @@
 
   onMount(async () => {
     configStore.subscribe(async () => {
+      log(`update! - ${cfg.loaded}`);
       if (cfg.loaded) {
         if (cfg.service.broadcasterConfigExists()) {
           originalConfigData = structuredClone(cfg.config);
           srcName = cfg.config.gameData.userSrcName;
           srcId = cfg.config.gameData.userSrcId;
           loadingGameData = true;
-          liveData = await getUsersPersonalBests(srcId);
+          const retrievedData = await getUsersPersonalBests(srcId);
+          if ("errorMessage" in retrievedData) {
+            notify(
+              "Unable to retrieve data from Speedrun.com",
+              "danger",
+              "exclamation-octagon",
+              3000,
+            );
+            liveData = undefined;
+          } else {
+            liveData = retrievedData;
+          }
+          loadingGameData = false;
         }
-        loadingGameData = false;
         loadingUserData = false;
       }
     });
@@ -88,21 +101,49 @@
     // Get the live data from speedrun.com, this can be joined via the id
     // to the saved settings data
     loadingGameData = true;
-    liveData = await getUsersPersonalBests(srcId);
-    if (liveData === undefined) {
+    const retrievedData = await getUsersPersonalBests(srcId);
+    if ("errorMessage" in retrievedData) {
       notify(
         "Unable to retrieve data from Speedrun.com",
         "danger",
         "exclamation-octagon",
         3000,
       );
+      liveData = undefined;
     } else {
-      console.log(cfg);
-      cfg.config.gameData = GameData.initFromPersonalBestData(liveData);
+      if (liveData === undefined) {
+        liveData = retrievedData;
+        cfg.config.gameData = GameData.initFromPersonalBestData(liveData);
+      } else {
+        // Merge the new data into the live data
+        // This is so users can refresh their games without completely wiping out their current settings (ie. they do a new run in a new category)
+        const newGameData = GameData.initFromPersonalBestData(retrievedData);
+        for (const game of newGameData.games) {
+          let newGame = true;
+          for (const existingGame of cfg.config.gameData.games) {
+            if (existingGame.srcId === game.srcId) {
+              newGame = false;
+              // Add any new entries
+              for (const entry of game.entries) {
+                if (
+                  !existingGame.entries.find(
+                    (val) => val.dataId === entry.dataId,
+                  )
+                ) {
+                  existingGame.entries.push(entry);
+                }
+              }
+              break;
+            }
+          }
+          if (newGame) {
+            cfg.config.gameData.games.push(game);
+          }
+        }
+      }
       cfg.config.gameData.userSrcId = srcId;
       cfg.config.gameData.userSrcName = srcName;
     }
-    loadingGameData = false;
     loadingGameData = false;
     // TODO - merge new stuff in if they already have something saved
   }
@@ -171,8 +212,6 @@
       return;
     }
     cfg.config.gameData.games[gameIdx].isDisabled = val;
-    console.log(cfg.config);
-    console.log(originalConfigData);
   }
 
   async function disableGameEntry(
@@ -193,6 +232,20 @@
       return;
     }
     cfg.config.gameData.games[gameIdx].overrideDefaults = val;
+  }
+
+  async function showMilliseconds(val: boolean, gameIdx: number) {
+    if (cfg.config.gameData.games[gameIdx].showMilliseconds == val) {
+      return;
+    }
+    cfg.config.gameData.games[gameIdx].showMilliseconds = val;
+  }
+
+  async function showSeconds(val: boolean, gameIdx: number) {
+    if (cfg.config.gameData.games[gameIdx].showSeconds == val) {
+      return;
+    }
+    cfg.config.gameData.games[gameIdx].showSeconds = val;
   }
 
   async function overrideGameEntryDefaults(
@@ -219,7 +272,16 @@
 </script>
 
 {#if loadingUserData}
-  TODO Loading User Data
+  <div class="spinner-container" data-cy="panel-loading-spinner">
+    <sl-spinner class="loading-spinner"></sl-spinner>
+    <h3>Loading User Data...</h3>
+    <sl-button
+      data-cy="config_games_refresh-btn"
+      variant="primary"
+      on:click={cfg.service.setBroadcasterConfig(JSON.stringify(null))}
+      >Refresh Games</sl-button
+    >
+  </div>
 {:else}
   <div class="row" data-cy="config_games_src-username-form">
     <div class="col-6">
@@ -232,7 +294,7 @@
       >
     </div>
   </div>
-  <div class="row" data-cy="config_games_controls">
+  <div class="row mt-1" data-cy="config_games_controls">
     <div class="col" id="setting-controls">
       <sl-button
         data-cy="config_games_refresh-btn"
@@ -257,9 +319,12 @@
   </div>
 {/if}
 {#if loadingGameData}
-  TODO Loading Game Data
+  <div class="spinner-container" data-cy="panel-loading-spinner">
+    <sl-spinner class="loading-spinner"></sl-spinner>
+    <h3>Loading Game Data...</h3>
+  </div>
 {:else if cfg.config !== undefined && cfg.config.gameData.games.length > 0}
-  <h2>Game List <em class="normal-text">Drag to order</em></h2>
+  <h2 class="mt-1">Game List <em class="normal-text">Drag to order</em></h2>
   <div class="list" data-cy="config_games-game-list">
     {#each cfg.config.gameData.games as game, gameIdx (gameIdx)}
       <div
@@ -283,60 +348,59 @@
       <sl-details class="game-pane" data-cy="config_games-game-options">
         <div slot="summary" class="game-header">
           <div class="row">
-            <div class="col">
-              <h3>{game.title}</h3>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              {#if game.isDisabled}
-                <sl-badge
-                  variant="danger"
-                  pill
-                  data-cy="config_games-game-status">Disabled</sl-badge
-                >
-              {:else}
-                <sl-badge
-                  variant="success"
-                  pill
-                  data-cy="config_games-game-status">Enabled</sl-badge
-                >
-              {/if}
+            <div class="col game-title">
+              <h3>
+                {#if game.isDisabled}
+                  <sl-badge
+                    class="game-status-badge"
+                    variant="danger"
+                    pill
+                    data-cy="config_games-game-status">Disabled</sl-badge
+                  >
+                {:else}
+                  <sl-badge
+                    class="game-status-badge"
+                    variant="success"
+                    pill
+                    data-cy="config_games-game-status">Enabled</sl-badge
+                  >
+                {/if}{game.title}
+              </h3>
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col">
-            <sl-switch
-              data-cy="config_games-game-status-switch"
-              checked={game.isDisabled}
-              on:sl-change={(event) =>
-                disableGame(event.target.checked, gameIdx)}
-              >Disable Game</sl-switch
-            >
-          </div>
-          <div class="col">
-            <sl-switch
-              data-cy="config_games-game-override-switch"
-              checked={game.overrideDefaults}
-              on:sl-change={(event) =>
-                overrideGameDefaults(event.target.checked, gameIdx)}
-              >Override Defaults</sl-switch
-            >
-          </div>
+        <div class="game-settings-container">
+          <sl-switch
+            data-cy="config_games-game-status-switch"
+            checked={game.isDisabled}
+            on:sl-change={(event) => disableGame(event.target.checked, gameIdx)}
+            >Disable Game</sl-switch
+          ><sl-switch
+            data-cy="config_games-game-override-switch"
+            checked={game.overrideDefaults}
+            on:sl-change={(event) =>
+              overrideGameDefaults(event.target.checked, gameIdx)}
+            >Override Defaults</sl-switch
+          >
         </div>
         {#if game.overrideDefaults}
           <div class="row">
             <div class="col">
               <sl-switch
                 data-cy="config_games-game-show-seconds-switch"
-                checked={game.showSeconds}>Show Seconds</sl-switch
+                checked={game.showSeconds}
+                on:sl-change={(event) =>
+                  showSeconds(event.target.checked, gameIdx)}
+                >Show Seconds</sl-switch
               >
             </div>
             <div class="col">
               <sl-switch
                 data-cy="config_games-game-show-milliseconds-switch"
-                checked={game.showMilliseconds}>Show Milliseconds</sl-switch
+                checked={game.showMilliseconds}
+                on:sl-change={(event) =>
+                  showMilliseconds(event.target.checked, gameIdx)}
+                >Show Milliseconds</sl-switch
               >
             </div>
           </div>
@@ -348,7 +412,7 @@
             </div>
           </div>
         {/if}
-        <h4 class="entry-heading">
+        <h4 class="entry-heading mt-1">
           Entries <em class="normal-text">Drag to order</em>
         </h4>
         <div class="row">
@@ -431,6 +495,40 @@
 {/if}
 
 <style>
+  .spinner-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .spinner-container h3 {
+    font-size: 1em;
+    color: white;
+  }
+
+  .loading-spinner {
+    font-size: 3rem;
+    --track-width: 5px;
+    --indicator-color: cyan;
+  }
+  .game-title {
+    display: flex;
+    align-content: center;
+    align-items: center;
+  }
+
+  .game-status-badge {
+    margin-right: 0.5em;
+  }
+
+  .game-settings-container {
+    gap: 1em;
+    display: flex;
+    padding-left: 1em;
+  }
+
   .normal-text {
     font-size: 1rem;
     font-weight: 400;
@@ -480,10 +578,6 @@
 
   .game-entry::part(base) {
     height: 100%;
-  }
-
-  .game-entry .entry-types {
-    margin-top: 0.5em;
   }
 
   .mt-1 {

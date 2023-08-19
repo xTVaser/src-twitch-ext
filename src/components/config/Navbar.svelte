@@ -2,15 +2,15 @@
   import { link, location } from "svelte-spa-router";
 </script>
 
-<nav class="col-1 navbar is-marginless is-paddingless is-gutterless">
-  <div class="row pt-1 is-marginless">
+<nav class="col navbar is-marginless is-paddingless is-gutterless">
+  <div class="row p-1 is-marginless">
     <div class="col is-center text-center is-marginless">
       <div class="pure-u">
         <strong>Personal Best<br />Extension</strong>
       </div>
     </div>
   </div>
-  <div class="row pt-1 is-marginless">
+  <div class="row p-1 is-marginless">
     <div class="col is-center text-center is-marginless">
       <a
         class="nav-link"
@@ -30,7 +30,7 @@
       </a>
     </div>
   </div>
-  <div class="row pt-1 is-marginless">
+  <div class="row p-1 is-marginless">
     <div class="col is-center text-center is-marginless">
       <a
         class="nav-link"
@@ -53,8 +53,8 @@
 </nav>
 
 <style>
-  main {
-    font-family: "Rubik", sans-serif;
+  .p-1 {
+    padding: 0.5em;
   }
 
   .navbar {
@@ -62,5 +62,6 @@
     height: 100vh;
     border-right: 2px solid #6441a4;
     box-sizing: border-box;
+    flex: 0 0 auto;
   }
 </style>

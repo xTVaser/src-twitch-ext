@@ -39,19 +39,26 @@ function createConfigStore() {
     subscribe,
     init: (forConfig: boolean) =>
       update((val) => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const onTwitch =
+          searchParams.has("twitch") && searchParams.get("twitch") === "true";
         if (
-          window.location.hostname === "127.0.0.1" ||
-          window.location.hostname === "localhost"
+          !onTwitch &&
+          (window.location.hostname === "127.0.0.1" ||
+            window.location.hostname === "localhost")
         ) {
-          log("using local host config");
+          log(`using local host config - ${window.location}`);
           val.service = new LocalConfigService();
-          val.config = loadConfig(val.service);
-          if (val.config === undefined && forConfig) {
-            val.config = new ConfigData();
+          if (val.config === undefined) {
+            if (forConfig) {
+              val.config = loadConfig(val.service);
+            } else {
+              val.config = new ConfigData();
+            }
+            const themeData = getThemeData(val.config);
+            updateCSSVars(themeData);
+            val.loaded = true;
           }
-          const themeData = getThemeData(val.config);
-          updateCSSVars(themeData);
-          val.loaded = true;
         } else if (window.Twitch && window.Twitch.ext) {
           // Twitch's extension helper makes heavy use of the window object
           // so this is a little clunky to work with unfortunately
@@ -59,18 +66,31 @@ function createConfigStore() {
           val.service = new TwitchConfigService(window);
           // Setup Twitch callbacks
           window.Twitch.ext.configuration.onChanged(() => {
-            val.config = loadConfig(val.service);
-            if (val.config === undefined && forConfig) {
-              val.config = new ConfigData();
+            // Despite the name, this is only called once when the extension first loads
+            log("twitch - config loaded or changed");
+            if (val.config === undefined) {
+              if (forConfig) {
+                val.config = loadConfig(val.service);
+              } else {
+                val.config = new ConfigData();
+              }
+              const themeData = getThemeData(val.config);
+              updateCSSVars(themeData);
+              val.loaded = true;
             }
-            const themeData = getThemeData(val.config);
-            updateCSSVars(themeData);
-            val.loaded = true;
           });
           window.Twitch.ext.onAuthorized((auth) => {
-            log("authed!");
-            // there isn't much to do here because we aren't using our own EBS anymore
-            // TODO - mark component as ready
+            log("twitch - authed!");
+            if (val.config === undefined) {
+              if (forConfig) {
+                val.config = loadConfig(val.service);
+              } else {
+                val.config = new ConfigData();
+              }
+              const themeData = getThemeData(val.config);
+              updateCSSVars(themeData);
+              val.loaded = true;
+            }
           });
           // TODO - register `onContext` to react to things like theme changes
         } else {
@@ -80,9 +100,13 @@ function createConfigStore() {
       }),
     commit: () =>
       update((val) => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const onTwitch =
+          searchParams.has("twitch") && searchParams.get("twitch") === "true";
         if (
-          window.location.hostname === "127.0.0.1" ||
-          window.location.hostname === "localhost"
+          !onTwitch &&
+          (window.location.hostname === "127.0.0.1" ||
+            window.location.hostname === "localhost")
         ) {
           log("persisting local host config");
           val.service.setBroadcasterConfig(val.config);

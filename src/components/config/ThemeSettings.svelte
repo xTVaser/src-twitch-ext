@@ -32,7 +32,7 @@
   onMount(async () => {
     configStore.subscribe(async () => {
       if (cfg.loaded && originalThemeData === undefined) {
-        console.log("updating original theme data");
+        log("updating original theme data");
         originalThemeData = structuredClone(getThemeData(cfg.config));
       }
     });
@@ -43,6 +43,13 @@
     if (themeName in cfg.config.customThemes) {
       notify(
         "Theme with that name already exists",
+        "danger",
+        "exclamation-octagon",
+        3000,
+      );
+    } else if (cfg.config.customThemes.size >= 10) {
+      notify(
+        "You can only have 10 custom themes",
         "danger",
         "exclamation-octagon",
         3000,
@@ -94,7 +101,9 @@
           <sl-divider />
           <small>Custom Themes</small>
           {#each customThemeNames(Object.keys(cfg.config.customThemes)) as themeName}
-            <sl-option value={`_custom-${themeName.replace(" ", "_")}`}>{themeName}</sl-option>
+            <sl-option value={`_custom-${themeName.replace(" ", "_")}`}
+              >{themeName}</sl-option
+            >
           {/each}
         {/if}
       </sl-select>
@@ -222,7 +231,7 @@
           data-cy="expand-icon-color"
           value={getThemeData(cfg.config).gameExpandIconColor}
           on:blur={(event) => {
-            console.log("blurred");
+            log("blurred");
             configStore.setValueOnCurrentTheme(
               "gameExpandIconColor",
               event.target.value,

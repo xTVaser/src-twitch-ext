@@ -25,7 +25,7 @@ export async function lookupUserByName(
     }
     userData = (await resp.json()).data;
   } catch (error) {
-    console.error("Caught an error:", error);
+    log(`Caught an error: ${error}`);
     return <SpeedrunComError>{
       errorMessage:
         "Unexpected error occurred when looking up the Speedrun.com User",
@@ -191,21 +191,16 @@ function resolveLevelOrCategoryName(pb: PersonalBest): string {
   return `${pb.srcCategoryName}${resolveSubcategoryName(pb)}`;
 }
 
-export async function getUsersPersonalBests(
-  srcUserId: string,
-): Promise<Map<string, PersonalBest> | undefined> {
-  // https://www.speedrun.com/api/v1/users/e8envo80/personal-bests?embed=game,category.variables,level.variables&max=200
-  const url = `https://www.speedrun.com/api/v1/users/${srcUserId}/personal-bests?embed=game,category.variables,level.variables&max=200`;
-  let personalBests = new Map<string, PersonalBest>();
-  let pbData = [];
-
+async function retrievePersonalBests(
+  url: string,
+  personalBests: Map<string, PersonalBest>,
+): Promise<SpeedrunComError | string | undefined> {
   try {
     let resp = await fetch(url);
     if (!resp.ok) {
       return undefined;
     }
-    pbData = (await resp.json()).data;
-    // TODO - pagination - check for 'pagination' entry on `resp`
+    let pbData = (await resp.json()).data;
     for (const pb of pbData) {
       let newEntry = new PersonalBest(
         pb.game.data.id,
@@ -227,10 +222,43 @@ export async function getUsersPersonalBests(
       );
       personalBests.set(newEntry.getId(), newEntry);
     }
+
+    if (
+      "pagination" in Object.keys(pbData) &&
+      "links" in Object.keys(pbData.pagination)
+    ) {
+      // Find the "next" link, for some reason it's not a map
+      for (const link of pbData.pagination.links) {
+        if (link.rel === "next") {
+          return link.uri;
+        }
+      }
+    }
+    return undefined;
   } catch (error) {
     log(`unexpected error when hitting speedrun.com's API ${error}`);
-    return undefined;
+    return <SpeedrunComError>{
+      errorMessage:
+        "Unexpected error when retrieving Personal Best data from Speedrun.com",
+    };
   }
+}
 
+export async function getUsersPersonalBests(
+  srcUserId: string,
+): Promise<Map<string, PersonalBest> | SpeedrunComError> {
+  // https://www.speedrun.com/api/v1/users/e8envo80/personal-bests?embed=game,category.variables,level.variables&max=200
+  let url = `https://www.speedrun.com/api/v1/users/${srcUserId}/personal-bests?embed=game,category.variables,level.variables&max=200`;
+  let personalBests = new Map<string, PersonalBest>();
+  while (true) {
+    const result = await retrievePersonalBests(url, personalBests);
+    if (result === undefined) {
+      break;
+    } else if (typeof result === "string") {
+      url = result;
+    } else {
+      return result;
+    }
+  }
   return personalBests;
 }

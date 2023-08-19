@@ -9,13 +9,28 @@ describe("no existing config", () => {
     });
 
     it("has empty username input", () => {
-      cy.get('[data-cy="config_games_src-username-input"]').should("have.value", "");
+      cy.get('[data-cy="config_games_src-username-input"]').should(
+        "have.value",
+        "",
+      );
     });
 
     it("has disabled buttons", () => {
-      cy.get('[data-cy="config_games_refresh-btn"]').should("have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_revert-btn"]').should("have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_save-btn"]').should("have.attr", "disabled", "disabled");
+      cy.get('[data-cy="config_games_refresh-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_revert-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_save-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
     });
   });
 
@@ -29,23 +44,55 @@ describe("no existing config", () => {
     });
 
     it("has empty username input", () => {
-      cy.get('[data-cy="config_games_src-username-input"]').should("have.value", "");
+      cy.get('[data-cy="config_games_src-username-input"]').should(
+        "have.value",
+        "",
+      );
     });
 
     it("has disabled buttons", () => {
-      cy.get('[data-cy="config_games_refresh-btn"]').should("have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_revert-btn"]').should("have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_save-btn"]').should("have.attr", "disabled", "disabled");
+      cy.get('[data-cy="config_games_refresh-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_revert-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_save-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
     });
 
     it("attempt to search for games", () => {
-      cy.get('[data-cy="config_games_src-username-input"]').shadow()
-      .find("input").type("this-user-doesnt-exist");
-      cy.get('[data-cy="config_games_refresh-btn"]').should("not.have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_revert-btn"]').should("have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_save-btn"]').should("have.attr", "disabled", "disabled");
+      cy.get('[data-cy="config_games_src-username-input"]')
+        .shadow()
+        .find("input")
+        .type("this-user-doesnt-exist");
+      cy.get('[data-cy="config_games_refresh-btn"]').should(
+        "not.have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_revert-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_save-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
       cy.get('[data-cy="config_games_refresh-btn"]').click();
-      cy.contains("sl-alert", "Unexpected error occurred when looking up the Speedrun.com User");
+      cy.contains(
+        "sl-alert",
+        "Unexpected error occurred when looking up the Speedrun.com User",
+      );
     });
   });
 
@@ -54,31 +101,66 @@ describe("no existing config", () => {
       cy.intercept("GET", "https://www.speedrun.com/api/v1/users*", {
         fixture: "config/games/valid-user-lookup.json",
       });
-      cy.intercept("GET", "https://www.speedrun.com/api/v1/users/*/personal-bests*", {
-        statusCode: 500,
-        body: {},
-      });
+      cy.intercept(
+        "GET",
+        "https://www.speedrun.com/api/v1/users/*/personal-bests*",
+        {
+          statusCode: 500,
+          body: {},
+        },
+      );
       cy.visit("https://localhost:5173/config/#/games");
     });
 
     it("has empty username input", () => {
-      cy.get('[data-cy="config_games_src-username-input"]').should("have.value", "");
+      cy.get('[data-cy="config_games_src-username-input"]').should(
+        "have.value",
+        "",
+      );
     });
 
     it("has disabled buttons", () => {
-      cy.get('[data-cy="config_games_refresh-btn"]').should("have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_revert-btn"]').should("have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_save-btn"]').should("have.attr", "disabled", "disabled");
+      cy.get('[data-cy="config_games_refresh-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_revert-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_save-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
     });
 
     it("attempt to search for games", () => {
-      cy.get('[data-cy="config_games_src-username-input"]').shadow()
-      .find("input").type("this-user-doesnt-exist");
-      cy.get('[data-cy="config_games_refresh-btn"]').should("not.have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_revert-btn"]').should("have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_save-btn"]').should("have.attr", "disabled", "disabled");
+      cy.get('[data-cy="config_games_src-username-input"]')
+        .shadow()
+        .find("input")
+        .type("this-user-doesnt-exist");
+      cy.get('[data-cy="config_games_refresh-btn"]').should(
+        "not.have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_revert-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_save-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
       cy.get('[data-cy="config_games_refresh-btn"]').click();
-      cy.root().get("sl-alert").contains("Unable to retrieve data from Speedrun.com");
+      cy.root()
+        .get("sl-alert")
+        .contains("Unable to retrieve data from Speedrun.com");
     });
   });
 
@@ -87,56 +169,113 @@ describe("no existing config", () => {
       cy.intercept("GET", "https://www.speedrun.com/api/v1/users*", {
         fixture: "config/games/valid-user-lookup.json",
       });
-      cy.intercept("GET", "https://www.speedrun.com/api/v1/users/*/personal-bests*", {
-        fixture: "config/games/src-basic-personal-bests.json"
-      });
+      cy.intercept(
+        "GET",
+        "https://www.speedrun.com/api/v1/users/*/personal-bests*",
+        {
+          fixture: "config/games/src-basic-personal-bests.json",
+        },
+      );
       cy.visit("https://localhost:5173/config/#/games");
     });
 
     it("has empty username input", () => {
-      cy.get('[data-cy="config_games_src-username-input"]').should("have.value", "");
+      cy.get('[data-cy="config_games_src-username-input"]').should(
+        "have.value",
+        "",
+      );
     });
 
     it("has disabled buttons", () => {
-      cy.get('[data-cy="config_games_refresh-btn"]').should("have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_revert-btn"]').should("have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_save-btn"]').should("have.attr", "disabled", "disabled");
+      cy.get('[data-cy="config_games_refresh-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_revert-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_save-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
     });
 
     it("attempt to search for games", () => {
-      cy.get('[data-cy="config_games_src-username-input"]').shadow()
-      .find("input").type("this-user-doesnt-exist");
-      cy.get('[data-cy="config_games_refresh-btn"]').should("not.have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_revert-btn"]').should("have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_save-btn"]').should("have.attr", "disabled", "disabled");
+      cy.get('[data-cy="config_games_src-username-input"]')
+        .shadow()
+        .find("input")
+        .type("this-user-doesnt-exist");
+      cy.get('[data-cy="config_games_refresh-btn"]').should(
+        "not.have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_revert-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_save-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
       cy.get('[data-cy="config_games_refresh-btn"]').click();
-      cy.get('[data-cy="config_games-game-list-entry"]').should("have.length", 3);
+      cy.get('[data-cy="config_games-game-list-entry"]').should(
+        "have.length",
+        3,
+      );
       cy.get('[data-cy="config_games-game-options"]').should("have.length", 3);
-      cy.get('[data-cy="config_games_revert-btn"]').should("have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_save-btn"]').click().then(() => {
-        const config = JSON.parse(
-          JSON.parse(localStorage.getItem("src-twitch-ext")).broadcaster
-            .content,
-        );
-        expect(config.gameData.games).to.have.length(3);
-        expect(config.gameData.games[0].title).to.equal("Jak and Daxter: Misc Category Extensions");
-        expect(config.gameData.userSrcId).to.eq("e8envo80");
-        expect(config.gameData.userSrcName).to.eq("this-user-doesnt-exist");
-      });
+      cy.get('[data-cy="config_games_revert-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_save-btn"]')
+        .click()
+        .then(() => {
+          const config = JSON.parse(
+            JSON.parse(localStorage.getItem("src-twitch-ext")).broadcaster
+              .content,
+          );
+          expect(config.gameData.games).to.have.length(3);
+          expect(config.gameData.games[0].title).to.equal(
+            "Jak and Daxter: Misc Category Extensions",
+          );
+          expect(config.gameData.userSrcId).to.eq("e8envo80");
+          expect(config.gameData.userSrcName).to.eq("this-user-doesnt-exist");
+        });
       cy.root().get("sl-alert").contains("Settings Saved Successfully!");
-      cy.get('[data-cy="config_games_revert-btn"]').should("have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_save-btn"]').should("have.attr", "disabled", "disabled");
+      cy.get('[data-cy="config_games_revert-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_save-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
     });
   });
 });
 
+// TODO - test and implement adding new categories/levels to existing config when "refreshing"
 // TODO - test revert above ^^
 
 describe("existing config", () => {
   beforeEach(() => {
-    cy.intercept("GET", "https://www.speedrun.com/api/v1/users/*/personal-bests*", {
-      fixture: "config/games/src-basic-personal-bests.json"
-    });
+    cy.intercept(
+      "GET",
+      "https://www.speedrun.com/api/v1/users/*/personal-bests*",
+      {
+        fixture: "config/games/src-basic-personal-bests.json",
+      },
+    );
     cy.fixture("config-with-games.json").then((value) => {
       localStorage.setItem("src-twitch-ext", JSON.stringify(value));
     });
@@ -148,13 +287,28 @@ describe("existing config", () => {
     });
 
     it("username is populated", () => {
-      cy.get('[data-cy="config_games_src-username-input"]').should("have.value", "xtvaser");
+      cy.get('[data-cy="config_games_src-username-input"]').should(
+        "have.value",
+        "xtvaser",
+      );
     });
 
     it("initial button state", () => {
-      cy.get('[data-cy="config_games_refresh-btn"]').should("not.have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_revert-btn"]').should("have.attr", "disabled", "disabled");
-      cy.get('[data-cy="config_games_save-btn"]').should("have.attr", "disabled", "disabled");
+      cy.get('[data-cy="config_games_refresh-btn"]').should(
+        "not.have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_revert-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_save-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
     });
 
     // it("disable first game", () => {
