@@ -15,6 +15,7 @@
     gameUrl: string;
     gameCoverUrl: string | undefined;
     entries: PersonalBest[];
+    entriesGroupTwo: PersonalBest[];
   }
 
   let pbData: GameData[] | undefined;
@@ -52,6 +53,7 @@
                 gameUrl: pb.srcGameUrl,
                 gameCoverUrl: pb.srcGameCoverUrl,
                 entries: [],
+                entriesGroupTwo: [],
               });
             }
             sortedGames.get(pb.srcGameId).entries.push(pb);
@@ -102,6 +104,20 @@
                 );
               }
             });
+          }
+          // If we want to group levels separately, separate them
+          if (cfg.config.gameData.groupLevelsSeparately) {
+            for (const gameData of pbData) {
+              let filteredPbs = [];
+              for (const pb of gameData.entries) {
+                if (pb.isLevel) {
+                  gameData.entriesGroupTwo.push(pb);
+                } else {
+                  filteredPbs.push(pb);
+                }
+              }
+              gameData.entries = filteredPbs;
+            }
           }
           pbData = pbData;
         }
@@ -158,7 +174,6 @@
             data-cy="panel-game-cover"
           />
           <div class="game-header-text-wrapper">
-            <!-- TODO - ellipsis not rendering properly -->
             <span
               class="game-name"
               title={gameData.gameName}
@@ -171,7 +186,7 @@
             >
             <br />
             <span data-cy="panel-game-count" class="game-entry-count"
-              >{gameData.entries.length} Runs</span
+              >{gameData.entries.length + gameData.entriesGroupTwo.length} Runs</span
             >
           </div>
         </div>
@@ -202,6 +217,38 @@
             </div>
           </div>
         {/each}
+        {#if gameData.entriesGroupTwo.length > 0}
+          <div data-cy="panel-game-entry" class="row game-entry divider">
+            <div class="col entry-divider-name">Levels</div>
+          </div>
+          {#each gameData.entriesGroupTwo as entry}
+            <div data-cy="panel-game-entry" class="row game-entry">
+              <div class="col entry-name">
+                <span
+                  ><a
+                    href={entry.srcRunUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {#if getThemeData(cfg.config).showPlace}
+                      <span class="entry-place"
+                        >[{entry.srcLeaderboardPlace}]</span
+                      >
+                    {/if}
+                    {entry.getCategoryOrLevelName()}
+                  </a></span
+                >
+              </div>
+              <div
+                class="entry-time"
+                class:rainbow-cycle={getThemeData(cfg.config)
+                  .showRainbowWorldRecord && entry.srcLeaderboardPlace === 1}
+              >
+                <span>{formatTime(entry.srcRunTime, true, true)}</span>
+              </div>
+            </div>
+          {/each}
+        {/if}
       </sl-details>
     {/each}
   {:else if cfg.configInvalid === true}
@@ -229,6 +276,16 @@
 </main>
 
 <style>
+  .entry-divider-name {
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .game-entry.divider {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
   .spinner-container {
     height: 100%;
     display: flex;
@@ -369,8 +426,7 @@
   }
 
   .entry-place {
-    /* TODO make it customizable */
-    color: grey;
+    color: var(--src-twitch-ext-color-gameEntryLeaderboardPlace);
   }
 
   .entry-time {

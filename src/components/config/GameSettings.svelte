@@ -35,6 +35,7 @@
           originalConfigData = structuredClone(cfg.config);
           srcName = cfg.config.gameData.userSrcName;
           srcId = cfg.config.gameData.userSrcId;
+          loadingConfigData = false;
           if (srcName !== null && srcName !== null) {
             loadingGameData = true;
             const response = await getUsersGamesFromPersonalBests(srcId);
@@ -52,7 +53,6 @@
             loadingGameData = false;
           }
         }
-        loadingConfigData = false;
       }
     });
   });
@@ -204,13 +204,14 @@
         data-cy="config_games_refresh-btn"
         variant="primary"
         on:click={refreshGameList}
-        disabled={srcName === undefined || srcName === ""}
+        disabled={srcName === undefined || srcName === "" || loadingGameData}
         >Refresh Games</sl-button
       >
       <sl-button
         data-cy="config_games_revert-btn"
         variant="warning"
-        disabled={!areChangesPending(cfg.config, originalConfigData) || originalConfigData === undefined}
+        disabled={!areChangesPending(cfg.config, originalConfigData) ||
+          originalConfigData === undefined}
         on:click={revertChanges}>Revert Changes</sl-button
       >
       <sl-button
@@ -232,18 +233,38 @@
     <h2>No Games Found</h2>
   {:else}
     <h2 class="mt-1">Options</h2>
-    <sl-radio-group label="Game Ordering" name="a" value="recent">
-      <sl-radio value="recent">By Most Recent Run Date</sl-radio>
-      <sl-radio value="num">Number of Runs</sl-radio>
-      <sl-radio value="alpha">Alphabetically by Name</sl-radio>
+    <sl-radio-group
+      label="Game Ordering"
+      name="a"
+      value={cfg.config.gameData.gameSorting}
+      on:sl-change={(event) => {
+        cfg.config.gameData.gameSorting = event.target.value;
+      }}
+    >
+      <sl-radio value="recent">By most recent run date</sl-radio>
+      <sl-radio value="num">Number of runs</sl-radio>
+      <sl-radio value="alpha">Alphabetically by name</sl-radio>
     </sl-radio-group>
-    <sl-radio-group label="Run Ordering" name="a" value="recent" class="mt-1">
-      <sl-radio value="recent">By Date</sl-radio>
-      <sl-radio value="alpha">Alphabetically by Category</sl-radio>
-      <sl-radio value="place">Leaderboard Position</sl-radio>
+    <sl-radio-group
+      label="Run Ordering"
+      name="a"
+      value={cfg.config.gameData.entrySorting}
+      class="mt-1"
+      on:sl-change={(event) => {
+        cfg.config.gameData.entrySorting = event.target.value;
+      }}
+    >
+      <sl-radio value="recent">By date</sl-radio>
+      <sl-radio value="alpha">Alphabetically by category</sl-radio>
+      <sl-radio value="place">Leaderboard position</sl-radio>
     </sl-radio-group>
-    <sl-checkbox>
-      Group Normal, Miscellaneous, and Level runs separately
+    <sl-checkbox
+      checked={cfg.config.gameData.groupLevelsSeparately}
+      on:sl-change={(event) => {
+        cfg.config.gameData.groupLevelsSeparately = event.target.checked;
+      }}
+    >
+      Group level runs separately
     </sl-checkbox>
     <h2 class="mt-1">Game List</h2>
     <div id="game-list">

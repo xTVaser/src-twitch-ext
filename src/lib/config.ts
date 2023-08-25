@@ -23,6 +23,8 @@ interface ThemeDataMinified {
   gnlhc: string;
   // gameEntryLinkHoverColor
   gelhc: string;
+  // gameEntryLeaderboardPlaceColor
+  gelpc: string;
   // gameExpandIconColor
   geic: string;
   // gameNameFontColor
@@ -49,6 +51,7 @@ export interface ThemeData {
   gameNameLinkHoverColor: string;
   gameEntryLinkHoverColor: string;
   gameExpandIconColor: string;
+  gameEntryLeaderboardPlaceColor: string;
   // Fonts
   gameNameFontColor: string;
   gameNameSubheaderFontColor: string;
@@ -69,6 +72,7 @@ function minifyThemeData(themeData: ThemeData): ThemeDataMinified {
     gnlhc: themeData.gameNameLinkHoverColor,
     gelhc: themeData.gameEntryLinkHoverColor,
     geic: themeData.gameExpandIconColor,
+    gelpc: themeData.gameEntryLeaderboardPlaceColor,
     gnfc: themeData.gameNameFontColor,
     gnsfc: themeData.gameNameSubheaderFontColor,
     gefc: themeData.gameEntryFontColor,
@@ -91,6 +95,7 @@ function parseMinifiedThemeData(
     gameNameLinkHoverColor: themeDataMinfied.gnlhc,
     gameEntryLinkHoverColor: themeDataMinfied.gelhc,
     gameExpandIconColor: themeDataMinfied.geic,
+    gameEntryLeaderboardPlaceColor: themeDataMinfied.gelpc,
     gameNameFontColor: themeDataMinfied.gnfc,
     gameNameSubheaderFontColor: themeDataMinfied.gnsfc,
     gameEntryFontColor: themeDataMinfied.gefc,
@@ -146,6 +151,10 @@ export function updateCSSVars(themeData: ThemeData) {
     `--src-twitch-ext-font-color-gameEntryTime`,
     themeData.gameEntryTimeFontColor,
   );
+  document.documentElement.style.setProperty(
+    `--src-twitch-ext-color-gameEntryLeaderboardPlace`,
+    themeData.gameEntryTimeFontColor,
+  );
 }
 
 export const DefaultDarkTheme: ThemeData = {
@@ -164,6 +173,7 @@ export const DefaultDarkTheme: ThemeData = {
   gameNameSubheaderFontColor: "#A299B0",
   gameEntryFontColor: "#FFFFFF",
   gameEntryTimeFontColor: "#FFFFFF",
+  gameEntryLeaderboardPlaceColor: "#808080",
 };
 
 export function getDefaultTheme(themeName: string | undefined): ThemeData {
@@ -180,6 +190,7 @@ export interface GameConfigData {
   disabledGames: string[];
   gameSorting: "recent" | "num" | "alpha";
   entrySorting: "recent" | "alpha" | "place";
+  groupLevelsSeparately: boolean;
 }
 
 interface GameConfigDataMinified {
@@ -193,6 +204,8 @@ interface GameConfigDataMinified {
   gs: "recent" | "num" | "alpha";
   // entrySorting
   es: "recent" | "alpha" | "place";
+  // groupLevelsSeparately
+  gl: boolean;
 }
 
 // TODO - limit size of the custom theme name
@@ -216,6 +229,7 @@ export class ConfigData {
     disabledGames: [],
     gameSorting: "recent",
     entrySorting: "recent",
+    groupLevelsSeparately: true,
   };
   currentThemeName: string = "_default-dark";
   customThemes: Map<string, ThemeData> = new Map<string, ThemeData>();
@@ -233,6 +247,7 @@ export class ConfigData {
         d: this.gameData.disabledGames,
         gs: this.gameData.gameSorting,
         es: this.gameData.entrySorting,
+        gl: this.gameData.groupLevelsSeparately,
       },
       tn: this.currentThemeName,
       td: themeDataMinfied,

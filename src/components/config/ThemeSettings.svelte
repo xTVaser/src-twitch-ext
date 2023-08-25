@@ -47,9 +47,9 @@
         "exclamation-octagon",
         3000,
       );
-    } else if (cfg.config.customThemes.size >= 10) {
+    } else if (cfg.config.customThemes.size >= 1) {
       notify(
-        "You can only have 10 custom themes",
+        "You can only have 1 custom theme",
         "danger",
         "exclamation-octagon",
         3000,
@@ -82,7 +82,9 @@
   }
 </script>
 
-{#if cfg.loaded}
+{#if !cfg.loaded}
+  TODO
+{:else}
   <div class="row mb-1">
     <div class="col mr-1">
       <sl-select
@@ -419,8 +421,6 @@
       </div>
     </div>
   {/if}
-{:else}
-  TODO
 {/if}
 
 <style>
@@ -447,14 +447,5 @@
 
   .setting-row:nth-child(even) {
     background-color: #18181b;
-  }
-
-  .code-block {
-    width: 100%;
-  }
-
-  .code-block::part(textarea) {
-    font-size: 0.75rem;
-    font-family: monospace;
   }
 </style>

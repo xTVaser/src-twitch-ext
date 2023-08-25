@@ -1,12 +1,13 @@
 <script lang="ts">
   import { link, location } from "svelte-spa-router";
+  import logo from "./img/logo.png";
 </script>
 
-<nav class="col navbar is-marginless is-paddingless is-gutterless">
+<nav class="col navbar is-marginless is-gutterless">
   <div class="row p-1 is-marginless">
     <div class="col is-center text-center is-marginless">
-      <div class="pure-u">
-        <strong>Personal Best<br />Extension</strong>
+      <div>
+        <img src={logo} alt="Extension logo" class="logo" />
       </div>
     </div>
   </div>
@@ -18,7 +19,7 @@
         href="/games"
         use:link
       >
-        <div class="pure-u">
+        <div>
           <sl-icon-button
             name="joystick"
             label="Edit"
@@ -38,7 +39,7 @@
         href="/themes"
         use:link
       >
-        <div class="pure-u">
+        <div>
           <sl-icon-button
             name="palette"
             label="Edit"
@@ -63,5 +64,10 @@
     border-right: 2px solid #6441a4;
     box-sizing: border-box;
     flex: 0 0 auto;
+    padding: 0.5em;
+  }
+
+  .logo {
+    width: 50px;
   }
 </style>

@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "Inter";
+  src: url(".ye/fonts/Inter.ttf");
+}
+
 :root {
   /* Colors */
   --src-twitch-ext-color-mainBackground: #212026;
@@ -7,6 +12,7 @@
   --src-twitch-ext-color-gameNameLinkHover: #a06bff;
   --src-twitch-ext-color-gameEntryLinkHover: #a06bff;
   --src-twitch-ext-color-gameExpandIcon: #dfdde2;
+  --src-twitch-ext-color-gameEntryLeaderboardPlace: #808080;
 
   /* Fonts */
   --src-twitch-ext-font-weight-gameName: 700;
@@ -34,9 +40,4 @@
 
   /* Chota Overrides */
   --font-family-sans: "Inter";
-}
-
-@font-face {
-  font-family: "Inter";
-  src: url(".ye/fonts/Inter.ttf");
 }
