@@ -1,60 +1,38 @@
-import { log } from "./logging";
-import type { PersonalBest } from "./src-api";
 import { z } from "zod";
+import { gzipSync, gunzipSync } from "fflate";
+import { Buffer } from "buffer";
 
-export class GameDataEntrySettings {
-  public isDisabled: boolean = false;
-  public overrideDefaults: boolean = false;
-  public showMilliseconds: boolean = false;
-  public showSeconds: boolean = true;
-  public titleOverride: string | null = null;
-  // The ID used to join with live data
-  constructor(public dataId: string) {}
-}
-
-export class GameDataGamesSettings {
-  public isDisabled: boolean = false;
-  public overrideDefaults: boolean = false;
-  public titleOverride: string | null = null;
-  public autoExpanded: boolean = false;
-  public entries: GameDataEntrySettings[] = [];
-  constructor(
-    public srcId: string,
-    public title: string,
-  ) {}
-}
-
-export class GameData {
-  userSrcId: string | null = null;
-  userSrcName: string | null = null;
-  games: GameDataGamesSettings[] = [];
-
-  static initFromPersonalBestData(pbData: Map<string, PersonalBest>): GameData {
-    let newGameData = new GameData();
-    // This setup is a little inefficient, we want to store everything here
-    // in an ordered fashion (so no maps)
-    //
-    // In normal operation, data is retrieved in the opposite manner (we have this data
-    // and we lookup in the live data)
-    for (const [dataId, pb] of pbData) {
-      // Find the game, create it if we havn't reached it yet
-      let game = newGameData.games.find((game) => game.srcId === pb.srcGameId);
-      if (game === undefined) {
-        game = new GameDataGamesSettings(pb.srcGameId, pb.srcGameName);
-        newGameData.games.push(game);
-      }
-      // Append new PB
-      game.entries.push(new GameDataEntrySettings(dataId));
-    }
-    // Order games by title
-    newGameData.games.sort((a, b) => a.title.localeCompare(b.title));
-    // Do a rough ordering by the data id, this will roughly put things into groups
-    // TODO - improve this
-    for (let game of newGameData.games) {
-      game.entries.sort((a, b) => a.dataId.localeCompare(b.dataId));
-    }
-    return newGameData;
-  }
+interface ThemeDataMinified {
+  // defaultTheme
+  d: boolean;
+  // hideExpandIcon
+  e: boolean;
+  // showRainbowWorldRecord
+  r: boolean;
+  // showPlace
+  p: boolean;
+  // mainBackgroundColor
+  mbgc: string;
+  // gameHeaderBackgroundColor
+  ghbgc: string;
+  // gameEntriesBackgroundColor
+  gebgc: string;
+  // gameEntriesAlternateRowColor
+  gearc: string;
+  // gameNameLinkHoverColor
+  gnlhc: string;
+  // gameEntryLinkHoverColor
+  gelhc: string;
+  // gameExpandIconColor
+  geic: string;
+  // gameNameFontColor
+  gnfc: string;
+  // gameNameSubheaderFontColor
+  gnsfc: string;
+  // gameEntryFontColor
+  gefc: string;
+  // gameEntryTimeFontColor
+  getfc: string;
 }
 
 export interface ThemeData {
@@ -78,6 +56,47 @@ export interface ThemeData {
   gameEntryTimeFontColor: string;
 }
 
+function minifyThemeData(themeData: ThemeData): ThemeDataMinified {
+  return {
+    d: themeData.defaultTheme,
+    e: themeData.hideExpandIcon,
+    r: themeData.showRainbowWorldRecord,
+    p: themeData.showPlace,
+    mbgc: themeData.mainBackgroundColor,
+    ghbgc: themeData.gameHeaderBackgroundColor,
+    gebgc: themeData.gameEntriesBackgroundColor,
+    gearc: themeData.gameEntriesAlternateRowColor,
+    gnlhc: themeData.gameNameLinkHoverColor,
+    gelhc: themeData.gameEntryLinkHoverColor,
+    geic: themeData.gameExpandIconColor,
+    gnfc: themeData.gameNameFontColor,
+    gnsfc: themeData.gameNameSubheaderFontColor,
+    gefc: themeData.gameEntryFontColor,
+    getfc: themeData.gameEntryTimeFontColor,
+  };
+}
+
+function parseMinifiedThemeData(
+  themeDataMinfied: ThemeDataMinified,
+): ThemeData {
+  return {
+    defaultTheme: themeDataMinfied.d,
+    hideExpandIcon: themeDataMinfied.e,
+    showRainbowWorldRecord: themeDataMinfied.r,
+    showPlace: themeDataMinfied.p,
+    mainBackgroundColor: themeDataMinfied.mbgc,
+    gameHeaderBackgroundColor: themeDataMinfied.ghbgc,
+    gameEntriesBackgroundColor: themeDataMinfied.gebgc,
+    gameEntriesAlternateRowColor: themeDataMinfied.gearc,
+    gameNameLinkHoverColor: themeDataMinfied.gnlhc,
+    gameEntryLinkHoverColor: themeDataMinfied.gelhc,
+    gameExpandIconColor: themeDataMinfied.geic,
+    gameNameFontColor: themeDataMinfied.gnfc,
+    gameNameSubheaderFontColor: themeDataMinfied.gnsfc,
+    gameEntryFontColor: themeDataMinfied.gefc,
+    gameEntryTimeFontColor: themeDataMinfied.getfc,
+  };
+}
 export function updateCSSVars(themeData: ThemeData) {
   document.documentElement.style.setProperty(
     `--src-twitch-ext-color-mainBackground`,
@@ -154,40 +173,95 @@ export function getDefaultTheme(themeName: string | undefined): ThemeData {
   return DefaultDarkTheme;
 }
 
-export class ConfigData {
-  version: string = "1.0";
-  gameData: GameData = new GameData();
-  currentThemeName: string = "_default-dark";
-  customThemes: Map<string, ThemeData> = new Map<string, ThemeData>();
+export interface GameConfigData {
+  userSrcId: string | null;
+  userSrcName: string | null;
+  // src game ids
+  disabledGames: string[];
+  gameSorting: "recent" | "num" | "alpha";
+  entrySorting: "recent" | "alpha" | "place";
 }
 
-const ConfigDataSchema = z.object({
-  version: z.string(),
-  gameData: z.object({
-    userSrcId: z.nullable(z.string()),
-    userSrcName: z.nullable(z.string()),
-    games: z.array(
-      z.object({
-        srcId: z.string(),
-        title: z.string(),
-        isDisabled: z.boolean(),
-        overrideDefaults: z.boolean(),
-        showMilliseconds: z.boolean(),
-        showSeconds: z.boolean(),
-        autoExpanded: z.boolean(),
-        entries: z.array(
-          z.object({
-            dataId: z.string(),
-            isDisabled: z.boolean(),
-            overrideDefaults: z.boolean(),
-            titleOverride: z.string(),
-          }),
-        ),
-      }),
-    ),
+interface GameConfigDataMinified {
+  // userSrcId
+  si: string;
+  // userSrcName
+  sn: string;
+  // disabledGames
+  d: string[];
+  // gameSorting
+  gs: "recent" | "num" | "alpha";
+  // entrySorting
+  es: "recent" | "alpha" | "place";
+}
+
+// TODO - limit size of the custom theme name
+
+interface ConfigDataMinified {
+  // version
+  v: string;
+  // gameData
+  g: GameConfigDataMinified;
+  // currentThemeName
+  tn: string;
+  // customThemes
+  td: Map<string, ThemeDataMinified>;
+}
+
+export class ConfigData {
+  version: string = "1.0";
+  gameData: GameConfigData = {
+    userSrcId: null,
+    userSrcName: null,
+    disabledGames: [],
+    gameSorting: "recent",
+    entrySorting: "recent",
+  };
+  currentThemeName: string = "_default-dark";
+  customThemes: Map<string, ThemeData> = new Map<string, ThemeData>();
+
+  minify(): ConfigDataMinified {
+    let themeDataMinfied = new Map<string, ThemeDataMinified>();
+    for (const [themeName, themeData] of this.customThemes.entries()) {
+      themeDataMinfied.set(themeName, minifyThemeData(themeData));
+    }
+    return {
+      v: this.version,
+      g: {
+        si: this.gameData.userSrcId,
+        sn: this.gameData.userSrcName,
+        d: this.gameData.disabledGames,
+        gs: this.gameData.gameSorting,
+        es: this.gameData.entrySorting,
+      },
+      tn: this.currentThemeName,
+      td: themeDataMinfied,
+    };
+  }
+
+  static parse(jsonData: ConfigDataMinified): ConfigData {
+    const configData = new ConfigData();
+    configData.version = jsonData.v;
+    configData.gameData.userSrcId = jsonData.g.si;
+    configData.gameData.userSrcName = jsonData.g.sn;
+    configData.gameData.disabledGames = jsonData.g.d;
+    configData.currentThemeName = jsonData.tn;
+    for (const [themeName, themeData] of Object.entries(jsonData.td)) {
+      configData.customThemes.set(themeName, parseMinifiedThemeData(themeData));
+    }
+    return configData;
+  }
+}
+
+const ConfigDataSchemaV1 = z.object({
+  v: z.string(),
+  g: z.object({
+    si: z.nullable(z.string()),
+    sn: z.nullable(z.string()),
+    d: z.array(z.string()),
   }),
-  currentThemeName: z.string(),
-  customThemes: z.record(
+  tn: z.string(),
+  td: z.record(
     z.string(),
     z.object({
       defaultTheme: z.boolean(),
@@ -211,7 +285,7 @@ const ConfigDataSchema = z.object({
 
 function isValidConfigData(jsonData: any): boolean {
   try {
-    ConfigDataSchema.parse(jsonData);
+    ConfigDataSchemaV1.parse(jsonData);
     return true;
   } catch (e) {
     return false;
@@ -251,7 +325,7 @@ export interface ConfigResponse {
 export abstract class ConfigService {
   abstract broadcasterConfigExists(): boolean | undefined;
   abstract getBroadcasterConfig(): ConfigResponse;
-  abstract setBroadcasterConfig(data: ConfigData | any);
+  abstract setBroadcasterConfig(data: ConfigData);
   abstract developerConfigExists(): boolean;
   abstract getDeveloperConfig(): any;
   abstract setDeveloperConfig(data: any);
@@ -280,6 +354,7 @@ export class LocalConfigService extends ConfigService {
       };
     }
     try {
+      // Decompress the data
       let config: TwitchConfigObject = JSON.parse(data);
       if (!("broadcaster" in config) || config.broadcaster === undefined) {
         return <ConfigResponse>{
@@ -288,7 +363,10 @@ export class LocalConfigService extends ConfigService {
           error: "Retrieved invalid configuration",
         };
       }
-      let parsedData = JSON.parse(config.broadcaster.content);
+      const decompressedData = Buffer.from(
+        gunzipSync(Buffer.from(config.broadcaster.content, "base64")).buffer,
+      ).toString();
+      let parsedData = JSON.parse(decompressedData);
       if (!isValidConfigData(parsedData)) {
         return <ConfigResponse>{
           data: undefined,
@@ -297,7 +375,7 @@ export class LocalConfigService extends ConfigService {
         };
       }
       return <ConfigResponse>{
-        data: parsedData,
+        data: ConfigData.parse(parsedData),
         configInvalid: false,
         error: undefined,
       };
@@ -314,18 +392,19 @@ export class LocalConfigService extends ConfigService {
   }
   setBroadcasterConfig(data: ConfigData) {
     let config: TwitchConfigObject;
+    const compressedData = gzipSync(Buffer.from(JSON.stringify(data.minify())));
     if (localStorage.getItem("src-twitch-ext") === null) {
       config = {
         broadcaster: {
           version: "1.0",
-          content: JSON.stringify(data),
+          content: Buffer.from(compressedData.buffer).toString("base64"),
         },
       };
     } else {
       config = JSON.parse(localStorage.getItem("src-twitch-ext"));
       config.broadcaster = {
         version: "1.0",
-        content: JSON.stringify(data),
+        content: Buffer.from(compressedData.buffer).toString("base64"),
       };
     }
     localStorage.setItem("src-twitch-ext", JSON.stringify(config));
@@ -348,9 +427,15 @@ export class TwitchConfigService extends ConfigService {
   }
   getBroadcasterConfig(): ConfigResponse {
     try {
-      let parsedData = JSON.parse(
-        this.windowInstance.Twitch.ext.configuration.broadcaster.content,
-      );
+      const decompressedData = Buffer.from(
+        gzipSync(
+          Buffer.from(
+            this.windowInstance.Twitch.ext.configuration.broadcaster.content,
+            "base64",
+          ),
+        ).buffer,
+      ).toString();
+      let parsedData = JSON.parse(decompressedData);
       if (!isValidConfigData(parsedData)) {
         return <ConfigResponse>{
           data: undefined,
@@ -359,7 +444,7 @@ export class TwitchConfigService extends ConfigService {
         };
       }
       return <ConfigResponse>{
-        data: parsedData,
+        data: ConfigData.parse(parsedData),
         configInvalid: false,
         error: undefined,
       };
@@ -371,11 +456,14 @@ export class TwitchConfigService extends ConfigService {
       };
     }
   }
-  setBroadcasterConfig(data: any) {
+  setBroadcasterConfig(data: ConfigData) {
+    const compressedData = gunzipSync(
+      Buffer.from(JSON.stringify(data.minify()), "base64"),
+    );
     this.windowInstance.Twitch.ext.configuration.set(
       "broadcaster",
       "1.0",
-      JSON.stringify(data),
+      Buffer.from(compressedData.buffer).toString("base64"),
     );
   }
   developerConfigExists(): boolean {

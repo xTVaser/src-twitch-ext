@@ -1,9 +1,5 @@
 <script lang="ts">
-  import {
-    GameDataEntrySettings,
-    GameDataGamesSettings,
-    getThemeData,
-  } from "@lib/config";
+  import { getThemeData } from "@lib/config";
   import { getUsersPersonalBests, PersonalBest } from "@lib/src-api";
   import { configStore } from "@lib/stores/config";
   import { onMount } from "svelte";
@@ -13,13 +9,27 @@
 
   $: cfg = $configStore;
 
-  let pbData: Map<string, PersonalBest> | undefined;
+  interface GameData {
+    gameId: string;
+    gameName: string;
+    gameUrl: string;
+    gameCoverUrl: string | undefined;
+    entries: PersonalBest[];
+  }
+
+  let pbData: GameData[] | undefined;
   let pbDataLoaded = false;
 
   onMount(async () => {
     configStore.init(false);
     configStore.subscribe(async () => {
-      if (cfg.loaded && cfg.config !== undefined && !pbDataLoaded && !cfg.configInvalid && cfg.configError === undefined) {
+      if (
+        cfg.loaded &&
+        cfg.config !== undefined &&
+        !pbDataLoaded &&
+        !cfg.configInvalid &&
+        cfg.configError === undefined
+      ) {
         // Request SRC for all PBs, not all information is stored in the config settings (times, cover art, etc)
         const response = await getUsersPersonalBests(
           cfg.config.gameData.userSrcId,
@@ -29,64 +39,76 @@
           pbDataLoaded = true;
           pbData = undefined;
         } else {
-          pbData = response;
-        }
-        // Grab any games and categories not defined in the configuration but the users has done
-        // Append them to the end
-        if (pbData !== undefined) {
-          for (const [dataId, pbInfo] of pbData) {
-            // Check if it's a new game or entry
-            let isNewGame = true;
-            for (let game of cfg.config.gameData.games) {
-              if (game.srcId === pbInfo.srcGameId) {
-                isNewGame = false;
-                // It's the same game, check if the entry exists
-                if (
-                  game.entries.find((val) => {
-                    return val.dataId === dataId;
-                  }) === undefined
-                ) {
-                  // It's a new unknown entry in an existing game
-                  game.entries.push(new GameDataEntrySettings(dataId));
-                }
-                break;
-              }
+          // Sort runs by gameId, discard the disabled ones
+          const sortedGames = new Map<string, GameData>();
+          for (const [_, pb] of response) {
+            if (cfg.config.gameData.disabledGames.includes(pb.srcGameId)) {
+              continue;
             }
-            if (isNewGame) {
-              // We were unable to find it, it's a new game, add a new game AND the category
-              let newGame = new GameDataGamesSettings(
-                pbInfo.srcGameId,
-                pbInfo.srcGameName,
-              );
-              newGame.entries.push(new GameDataEntrySettings(dataId));
-              cfg.config.gameData.games.push(newGame);
+            if (!sortedGames.has(pb.srcGameId)) {
+              sortedGames.set(pb.srcGameId, {
+                gameId: pb.srcGameId,
+                gameName: pb.srcGameName,
+                gameUrl: pb.srcGameUrl,
+                gameCoverUrl: pb.srcGameCoverUrl,
+                entries: [],
+              });
             }
+            sortedGames.get(pb.srcGameId).entries.push(pb);
           }
+          pbData = [];
+          for (const [_, gameData] of sortedGames) {
+            // Drop games with no runs (this shouldnt happen anyway)
+            if (gameData.entries.length <= 0) {
+              continue;
+            }
+            pbData.push(gameData);
+          }
+          // Now sort the games according to the configuration
+          pbData.sort((gameA, gameB) => {
+            if (cfg.config.gameData.gameSorting === "alpha") {
+              return gameA.gameName.localeCompare(gameB.gameName);
+            } else if (cfg.config.gameData.gameSorting === "num") {
+              return gameA.entries.length - gameB.entries.length;
+            } else if (cfg.config.gameData.gameSorting === "recent") {
+              // Find the most recent run in each game
+              let runGameA = gameA.entries[0].srcRunDate;
+              for (const run of gameA.entries) {
+                if (run.srcRunDate > runGameA) {
+                  runGameA = run.srcRunDate;
+                }
+              }
+              let runGameB = gameB.entries[0].srcRunDate;
+              for (const run of gameB.entries) {
+                if (run.srcRunDate > runGameB) {
+                  runGameB = run.srcRunDate;
+                }
+              }
+              return runGameB.valueOf() - runGameA.valueOf();
+            }
+          });
+          // And sort the entries for each game similarly
+          for (const gameData of pbData) {
+            gameData.entries.sort((entryA, entryB) => {
+              if (cfg.config.gameData.entrySorting === "alpha") {
+                return entryA
+                  .getCategoryOrLevelName()
+                  .localeCompare(entryB.getCategoryOrLevelName());
+              } else if (cfg.config.gameData.entrySorting === "place") {
+                return entryA.srcLeaderboardPlace - entryB.srcLeaderboardPlace;
+              } else if (cfg.config.gameData.entrySorting === "recent") {
+                return (
+                  entryB.srcRunDate.valueOf() - entryA.srcRunDate.valueOf()
+                );
+              }
+            });
+          }
+          pbData = pbData;
         }
-
         pbDataLoaded = true;
       }
     });
   });
-
-  function countGameEntries(entries: GameDataEntrySettings[]): number {
-    let count = 0;
-    for (const entry of entries) {
-      if (entry.isDisabled) {
-        continue;
-      }
-      count++;
-    }
-    return count;
-  }
-
-  function liveDataExists(dataId: string): boolean {
-    return pbData.has(dataId);
-  }
-
-  function getLiveData(dataId: string): PersonalBest {
-    return pbData.get(dataId);
-  }
 
   function extractMilliseconds(time: number): number | undefined {
     if (time % 1 != 0) {
@@ -115,7 +137,7 @@
       result += `${seconds}s `;
     }
     if (show_milliseconds && milliseconds !== undefined) {
-      result += `${milliseconds}ms `;
+      result += `${Math.trunc(milliseconds)}ms `;
     }
     return result.trim();
   }
@@ -123,89 +145,71 @@
 
 <main data-cy="extension-panel">
   {#if pbDataLoaded && pbData !== undefined}
-    {#each cfg.config.gameData.games as game}
-      {#if !game.isDisabled && game.entries.length > 0 && liveDataExists(game.entries[0].dataId)}
-        <sl-details class="game-pane" data-cy="panel-game">
-          <div slot="summary" class="game-header">
-            <!-- SRC ISSUE - https://github.com/speedruncomorg/api/issues/169 -->
-            <img
-              src={getLiveData(game.entries[0].dataId).srcGameCoverUrl.replace(
-                "gameasset/",
-                "static/game/",
-              )}
-              alt="Cover art for {game.title}"
-              class="game-cover"
-              data-cy="panel-game-cover"
-            />
-            <div class="game-header-text-wrapper">
-              <!-- TODO - ellipsis not rendering properly -->
+    {#each pbData as gameData}
+      <sl-details class="game-pane" data-cy="panel-game">
+        <div slot="summary" class="game-header">
+          <!-- SRC ISSUE - https://github.com/speedruncomorg/api/issues/169 -->
+          <img
+            src={gameData.gameCoverUrl === undefined
+              ? null
+              : gameData.gameCoverUrl.replace("gameasset/", "static/game/")}
+            alt="Cover art for {gameData.gameName}"
+            class="game-cover"
+            data-cy="panel-game-cover"
+          />
+          <div class="game-header-text-wrapper">
+            <!-- TODO - ellipsis not rendering properly -->
+            <span
+              class="game-name"
+              title={gameData.gameName}
+              data-cy="panel-game-name"
+              ><a
+                href={gameData.gameUrl}
+                target="_blank"
+                rel="noopener noreferrer">{gameData.gameName}</a
+              ></span
+            >
+            <br />
+            <span data-cy="panel-game-count" class="game-entry-count"
+              >{gameData.entries.length} Runs</span
+            >
+          </div>
+        </div>
+        {#each gameData.entries as entry}
+          <div data-cy="panel-game-entry" class="row game-entry">
+            <div class="col entry-name">
               <span
-                class="game-name"
-                title={game.title}
-                data-cy="panel-game-name"
                 ><a
-                  href={getLiveData(game.entries[0].dataId).srcGameUrl}
+                  href={entry.srcRunUrl}
                   target="_blank"
-                  rel="noopener noreferrer">{game.title}</a
-                ></span
-              >
-              <br />
-              <span data-cy="panel-game-count" class="game-entry-count"
-                >{countGameEntries(game.entries)} Runs</span
+                  rel="noopener noreferrer"
+                >
+                  {#if getThemeData(cfg.config).showPlace}
+                    <span class="entry-place"
+                      >[{entry.srcLeaderboardPlace}]</span
+                    >
+                  {/if}
+                  {entry.getCategoryOrLevelName()}
+                </a></span
               >
             </div>
+            <div
+              class="entry-time"
+              class:rainbow-cycle={getThemeData(cfg.config)
+                .showRainbowWorldRecord && entry.srcLeaderboardPlace === 1}
+            >
+              <span>{formatTime(entry.srcRunTime, true, true)}</span>
+            </div>
           </div>
-          <!-- TODO - what if they get a new run (and in a different game) without saving their config -->
-          {#each game.entries as entry}
-            {#if !entry.isDisabled && liveDataExists(entry.dataId)}
-              <div data-cy="panel-game-entry" class="row game-entry">
-                <div class="col entry-name">
-                  <span
-                    ><a
-                      href={getLiveData(entry.dataId).srcRunUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {#if getThemeData(cfg.config).showPlace}
-                        <span class="entry-place"
-                          >[{getLiveData(entry.dataId)
-                            .srcLeaderboardPlace}]</span
-                        >
-                      {/if}
-                      {#if entry.titleOverride !== ""}
-                        {entry.titleOverride}
-                      {:else}
-                        {getLiveData(entry.dataId).getCategoryOrLevelName()}
-                      {/if}
-                    </a></span
-                  >
-                </div>
-                <div
-                  class="entry-time"
-                  class:rainbow-cycle={getThemeData(cfg.config)
-                    .showRainbowWorldRecord &&
-                    getLiveData(entry.dataId).srcLeaderboardPlace === 1}
-                >
-                  <span
-                    >{formatTime(
-                      getLiveData(entry.dataId).srcRunTime,
-                      game.showSeconds,
-                      game.showMilliseconds,
-                    )}</span
-                  >
-                </div>
-              </div>
-            {/if}
-          {/each}
-        </sl-details>
-      {/if}
+        {/each}
+      </sl-details>
     {/each}
   {:else if cfg.configInvalid === true}
     <div class="spinner-container" data-cy="panel-bad-config">
       {#if cfg.configError}
-      <h3>{cfg.configError}</h3>
+        <h3>{cfg.configError}</h3>
       {:else}
-      <h3>Invalid Configuration</h3>
+        <h3>Invalid Configuration</h3>
       {/if}
     </div>
   {:else if pbDataLoaded && pbData === undefined}

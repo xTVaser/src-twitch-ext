@@ -60,11 +60,12 @@ export class PersonalBest {
   constructor(
     public srcGameId: string,
     public srcGameName: string,
-    public srcGameCoverUrl: string,
+    public srcGameCoverUrl: string | undefined,
     public srcGameUrl: string,
     public srcRunId: string,
     public srcRunUrl: string,
     public srcRunTime: number,
+    public srcRunDate: Date,
     public srcLeaderboardPlace: number,
     public srcCategoryId: string | undefined,
     public srcCategoryName: string | undefined,
@@ -207,11 +208,14 @@ async function retrievePersonalBests(
       let newEntry = new PersonalBest(
         pb.game.data.id,
         pb.game.data.names.international,
-        pb.game.data.assets["cover-tiny"].uri,
+        "cover-tiny" in pb.game.data.assets
+          ? pb.game.data.assets["cover-tiny"].uri
+          : undefined,
         pb.game.data.weblink,
         pb.run.id,
         pb.run.weblink,
         pb.run.times.primary_t,
+        new Date(pb.run.date),
         pb.place,
         pb.category.data.id,
         pb.category.data.name,
@@ -263,4 +267,31 @@ export async function getUsersPersonalBests(
     }
   }
   return personalBests;
+}
+
+export interface UserGameData {
+  id: string;
+  name: string;
+}
+
+export async function getUsersGamesFromPersonalBests(
+  srcUserId: string,
+): Promise<UserGameData[] | SpeedrunComError> {
+  const personalBests = await getUsersPersonalBests(srcUserId);
+  if ("errorMessage" in personalBests) {
+    return personalBests;
+  }
+  // Extract just the gameIds
+  let gameIds = new Set<string>();
+  let gameDataList = [];
+  for (const [dataId, pb] of personalBests) {
+    if (!gameIds.has(pb.srcGameId)) {
+      gameDataList.push({
+        id: pb.srcGameId,
+        name: pb.srcGameName,
+      });
+      gameIds.add(pb.srcGameId);
+    }
+  }
+  return gameDataList;
 }

@@ -2,7 +2,6 @@ import {
   ConfigData,
   ConfigService,
   LocalConfigService,
-  TwitchConfigService,
   getThemeData,
   updateCSSVars,
   type ConfigResponse,
@@ -47,6 +46,7 @@ function createConfigStore() {
     init: (forConfig: boolean) =>
       update((val) => {
         const searchParams = new URLSearchParams(window.location.search);
+        // This is so i can do a localhost test on twitch, set this query param in the dashboard
         const onTwitch =
           searchParams.has("twitch") && searchParams.get("twitch") === "true";
         if (
@@ -54,7 +54,7 @@ function createConfigStore() {
           (window.location.hostname === "127.0.0.1" ||
             window.location.hostname === "localhost")
         ) {
-          log(`using local host config - ${window.location}`);
+          log(`loading local host config - ${window.location}`);
           val.service = new LocalConfigService();
           if (val.config === undefined) {
             const currentConfig = loadConfig(val.service);
@@ -111,6 +111,16 @@ function createConfigStore() {
           // TODO - register `onContext` to react to things like theme changes
         } else {
           log("unable to determine the config source");
+        }
+        return val;
+      }),
+    resetConfig: () =>
+      update((val) => {
+        if (val.loaded && val.config !== undefined) {
+          val.config = new ConfigData();
+          val.configError = undefined;
+          val.configInvalid = false;
+          val.service.setBroadcasterConfig(val.config);
         }
         return val;
       }),

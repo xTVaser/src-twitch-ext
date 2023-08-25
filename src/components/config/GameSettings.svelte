@@ -1,21 +1,18 @@
 <script lang="ts">
-  import { flip } from "svelte/animate";
-  import { GameData } from "@lib/config";
   import {
-    getUsersPersonalBests,
+    getUsersGamesFromPersonalBests,
     lookupUserByName,
-    PersonalBest,
+    type UserGameData,
   } from "@lib/src-api";
   import { onMount } from "svelte";
   import structuredClone from "@ungap/structured-clone";
   import { configStore } from "@lib/stores/config";
   import { notify } from "@lib/toast";
-  import "@shoelace-style/shoelace/dist/components/details/details.js";
-  import "@shoelace-style/shoelace/dist/components/badge/badge.js";
-  import "@shoelace-style/shoelace/dist/components/switch/switch.js";
   import "@shoelace-style/shoelace/dist/components/input/input.js";
   import "@shoelace-style/shoelace/dist/components/button/button.js";
-  import "@shoelace-style/shoelace/dist/components/card/card.js";
+  import "@shoelace-style/shoelace/dist/components/checkbox/checkbox.js";
+  import "@shoelace-style/shoelace/dist/components/radio/radio.js";
+  import "@shoelace-style/shoelace/dist/components/radio-group/radio-group.js";
   import { log } from "@lib/logging";
 
   $: cfg = $configStore;
@@ -24,18 +21,11 @@
   let srcName = "";
   let srcId = undefined;
 
-  let liveData: Map<string, PersonalBest> | undefined = undefined;
+  let userGames: UserGameData[] | undefined = undefined;
   let originalConfigData = undefined;
 
-  let loadingUserData = true;
+  let loadingConfigData = true;
   let loadingGameData = false;
-
-  $: changesToSave =
-    (originalConfigData === undefined &&
-      cfg.config !== undefined &&
-      cfg.config.gameData.games.length > 0) ||
-    (originalConfigData !== undefined &&
-      JSON.stringify(cfg.config) !== JSON.stringify(originalConfigData));
 
   onMount(async () => {
     configStore.subscribe(async () => {
@@ -45,37 +35,48 @@
           originalConfigData = structuredClone(cfg.config);
           srcName = cfg.config.gameData.userSrcName;
           srcId = cfg.config.gameData.userSrcId;
-          loadingGameData = true;
-          const retrievedData = await getUsersPersonalBests(srcId);
-          if ("errorMessage" in retrievedData) {
-            notify(
-              "Unable to retrieve data from Speedrun.com",
-              "danger",
-              "exclamation-octagon",
-              3000,
-            );
-            liveData = undefined;
-          } else {
-            liveData = retrievedData;
+          if (srcName !== null && srcName !== null) {
+            loadingGameData = true;
+            const response = await getUsersGamesFromPersonalBests(srcId);
+            if ("errorMessage" in response) {
+              notify(
+                "Unable to retrieve data from Speedrun.com",
+                "danger",
+                "exclamation-octagon",
+                3000,
+              );
+              userGames = undefined;
+            } else {
+              userGames = response;
+            }
+            loadingGameData = false;
           }
-          loadingGameData = false;
         }
-        loadingUserData = false;
+        loadingConfigData = false;
       }
     });
   });
+
+  function areChangesPending(current, original) {
+    return (
+      (original === undefined && current !== undefined) ||
+      (original !== undefined &&
+        JSON.stringify(current) !== JSON.stringify(original))
+    );
+  }
 
   const srcNameChanged = (event) => {
     srcName = event.target.value.trim();
   };
 
   async function refreshGameList() {
-    if (srcName === undefined) {
+    log(`Searching with ${srcName}:${srcId}`);
+    if (srcName === undefined || srcName === null) {
       notify("Please enter a username", "danger", "exclamation-octagon", 3000);
       return;
     }
     // If we don't have their ID yet, go get it
-    if (srcId === undefined) {
+    if (srcId === undefined || srcId === null) {
       try {
         const lookupResponse = await lookupUserByName(srcName);
         if ("errorMessage" in lookupResponse) {
@@ -98,54 +99,30 @@
         return;
       }
     }
-    // Get the live data from speedrun.com, this can be joined via the id
-    // to the saved settings data
     loadingGameData = true;
-    const retrievedData = await getUsersPersonalBests(srcId);
-    if ("errorMessage" in retrievedData) {
+    const response = await getUsersGamesFromPersonalBests(srcId);
+    if ("errorMessage" in response) {
       notify(
         "Unable to retrieve data from Speedrun.com",
         "danger",
         "exclamation-octagon",
         3000,
       );
-      liveData = undefined;
+      userGames = undefined;
     } else {
-      if (liveData === undefined) {
-        liveData = retrievedData;
-        cfg.config.gameData = GameData.initFromPersonalBestData(liveData);
-      } else {
-        // Merge the new data into the live data
-        // This is so users can refresh their games without completely wiping out their current settings (ie. they do a new run in a new category)
-        const newGameData = GameData.initFromPersonalBestData(retrievedData);
-        for (const game of newGameData.games) {
-          let newGame = true;
-          for (const existingGame of cfg.config.gameData.games) {
-            if (existingGame.srcId === game.srcId) {
-              newGame = false;
-              // Add any new entries
-              for (const entry of game.entries) {
-                if (
-                  !existingGame.entries.find(
-                    (val) => val.dataId === entry.dataId,
-                  )
-                ) {
-                  existingGame.entries.push(entry);
-                }
-              }
-              break;
-            }
-          }
-          if (newGame) {
-            cfg.config.gameData.games.push(game);
-          }
+      // Remove any games that were previously disabled that no longer have runs for them.
+      let cleanedDisabledGameIds = [];
+      for (const disabledGameId of cfg.config.gameData.disabledGames) {
+        if (response.find((game) => game.id === disabledGameId) !== undefined) {
+          cleanedDisabledGameIds.push(disabledGameId);
         }
       }
+      cfg.config.gameData.disabledGames = cleanedDisabledGameIds;
+      userGames = response;
       cfg.config.gameData.userSrcId = srcId;
       cfg.config.gameData.userSrcName = srcName;
     }
     loadingGameData = false;
-    // TODO - merge new stuff in if they already have something saved
   }
 
   async function saveSettings() {
@@ -158,142 +135,56 @@
     cfg.config = structuredClone(originalConfigData);
   }
 
-  let hoveringGameEntry = undefined;
-
-  function dropGameEntry(event, gameIdx, targetIndex) {
-    event.dataTransfer.dropEffect = "move";
-    const originIndex = parseInt(event.dataTransfer.getData("text/plain"));
-    const newTracklist = cfg.config.gameData.games[gameIdx].entries;
-
-    if (originIndex < targetIndex) {
-      newTracklist.splice(targetIndex + 1, 0, newTracklist[originIndex]);
-      newTracklist.splice(originIndex, 1);
-    } else {
-      newTracklist.splice(targetIndex, 0, newTracklist[originIndex]);
-      newTracklist.splice(originIndex + 1, 1);
-    }
-    cfg.config.gameData.games[gameIdx].entries = newTracklist;
-    hoveringGameEntry = null;
-  }
-
-  function dragstartGameEntry(event, i) {
-    event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.dropEffect = "move";
-    event.dataTransfer.setData("text/plain", i);
-  }
-
-  let hoveringGame = undefined;
-
-  function dropGame(event, gameIdx) {
-    event.dataTransfer.dropEffect = "move";
-    const originIndex = parseInt(event.dataTransfer.getData("text/plain"));
-    const newTracklist = cfg.config.gameData.games;
-
-    if (originIndex < gameIdx) {
-      newTracklist.splice(gameIdx + 1, 0, newTracklist[originIndex]);
-      newTracklist.splice(originIndex, 1);
-    } else {
-      newTracklist.splice(gameIdx, 0, newTracklist[originIndex]);
-      newTracklist.splice(originIndex + 1, 1);
-    }
-    cfg.config.gameData.games = newTracklist;
-    hoveringGameEntry = null;
-  }
-
-  function dragstartGame(event, i) {
-    event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.dropEffect = "move";
-    event.dataTransfer.setData("text/plain", i);
-  }
-
   // Setting Change Handlers
-  async function disableGame(val: boolean, gameIdx: number) {
-    if (cfg.config.gameData.games[gameIdx].isDisabled == val) {
+  async function disableGame(val: boolean, gameId: string) {
+    // Check to see if the game is already disabled
+    const gameIdx = cfg.config.gameData.disabledGames.findIndex(
+      (disabledGameId) => disabledGameId === gameId,
+    );
+    if (gameIdx === -1) {
+      // If we are trying to enable it, do nothing it's already enabled
+      if (val) {
+        return;
+      }
+      // otherwise, add it to the list
+      cfg.config.gameData.disabledGames.push(gameId);
+      cfg.config = cfg.config;
       return;
     }
-    cfg.config.gameData.games[gameIdx].isDisabled = val;
-  }
-
-  async function disableGameEntry(
-    val: boolean,
-    gameIdx: number,
-    entryIdx: number,
-  ) {
-    if (
-      cfg.config.gameData.games[gameIdx].entries[entryIdx].isDisabled == val
-    ) {
+    // If we found it, then we either need to remove it from the list or leave it alone
+    if (!val) {
       return;
     }
-    cfg.config.gameData.games[gameIdx].entries[entryIdx].isDisabled = val;
+    cfg.config.gameData.disabledGames.splice(gameIdx, 1);
+    cfg.config = cfg.config;
   }
 
-  async function overrideGameDefaults(val: boolean, gameIdx: number) {
-    if (cfg.config.gameData.games[gameIdx].overrideDefaults == val) {
-      return;
-    }
-    cfg.config.gameData.games[gameIdx].overrideDefaults = val;
-  }
-
-  async function overrideGameEntryDefaults(
-    val: boolean,
-    gameIdx: number,
-    entryIdx: number,
-  ) {
-    if (
-      cfg.config.gameData.games[gameIdx].entries[entryIdx].overrideDefaults ==
-      val
-    ) {
-      return;
-    }
-    cfg.config.gameData.games[gameIdx].entries[entryIdx].overrideDefaults = val;
-  }
-
-  async function changeGameEntryShowSeconds(
-    val: boolean,
-    gameIdx: number,
-    entryIdx: number,
-  ) {
-    if (
-      cfg.config.gameData.games[gameIdx].entries[entryIdx].showSeconds == val
-    ) {
-      return;
-    }
-    cfg.config.gameData.games[gameIdx].entries[entryIdx].showSeconds = val;
-  }
-
-  async function changeGameEntryShowMilliseconds(
-    val: boolean,
-    gameIdx: number,
-    entryIdx: number,
-  ) {
-    if (
-      cfg.config.gameData.games[gameIdx].entries[entryIdx].showMilliseconds ==
-      val
-    ) {
-      return;
-    }
-    cfg.config.gameData.games[gameIdx].entries[entryIdx].showMilliseconds = val;
-  }
-
-  async function setGameEntryTitleOverride(
-    val: string,
-    gameIdx: number,
-    entryIdx: number,
-  ) {
-    cfg.config.gameData.games[gameIdx].entries[entryIdx].titleOverride = val;
+  async function resetConfiguration() {
+    configStore.resetConfig();
+    originalConfigData = structuredClone(cfg.config);
   }
 </script>
 
-{#if loadingUserData}
+{#if loadingConfigData}
   <div class="spinner-container" data-cy="panel-loading-spinner">
     <sl-spinner class="loading-spinner"></sl-spinner>
-    <h3>Loading User Data...</h3>
+    <h3>Loading Config...</h3>
+  </div>
+{:else if cfg.loaded && cfg.configInvalid}
+  <div class="spinner-container" data-cy="panel-bad-config-prompt">
+    <h3>Config is malformed, it needs to be reset</h3>
     <sl-button
-      data-cy="config_games_refresh-btn"
-      variant="primary"
-      on:click={cfg.service.setBroadcasterConfig(JSON.stringify(null))}
-      >Refresh Games</sl-button
+      variant="warning"
+      on:click={resetConfiguration}
+      disabled={srcName === undefined || srcName === ""}
+      >Reset Configration</sl-button
     >
+  </div>
+{:else if cfg.loaded && cfg.configError !== undefined}
+  <div class="spinner-container" data-cy="panel-bad-config-prompt">
+    <h3>
+      Unable to load configuration, Twitch's configuration service may be down
+    </h3>
   </div>
 {:else}
   <div class="row" data-cy="config_games_src-username-form">
@@ -319,13 +210,13 @@
       <sl-button
         data-cy="config_games_revert-btn"
         variant="warning"
-        disabled={!changesToSave || originalConfigData === undefined}
+        disabled={!areChangesPending(cfg.config, originalConfigData) || originalConfigData === undefined}
         on:click={revertChanges}>Revert Changes</sl-button
       >
       <sl-button
         data-cy="config_games_save-btn"
         variant="success"
-        disabled={!changesToSave}
+        disabled={!areChangesPending(cfg.config, originalConfigData)}
         on:click={saveSettings}>Save Changes</sl-button
       >
     </div>
@@ -336,186 +227,42 @@
     <sl-spinner class="loading-spinner"></sl-spinner>
     <h3>Loading Game Data...</h3>
   </div>
-{:else if cfg.config !== undefined && cfg.config.gameData.games.length > 0}
-  <h2 class="mt-1">Game List <em class="normal-text">Drag to order</em></h2>
-  <div class="list" data-cy="config_games-game-list">
-    {#each cfg.config.gameData.games as game, gameIdx (gameIdx)}
-      <div
-        data-cy="config_games-game-list-entry"
-        class="list-item"
-        draggable="true"
-        animate:flip
-        on:dragstart={(event) => dragstartGame(event, gameIdx)}
-        on:drop|preventDefault={(event) => dropGame(event, gameIdx)}
-        on:dragenter={() => (hoveringGame = gameIdx)}
-        on:dragover|preventDefault
-        class:is-active={hoveringGame === gameIdx}
-      >
-        {game.title}
-      </div>
-    {/each}
-  </div>
-  <h2>Game Options</h2>
-  <div id="game-list">
-    {#each cfg.config.gameData.games as game, gameIdx (gameIdx)}
-      <sl-details class="game-pane" data-cy="config_games-game-options">
-        <div slot="summary" class="game-header">
-          <div class="row">
-            <div class="col game-title">
-              <h3>
-                {#if game.isDisabled}
-                  <sl-badge
-                    class="game-status-badge"
-                    variant="danger"
-                    pill
-                    data-cy="config_games-game-status">Disabled</sl-badge
-                  >
-                {:else}
-                  <sl-badge
-                    class="game-status-badge"
-                    variant="success"
-                    pill
-                    data-cy="config_games-game-status">Enabled</sl-badge
-                  >
-                {/if}{game.title}
-              </h3>
-            </div>
-          </div>
-        </div>
-        <div class="game-settings-container">
-          <sl-switch
-            data-cy="config_games-game-status-switch"
-            checked={game.isDisabled}
-            on:sl-change={(event) => disableGame(event.target.checked, gameIdx)}
-            >Disable Game</sl-switch
-          ><sl-switch
-            data-cy="config_games-game-override-switch"
-            checked={game.overrideDefaults}
-            on:sl-change={(event) =>
-              overrideGameDefaults(event.target.checked, gameIdx)}
-            >Override Defaults</sl-switch
-          >
-        </div>
-        {#if game.overrideDefaults}
-          <div class="row mt-1">
-            <div class="col">
-              <sl-input
-                label="Game Title Override"
-                value={game.titleOverride}
-              />
-            </div>
-          </div>
-        {/if}
-        <h4 class="entry-heading mt-1">
-          Entries <em class="normal-text">Drag to order</em>
-        </h4>
+{:else if cfg.loaded && !cfg.configInvalid && userGames !== undefined}
+  {#if userGames.length <= 0}
+    <h2>No Games Found</h2>
+  {:else}
+    <h2 class="mt-1">Options</h2>
+    <sl-radio-group label="Game Ordering" name="a" value="recent">
+      <sl-radio value="recent">By Most Recent Run Date</sl-radio>
+      <sl-radio value="num">Number of Runs</sl-radio>
+      <sl-radio value="alpha">Alphabetically by Name</sl-radio>
+    </sl-radio-group>
+    <sl-radio-group label="Run Ordering" name="a" value="recent" class="mt-1">
+      <sl-radio value="recent">By Date</sl-radio>
+      <sl-radio value="alpha">Alphabetically by Category</sl-radio>
+      <sl-radio value="place">Leaderboard Position</sl-radio>
+    </sl-radio-group>
+    <sl-checkbox>
+      Group Normal, Miscellaneous, and Level runs separately
+    </sl-checkbox>
+    <h2 class="mt-1">Game List</h2>
+    <div id="game-list">
+      {#each userGames as userGame}
         <div class="row">
-          {#each game.entries as entry, entryIdx (`${game.srcId}-${entryIdx}`)}
-            <div
-              class="col-4"
-              draggable="true"
-              on:dragstart={(event) => dragstartGameEntry(event, entryIdx)}
-              on:drop|preventDefault={(event) =>
-                dropGameEntry(event, gameIdx, entryIdx)}
-              on:dragenter={() => (hoveringGameEntry = entryIdx)}
-              on:dragover|preventDefault
-              class:is-active={hoveringGameEntry === entryIdx}
+          <div class="col">
+            <sl-checkbox
+              checked={!cfg.config.gameData.disabledGames.find(
+                (disabledGameId) => disabledGameId === userGame.id,
+              )}
+              on:sl-change={(event) => {
+                disableGame(event.target.checked, userGame.id);
+              }}>{userGame.name}</sl-checkbox
             >
-              <sl-card class="game-entry" data-cy="config_games-game-entry">
-                <div slot="header">
-                  {liveData.get(entry.dataId).getCategoryOrLevelName()}
-                  {#if liveData.get(entry.dataId).isLevel || liveData.get(entry.dataId).hasSubcategories || liveData.get(entry.dataId).srcIsMiscCategory}
-                    <br />
-                    <div class="entry-types">
-                      {#if cfg.config.gameData.games[gameIdx].entries[entryIdx].isDisabled}
-                        <sl-badge variant="danger" pill>Disabled</sl-badge>
-                      {/if}
-                      {#if liveData.get(entry.dataId).isLevel}
-                        <sl-badge variant="primary" pill>Level</sl-badge>
-                      {/if}
-                      {#if liveData.get(entry.dataId).hasSubcategories}
-                        <sl-badge variant="warning" pill>Subcategories</sl-badge
-                        >
-                      {/if}
-                      {#if liveData.get(entry.dataId).srcIsMiscCategory}
-                        <sl-badge variant="neutral" pill>Misc</sl-badge>
-                      {/if}
-                    </div>
-                  {/if}
-                </div>
-                <div class="row">
-                  <div class="col-6">
-                    <sl-switch
-                      on:sl-change={(event) =>
-                        disableGameEntry(
-                          event.target.checked,
-                          gameIdx,
-                          entryIdx,
-                        )}>Disable Entry</sl-switch
-                    >
-                  </div>
-                  <div class="col-6">
-                    <sl-switch
-                      checked={entry.overrideDefaults}
-                      on:sl-change={(event) =>
-                        overrideGameEntryDefaults(
-                          event.target.checked,
-                          gameIdx,
-                          entryIdx,
-                        )}>Override Defaults</sl-switch
-                    >
-                  </div>
-                </div>
-                {#if entry.overrideDefaults}
-                  <div class="row mt-1">
-                    <div class="col-6">
-                      <sl-switch
-                        data-cy="config_games-game-show-seconds-switch"
-                        checked={entry.showSeconds}
-                        on:sl-change={(event) =>
-                          changeGameEntryShowSeconds(
-                            event.target.checked,
-                            gameIdx,
-                            entryIdx,
-                          )}>Show Seconds</sl-switch
-                      >
-                    </div>
-                    <div class="col-6">
-                      <sl-switch
-                        data-cy="config_games-game-show-milliseconds-switch"
-                        checked={entry.showMilliseconds}
-                        on:sl-change={(event) =>
-                          changeGameEntryShowMilliseconds(
-                            event.target.checked,
-                            gameIdx,
-                            entryIdx,
-                          )}>Show Milliseconds</sl-switch
-                      >
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col">
-                      <sl-input
-                        class="mt-1"
-                        label="Title Override"
-                        value={entry.titleOverride}
-                        on:sl-input={(event) =>
-                          setGameEntryTitleOverride(
-                            event.target.value,
-                            gameIdx,
-                            entryIdx,
-                          )}
-                      />
-                    </div>
-                  </div>
-                {/if}
-              </sl-card>
-            </div>
-          {/each}
+          </div>
         </div>
-      </sl-details>
-    {/each}
-  </div>
+      {/each}
+    </div>
+  {/if}
 {/if}
 
 <style>
@@ -537,72 +284,6 @@
     --track-width: 5px;
     --indicator-color: cyan;
   }
-  .game-title {
-    display: flex;
-    align-content: center;
-    align-items: center;
-  }
-
-  .game-status-badge {
-    margin-right: 0.5em;
-  }
-
-  .game-settings-container {
-    gap: 1em;
-    display: flex;
-    padding-left: 1em;
-  }
-
-  .normal-text {
-    font-size: 1rem;
-    font-weight: 400;
-  }
-
-  em {
-    color: var(--sl-input-help-text-color);
-  }
-
-  .list {
-    margin-bottom: 1em;
-    width: auto;
-    display: inline-flex;
-    flex-direction: column;
-    border: 2px #6441a4 solid;
-    border-radius: 5px;
-  }
-
-  .list-item {
-    padding: 0.5em;
-    cursor: move;
-  }
-
-  .list-item:hover {
-    margin-left: 1em;
-  }
-
-  .list-item:nth-child(even) {
-    background-color: rgb(24, 24, 27);
-  }
-
-  .game-entry {
-    width: 100%;
-    height: 100%;
-    padding: 0.5em;
-    cursor: move;
-  }
-
-  .game-entry:hover {
-    border: 1px solid #6441a4;
-    border-radius: 5px;
-  }
-
-  .entry-heading {
-    margin-bottom: 0;
-  }
-
-  .game-entry::part(base) {
-    height: 100%;
-  }
 
   .mt-1 {
     margin-top: 1em;
@@ -610,18 +291,5 @@
 
   #setting-controls sl-button:not(:last-child) {
     margin-right: 1em;
-  }
-
-  .game-header {
-    width: 100%;
-  }
-
-  .game-header h3 {
-    margin: 0;
-    margin-right: 1em;
-  }
-
-  #game-list .game-pane:not(:last-child) {
-    margin-bottom: 0.5em;
   }
 </style>
