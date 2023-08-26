@@ -1,5 +1,0 @@
-<div class="row center" id="titleContainerRow">
-    <a href="http://www.speedrun.com/user/{{srcName}}" target="_blank" id="titleLink">
-        <h1 id="viewerPanelTitle">{{settings.title}}</h1>
-    </a>
-</div>
