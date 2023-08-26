@@ -13,31 +13,38 @@
   import "@shoelace-style/shoelace/dist/components/checkbox/checkbox.js";
   import "@shoelace-style/shoelace/dist/components/radio/radio.js";
   import "@shoelace-style/shoelace/dist/components/radio-group/radio-group.js";
+  import "@shoelace-style/shoelace/dist/components/spinner/spinner.js";
   import { log } from "@lib/logging";
 
   $: cfg = $configStore;
 
   // State
-  let srcName = "";
-  let srcId = undefined;
+  let srcName: string = "";
+  let srcId: string | null = null;
 
   let userGames: UserGameData[] | undefined = undefined;
+  let speedrunComError = false;
   let originalConfigData = undefined;
 
   let loadingConfigData = true;
   let loadingGameData = false;
+  let resetMalformedConfig = false;
 
   onMount(async () => {
     configStore.subscribe(async () => {
-      log(`update! - ${cfg.loaded}`);
       if (cfg.loaded) {
         if (cfg.service.broadcasterConfigExists()) {
+          console.log(cfg);
           originalConfigData = structuredClone(cfg.config);
-          srcName = cfg.config.gameData.userSrcName;
+          if (cfg.config.gameData.userSrcName === null) {
+            srcName = "";
+          } else {
+            srcName = cfg.config.gameData.userSrcName;
+          }
           srcId = cfg.config.gameData.userSrcId;
-          loadingConfigData = false;
-          if (srcName !== null && srcName !== null) {
+          if (srcName !== null && srcName !== "") {
             loadingGameData = true;
+            speedrunComError = false;
             const response = await getUsersGamesFromPersonalBests(srcId);
             if ("errorMessage" in response) {
               notify(
@@ -46,6 +53,7 @@
                 "exclamation-octagon",
                 3000,
               );
+              speedrunComError = true;
               userGames = undefined;
             } else {
               userGames = response;
@@ -53,6 +61,7 @@
             loadingGameData = false;
           }
         }
+        loadingConfigData = false;
       }
     });
   });
@@ -71,12 +80,18 @@
 
   async function refreshGameList() {
     log(`Searching with ${srcName}:${srcId}`);
-    if (srcName === undefined || srcName === null) {
+    if (srcName === null || srcName === "") {
       notify("Please enter a username", "danger", "exclamation-octagon", 3000);
       return;
     }
     // If we don't have their ID yet, go get it
-    if (srcId === undefined || srcId === null) {
+    // or if the name has changed, look it up again
+    if (
+      srcId === null ||
+      (cfg.config.gameData.userSrcName !== null &&
+        srcName != cfg.config.gameData.userSrcName)
+    ) {
+      log(`Looking up ${srcName}`);
       try {
         const lookupResponse = await lookupUserByName(srcName);
         if ("errorMessage" in lookupResponse) {
@@ -100,6 +115,7 @@
       }
     }
     loadingGameData = true;
+    speedrunComError = false;
     const response = await getUsersGamesFromPersonalBests(srcId);
     if ("errorMessage" in response) {
       notify(
@@ -108,6 +124,7 @@
         "exclamation-octagon",
         3000,
       );
+      speedrunComError = true;
       userGames = undefined;
     } else {
       // Remove any games that were previously disabled that no longer have runs for them.
@@ -128,7 +145,9 @@
   async function saveSettings() {
     cfg.service.setBroadcasterConfig(cfg.config);
     notify(`Settings Saved Successfully!`, "success", "check2-circle", 3000);
+    log(cfg.config);
     originalConfigData = structuredClone(cfg.config);
+    resetMalformedConfig = false;
   }
 
   async function revertChanges() {
@@ -160,6 +179,7 @@
   }
 
   async function resetConfiguration() {
+    resetMalformedConfig = true;
     configStore.resetConfig();
     originalConfigData = structuredClone(cfg.config);
   }
@@ -176,12 +196,11 @@
     <sl-button
       variant="warning"
       on:click={resetConfiguration}
-      disabled={srcName === undefined || srcName === ""}
-      >Reset Configration</sl-button
+      data-cy="config_games_config-reset-btn">Reset Configration</sl-button
     >
   </div>
 {:else if cfg.loaded && cfg.configError !== undefined}
-  <div class="spinner-container" data-cy="panel-bad-config-prompt">
+  <div class="spinner-container" data-cy="panel-config-outage-prompt">
     <h3>
       Unable to load configuration, Twitch's configuration service may be down
     </h3>
@@ -204,20 +223,22 @@
         data-cy="config_games_refresh-btn"
         variant="primary"
         on:click={refreshGameList}
-        disabled={srcName === undefined || srcName === "" || loadingGameData}
+        disabled={srcName === "" || srcName === null || loadingGameData}
         >Refresh Games</sl-button
       >
       <sl-button
         data-cy="config_games_revert-btn"
         variant="warning"
         disabled={!areChangesPending(cfg.config, originalConfigData) ||
-          originalConfigData === undefined}
+          originalConfigData === undefined ||
+          resetMalformedConfig}
         on:click={revertChanges}>Revert Changes</sl-button
       >
       <sl-button
         data-cy="config_games_save-btn"
         variant="success"
-        disabled={!areChangesPending(cfg.config, originalConfigData)}
+        disabled={!areChangesPending(cfg.config, originalConfigData) ||
+          (originalConfigData === undefined && srcId === null)}
         on:click={saveSettings}>Save Changes</sl-button
       >
     </div>
@@ -228,6 +249,17 @@
     <sl-spinner class="loading-spinner"></sl-spinner>
     <h3>Loading Game Data...</h3>
   </div>
+{:else if speedrunComError}
+  <p class="mt-1" data-cy="config_games_speedruncom-error">
+    Unable to retrieve data from Speedrun.com's API. This may be a temporary
+    issue or a bug in the extension, however the main API endpoint for this has
+    known performance issues if you have a ton of personal bests - <a
+      href="https://github.com/speedruncomorg/api/issues/170"
+      target="_blank"
+      rel="noopener noreferrer"
+      >https://github.com/speedruncomorg/api/issues/170</a
+    >
+  </p>
 {:else if cfg.loaded && !cfg.configInvalid && userGames !== undefined}
   {#if userGames.length <= 0}
     <h2>No Games Found</h2>
@@ -235,34 +267,45 @@
     <h2 class="mt-1">Options</h2>
     <sl-radio-group
       label="Game Ordering"
-      name="a"
       value={cfg.config.gameData.gameSorting}
       on:sl-change={(event) => {
         cfg.config.gameData.gameSorting = event.target.value;
       }}
     >
-      <sl-radio value="recent">By most recent run date</sl-radio>
-      <sl-radio value="num">Number of runs</sl-radio>
-      <sl-radio value="alpha">Alphabetically by name</sl-radio>
+      <sl-radio value="recent" data-cy="config_games_game-sorting-recent"
+        >By most recent run date</sl-radio
+      >
+      <sl-radio value="num" data-cy="config_games_game-sorting-num"
+        >Number of runs</sl-radio
+      >
+      <sl-radio value="alpha" data-cy="config_games_game-sorting-alpha"
+        >Alphabetically by name</sl-radio
+      >
     </sl-radio-group>
     <sl-radio-group
       label="Run Ordering"
-      name="a"
       value={cfg.config.gameData.entrySorting}
       class="mt-1"
       on:sl-change={(event) => {
         cfg.config.gameData.entrySorting = event.target.value;
       }}
     >
-      <sl-radio value="recent">By date</sl-radio>
-      <sl-radio value="alpha">Alphabetically by category</sl-radio>
-      <sl-radio value="place">Leaderboard position</sl-radio>
+      <sl-radio value="recent" data-cy="config_games_entry-sorting-recent"
+        >By date</sl-radio
+      >
+      <sl-radio value="alpha" data-cy="config_games_entry-sorting-alpha"
+        >Alphabetically by category</sl-radio
+      >
+      <sl-radio value="place" data-cy="config_games_entry-sorting-place"
+        >Leaderboard position</sl-radio
+      >
     </sl-radio-group>
     <sl-checkbox
       checked={cfg.config.gameData.groupLevelsSeparately}
       on:sl-change={(event) => {
         cfg.config.gameData.groupLevelsSeparately = event.target.checked;
       }}
+      data-cy="config_games_group-levels-separately"
     >
       Group level runs separately
     </sl-checkbox>
@@ -272,6 +315,7 @@
         <div class="row">
           <div class="col">
             <sl-checkbox
+              data-cy="config_games_game-checkbox"
               checked={!cfg.config.gameData.disabledGames.find(
                 (disabledGameId) => disabledGameId === userGame.id,
               )}

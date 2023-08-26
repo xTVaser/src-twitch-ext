@@ -1,6 +1,5 @@
 // TODO - not yet supported:
 // - miscellaneous subcategories (seems to be a thing...)
-// TODO - storing "undefined" in the dataId (might be intentional)
 
 import { log } from "./logging";
 
@@ -28,7 +27,7 @@ export async function lookupUserByName(
     log(`Caught an error: ${error}`);
     return <SpeedrunComError>{
       errorMessage:
-        "Unexpected error occurred when looking up the Speedrun.com User",
+        "Unexpected error occurred when looking up the Speedrun.com user",
     };
   }
 
@@ -126,8 +125,15 @@ export class PersonalBest {
 }
 
 function isLevel(pbData: any) {
-  // SRC Issue - 'data' is normally an object, but when it is absent it's an array? strange
-  if (!("level" in pbData) || pbData.level.data.length === 0) {
+  // SRC Issue - 'data' is normally an object, but when it is absent it's an array? strange, bunch of checks to make this resilient
+  // https://github.com/speedruncomorg/api/issues/64
+  if (
+    !("level" in pbData) ||
+    (Array.isArray(pbData.level.data) && pbData.level.data.length === 0) ||
+    (typeof pbData.level.data === "object" &&
+      !Array.isArray(pbData.level.data) &&
+      Object.keys(pbData.level.data).length === 0)
+  ) {
     return false;
   }
   return true;
@@ -141,10 +147,11 @@ function hasSubcategories(pbData: any) {
   }
 
   // Check to see if any are a subcategory
-  // TODO - probably a RTE if there are no variables
-  for (const variable of pbData.category.data.variables.data) {
-    if (variable["is-subcategory"] && variable.id in runValues) {
-      return true;
+  if ("variables" in pbData.category.data) {
+    for (const variable of pbData.category.data.variables.data) {
+      if (variable["is-subcategory"] && variable.id in runValues) {
+        return true;
+      }
     }
   }
   return false;
@@ -160,36 +167,19 @@ function getSubcategories(pbData: any) {
   let subcategories: SubcategoryInfo[] = [];
 
   // Check to see if any are a subcategory
-  // TODO - probably a RTE if there are no variables
-  for (const variable of pbData.category.data.variables.data) {
-    if (variable["is-subcategory"] && variable.id in runValues) {
-      subcategories.push(<SubcategoryInfo>{
-        srcVariableId: variable.id,
-        srcVariableValueId: runValues[variable.id],
-        srcVariableValueVal:
-          variable.values.values[runValues[variable.id]].label,
-      });
+  if ("variables" in pbData.category.data) {
+    for (const variable of pbData.category.data.variables.data) {
+      if (variable["is-subcategory"] && variable.id in runValues) {
+        subcategories.push(<SubcategoryInfo>{
+          srcVariableId: variable.id,
+          srcVariableValueId: runValues[variable.id],
+          srcVariableValueVal:
+            variable.values.values[runValues[variable.id]].label,
+        });
+      }
     }
   }
   return subcategories;
-}
-
-function resolveSubcategoryName(pb: PersonalBest): string {
-  // The order from SRC is probably somewhat deterministic, but i can't rely on it
-  // lexiographically sort
-  if (pb.hasSubcategories) {
-    return ` - ${pb.subcategoryInfo
-      .map((elem) => elem.srcVariableValueVal)
-      .join(" - ")}`;
-  }
-  return "";
-}
-
-function resolveLevelOrCategoryName(pb: PersonalBest): string {
-  if (pb.isLevel) {
-    return `${pb.srcLevelName}${resolveSubcategoryName(pb)}`;
-  }
-  return `${pb.srcCategoryName}${resolveSubcategoryName(pb)}`;
 }
 
 async function retrievePersonalBests(
@@ -256,6 +246,7 @@ export async function getUsersPersonalBests(
   // https://www.speedrun.com/api/v1/users/e8envo80/personal-bests?embed=game,category.variables,level.variables&max=200
   let url = `https://www.speedrun.com/api/v1/users/${srcUserId}/personal-bests?embed=game,category.variables,level.variables&max=200`;
   let personalBests = new Map<string, PersonalBest>();
+  // SRC Issue - doesn't even support pagination https://github.com/speedruncomorg/api/issues/170
   while (true) {
     const result = await retrievePersonalBests(url, personalBests);
     if (result === undefined) {

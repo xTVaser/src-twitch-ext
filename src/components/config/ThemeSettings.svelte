@@ -12,6 +12,7 @@
   import "@shoelace-style/shoelace/dist/components/switch/switch.js";
   import "@shoelace-style/shoelace/dist/components/color-picker/color-picker.js";
   import "@shoelace-style/shoelace/dist/components/textarea/textarea.js";
+  import "@shoelace-style/shoelace/dist/components/spinner/spinner.js";
   import { log } from "@lib/logging";
 
   function isThemeCustom(themeName: string): boolean {
@@ -33,6 +34,7 @@
     configStore.subscribe(async () => {
       if (cfg.loaded && originalThemeData === undefined) {
         log("updating original theme data");
+        // TODO - this might be wrong because you can't stringify a map, test!
         originalThemeData = structuredClone(getThemeData(cfg.config));
       }
     });
@@ -47,7 +49,7 @@
         "exclamation-octagon",
         3000,
       );
-    } else if (cfg.config.customThemes.size >= 1) {
+    } else if (Object.keys(cfg.config.customThemes).length >= 1) {
       notify(
         "You can only have 1 custom theme",
         "danger",
@@ -83,7 +85,10 @@
 </script>
 
 {#if !cfg.loaded}
-  TODO
+  <div class="spinner-container" data-cy="panel-loading-spinner">
+    <sl-spinner class="loading-spinner"></sl-spinner>
+    <h3>Loading Config...</h3>
+  </div>
 {:else}
   <div class="row mb-1">
     <div class="col mr-1">
@@ -151,6 +156,7 @@
             label="New Theme Name"
             value={newCustomThemeName}
             data-cy="new-theme-input"
+            maxlength="32"
             on:sl-input={(event) => {
               newCustomThemeName = event.target.value.trim();
             }}>{newCustomThemeName}</sl-input
@@ -236,6 +242,24 @@
             log("blurred");
             configStore.setValueOnCurrentTheme(
               "gameExpandIconColor",
+              event.target.value,
+            );
+          }}
+        />
+      </div>
+    </div>
+    <div class="row setting-row">
+      <div class="col">
+        <span>Leaderboard Place Color</span>
+      </div>
+      <div class="col">
+        <sl-color-picker
+          data-cy="leaderboard-place-color"
+          value={getThemeData(cfg.config).gameEntryLeaderboardPlaceColor}
+          on:blur={(event) => {
+            log("blurred");
+            configStore.setValueOnCurrentTheme(
+              "gameEntryLeaderboardPlaceColor",
               event.target.value,
             );
           }}
@@ -424,6 +448,25 @@
 {/if}
 
 <style>
+  .spinner-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .spinner-container h3 {
+    font-size: 1em;
+    color: white;
+  }
+
+  .loading-spinner {
+    font-size: 3rem;
+    --track-width: 5px;
+    --indicator-color: cyan;
+  }
+
   .is-vertically-aligned-end {
     align-items: flex-end;
   }

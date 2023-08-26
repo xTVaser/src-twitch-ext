@@ -29,7 +29,8 @@
         cfg.config !== undefined &&
         !pbDataLoaded &&
         !cfg.configInvalid &&
-        cfg.configError === undefined
+        cfg.configError === undefined &&
+        cfg.config.gameData.userSrcId !== null
       ) {
         // Request SRC for all PBs, not all information is stored in the config settings (times, cover art, etc)
         const response = await getUsersPersonalBests(
@@ -71,7 +72,7 @@
             if (cfg.config.gameData.gameSorting === "alpha") {
               return gameA.gameName.localeCompare(gameB.gameName);
             } else if (cfg.config.gameData.gameSorting === "num") {
-              return gameA.entries.length - gameB.entries.length;
+              return gameB.entries.length - gameA.entries.length;
             } else if (cfg.config.gameData.gameSorting === "recent") {
               // Find the most recent run in each game
               let runGameA = gameA.entries[0].srcRunDate;
@@ -179,12 +180,12 @@
               title={gameData.gameName}
               data-cy="panel-game-name"
               ><a
+                class="panel-game-name-link"
                 href={gameData.gameUrl}
                 target="_blank"
                 rel="noopener noreferrer">{gameData.gameName}</a
               ></span
             >
-            <br />
             <span data-cy="panel-game-count" class="game-entry-count"
               >{gameData.entries.length + gameData.entriesGroupTwo.length} Runs</span
             >
@@ -218,7 +219,7 @@
           </div>
         {/each}
         {#if gameData.entriesGroupTwo.length > 0}
-          <div data-cy="panel-game-entry" class="row game-entry divider">
+          <div data-cy="panel-game-entry-divider" class="row game-entry divider">
             <div class="col entry-divider-name">Levels</div>
           </div>
           {#each gameData.entriesGroupTwo as entry}
@@ -231,7 +232,7 @@
                     rel="noopener noreferrer"
                   >
                     {#if getThemeData(cfg.config).showPlace}
-                      <span class="entry-place"
+                      <span class="entry-place" data-cy="panel-game-place"
                         >[{entry.srcLeaderboardPlace}]</span
                       >
                     {/if}
@@ -263,7 +264,7 @@
     <div class="spinner-container" data-cy="panel-speedruncom-outage">
       <h3>Unable to retrieve data from Speedrun.com</h3>
     </div>
-  {:else if cfg.loaded && cfg.config === undefined}
+  {:else if (cfg.loaded && cfg.config === undefined) || (cfg.config !== undefined && cfg.config.gameData.userSrcId === null)}
     <div class="spinner-container" data-cy="panel-nothing-to-load">
       <h3>No Configuration Found</h3>
     </div>
@@ -279,6 +280,15 @@
   .entry-divider-name {
     text-align: center;
     font-weight: 700;
+    margin: 0;
+  }
+
+  .panel-game-name-link {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
   }
 
   .game-entry.divider {
@@ -355,10 +365,12 @@
 
   .game-header-text-wrapper {
     flex-grow: 1;
-    width: 225px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
   }
 
   .game-name {
@@ -367,7 +379,6 @@
     font-style: var(--src-twitch-ext-font-style-gameName);
     font-family: var(--src-twitch-ext-font-family-gameName), sans-serif;
     color: var(--src-twitch-ext-font-color-gameName);
-    margin-left: 10px;
   }
 
   .game-name a {
@@ -380,7 +391,6 @@
   }
 
   .game-entry-count {
-    margin-left: 10px;
     color: var(--src-twitch-ext-font-color-gameNameSubheader);
     font-family: var(--src-twitch-ext-font-family-gameNameSubheader), sans-serif;
     font-weight: var(--src-twitch-ext-font-weight-gameNameSubheader);

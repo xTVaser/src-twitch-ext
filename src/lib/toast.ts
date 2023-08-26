@@ -1,8 +1,9 @@
+import type { SlAlert } from "@shoelace-style/shoelace";
 import "@shoelace-style/shoelace/dist/components/alert/alert.js";
 import "@shoelace-style/shoelace/dist/components/icon/icon.js";
 
 // Always escape HTML for text arguments!
-function escapeHtml(html) {
+function escapeHtml(html: string) {
   const div = document.createElement("div");
   div.textContent = html;
   return div.innerHTML;
@@ -10,21 +11,24 @@ function escapeHtml(html) {
 
 // Custom function to emit toast notifications
 export function notify(
-  message,
-  variant = "primary",
+  message: string,
+  variant: SlAlert["variant"],
   icon = "info-circle",
   duration = 3000,
 ) {
-  // TODO - remove innerHTML usage
-  const alert = Object.assign(document.createElement("sl-alert"), {
-    variant,
-    closable: true,
-    duration: duration,
-    innerHTML: `
-      <sl-icon name="${icon}" slot="icon"></sl-icon>
-      ${escapeHtml(message)}
-    `,
-  });
+  const alert = document.createElement("sl-alert");
+  alert.variant = variant;
+  alert.closable = true;
+  alert.duration = duration;
+
+  const iconElement = document.createElement("sl-icon");
+  iconElement.name = icon;
+  iconElement.slot = "icon";
+
+  const messageTextNode = document.createTextNode(escapeHtml(message));
+
+  alert.appendChild(iconElement);
+  alert.appendChild(messageTextNode);
 
   document.body.append(alert);
   return alert.toast();

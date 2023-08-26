@@ -169,11 +169,11 @@ export const DefaultDarkTheme: ThemeData = {
   gameNameLinkHoverColor: "#a06bff",
   gameEntryLinkHoverColor: "#a06bff",
   gameExpandIconColor: "#DFDDE2",
+  gameEntryLeaderboardPlaceColor: "#808080",
   gameNameFontColor: "#DFDDE2",
   gameNameSubheaderFontColor: "#A299B0",
   gameEntryFontColor: "#FFFFFF",
   gameEntryTimeFontColor: "#FFFFFF",
-  gameEntryLeaderboardPlaceColor: "#808080",
 };
 
 export function getDefaultTheme(themeName: string | undefined): ThemeData {
@@ -208,8 +208,6 @@ interface GameConfigDataMinified {
   gl: boolean;
 }
 
-// TODO - limit size of the custom theme name
-
 interface ConfigDataMinified {
   // version
   v: string;
@@ -218,7 +216,7 @@ interface ConfigDataMinified {
   // currentThemeName
   tn: string;
   // customThemes
-  td: Map<string, ThemeDataMinified>;
+  td: Record<string, ThemeDataMinified>;
 }
 
 export class ConfigData {
@@ -232,14 +230,14 @@ export class ConfigData {
     groupLevelsSeparately: true,
   };
   currentThemeName: string = "_default-dark";
-  customThemes: Map<string, ThemeData> = new Map<string, ThemeData>();
+  customThemes: Record<string, ThemeData> = {};
 
   minify(): ConfigDataMinified {
-    let themeDataMinfied = new Map<string, ThemeDataMinified>();
-    for (const [themeName, themeData] of this.customThemes.entries()) {
-      themeDataMinfied.set(themeName, minifyThemeData(themeData));
+    let themeDataMinified = {};
+    for (const [themeName, themeData] of Object.entries(this.customThemes)) {
+      themeDataMinified[themeName] = minifyThemeData(themeData);
     }
-    return {
+    const ye = {
       v: this.version,
       g: {
         si: this.gameData.userSrcId,
@@ -250,8 +248,9 @@ export class ConfigData {
         gl: this.gameData.groupLevelsSeparately,
       },
       tn: this.currentThemeName,
-      td: themeDataMinfied,
+      td: themeDataMinified,
     };
+    return ye;
   }
 
   static parse(jsonData: ConfigDataMinified): ConfigData {
@@ -260,9 +259,12 @@ export class ConfigData {
     configData.gameData.userSrcId = jsonData.g.si;
     configData.gameData.userSrcName = jsonData.g.sn;
     configData.gameData.disabledGames = jsonData.g.d;
+    configData.gameData.gameSorting = jsonData.g.gs;
+    configData.gameData.entrySorting = jsonData.g.es;
+    configData.gameData.groupLevelsSeparately = jsonData.g.gl;
     configData.currentThemeName = jsonData.tn;
     for (const [themeName, themeData] of Object.entries(jsonData.td)) {
-      configData.customThemes.set(themeName, parseMinifiedThemeData(themeData));
+      configData.customThemes[themeName] = parseMinifiedThemeData(themeData);
     }
     return configData;
   }
@@ -274,26 +276,30 @@ const ConfigDataSchemaV1 = z.object({
     si: z.nullable(z.string()),
     sn: z.nullable(z.string()),
     d: z.array(z.string()),
+    gs: z.enum(["recent", "num", "alpha"]),
+    es: z.enum(["recent", "alpha", "place"]),
+    gl: z.boolean(),
   }),
   tn: z.string(),
   td: z.record(
     z.string(),
     z.object({
-      defaultTheme: z.boolean(),
-      hideExpandIcon: z.boolean(),
-      showRainbowWorldRecord: z.boolean(),
-      showPlace: z.boolean(),
-      mainBackgroundColor: z.string(),
-      gameHeaderBackgroundColor: z.string(),
-      gameEntriesBackgroundColor: z.string(),
-      gameEntriesAlternateRowColor: z.string(),
-      gameNameLinkHoverColor: z.string(),
-      gameEntryLinkHoverColor: z.string(),
-      gameExpandIconColor: z.string(),
-      gameNameFontColor: z.string(),
-      gameNameSubheaderFontColor: z.string(),
-      gameEntryFontColor: z.string(),
-      gameEntryTimeFontColor: z.string(),
+      d: z.boolean(),
+      e: z.boolean(),
+      gearc: z.string(),
+      gebgc: z.string(),
+      gefc: z.string(),
+      geic: z.string(),
+      gelhc: z.string(),
+      gelpc: z.string(),
+      getfc: z.string(),
+      ghbgc: z.string(),
+      gnfc: z.string(),
+      gnlhc: z.string(),
+      gnsfc: z.string(),
+      mbgc: z.string(),
+      p: z.boolean(),
+      r: z.boolean(),
     }),
   ),
 });
@@ -443,7 +449,7 @@ export class TwitchConfigService extends ConfigService {
   getBroadcasterConfig(): ConfigResponse {
     try {
       const decompressedData = Buffer.from(
-        gzipSync(
+        gunzipSync(
           Buffer.from(
             this.windowInstance.Twitch.ext.configuration.broadcaster.content,
             "base64",
@@ -472,9 +478,7 @@ export class TwitchConfigService extends ConfigService {
     }
   }
   setBroadcasterConfig(data: ConfigData) {
-    const compressedData = gunzipSync(
-      Buffer.from(JSON.stringify(data.minify()), "base64"),
-    );
+    const compressedData = gzipSync(Buffer.from(JSON.stringify(data.minify())));
     this.windowInstance.Twitch.ext.configuration.set(
       "broadcaster",
       "1.0",
