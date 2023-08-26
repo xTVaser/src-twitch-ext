@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
 
+import { getConfiguration, generateConfiguration } from "../../lib/util";
+
 describe("no existing config", () => {
   beforeEach(() => {});
 
@@ -91,7 +93,7 @@ describe("no existing config", () => {
       cy.get('[data-cy="config_games_refresh-btn"]').click();
       cy.contains(
         "sl-alert",
-        "Unexpected error occurred when looking up the Speedrun.com User",
+        "Unexpected error occurred when looking up the Speedrun.com user",
       );
     });
   });
@@ -161,6 +163,7 @@ describe("no existing config", () => {
       cy.root()
         .get("sl-alert")
         .contains("Unable to retrieve data from Speedrun.com");
+      cy.get('[data-cy="config_games_speedruncom-error"]');
     });
   });
 
@@ -225,11 +228,10 @@ describe("no existing config", () => {
         "disabled",
       );
       cy.get('[data-cy="config_games_refresh-btn"]').click();
-      cy.get('[data-cy="config_games-game-list-entry"]').should(
+      cy.get('[data-cy="config_games_game-checkbox"]').should(
         "have.length",
         3,
       );
-      cy.get('[data-cy="config_games-game-options"]').should("have.length", 3);
       cy.get('[data-cy="config_games_revert-btn"]').should(
         "have.attr",
         "disabled",
@@ -238,14 +240,11 @@ describe("no existing config", () => {
       cy.get('[data-cy="config_games_save-btn"]')
         .click()
         .then(() => {
-          const config = JSON.parse(
-            JSON.parse(localStorage.getItem("src-twitch-ext")).broadcaster
-              .content,
-          );
-          expect(config.gameData.games).to.have.length(3);
-          expect(config.gameData.games[0].title).to.equal(
-            "Jak and Daxter: Misc Category Extensions",
-          );
+          const config = getConfiguration();
+          expect(config.gameData.disabledGames).to.have.length(0);
+          expect(config.gameData.gameSorting).to.eq("recent");
+          expect(config.gameData.entrySorting).to.eq("recent");
+          expect(config.gameData.groupLevelsSeparately).to.eq(true);
           expect(config.gameData.userSrcId).to.eq("e8envo80");
           expect(config.gameData.userSrcName).to.eq("this-user-doesnt-exist");
         });
@@ -261,11 +260,162 @@ describe("no existing config", () => {
         "disabled",
       );
     });
+
+    it("change sorting", () => {
+      cy.get('[data-cy="config_games_src-username-input"]')
+        .shadow()
+        .find("input")
+        .type("this-user-doesnt-exist");
+      cy.get('[data-cy="config_games_refresh-btn"]').click();
+      cy.get('[data-cy="config_games_game-sorting-alpha"]').shadow().find("[part=label]").click();
+      cy.get('[data-cy="config_games_entry-sorting-place"]').shadow().find("[part=label]").click();
+      cy.get('[data-cy="config_games_save-btn"]')
+        .click()
+        .then(() => {
+          const config = getConfiguration();
+          expect(config.gameData.disabledGames).to.have.length(0);
+          expect(config.gameData.gameSorting).to.eq("alpha");
+          expect(config.gameData.entrySorting).to.eq("place");
+          expect(config.gameData.groupLevelsSeparately).to.eq(true);
+          expect(config.gameData.userSrcId).to.eq("e8envo80");
+          expect(config.gameData.userSrcName).to.eq("this-user-doesnt-exist");
+        });
+      cy.root().get("sl-alert").contains("Settings Saved Successfully!");
+      cy.get('[data-cy="config_games_revert-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_save-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+    });
+    // TODO - can't click a checkbox - https://github.com/cypress-io/cypress-documentation/pull/4256
   });
 });
 
-// TODO - test and implement adding new categories/levels to existing config when "refreshing"
-// TODO - test revert above ^^
+describe("malformed config", () => {
+  before(() => {
+    cy.intercept("GET", "https://www.speedrun.com/api/v1/users*", {
+      fixture: "config/games/valid-user-lookup.json",
+    });
+    cy.intercept(
+      "GET",
+      "https://www.speedrun.com/api/v1/users/*/personal-bests*",
+      {
+        fixture: "config/games/src-basic-personal-bests.json",
+      },
+    );
+    localStorage.setItem("src-twitch-ext", JSON.stringify({ "broadcaster": "wow this config is malformed" }));
+    cy.visit("https://localhost:5173/config/#/games");
+    console.log(localStorage.getItem("src-twitch-ext"));
+  });
+
+  it("reset and successfully setup", () => {
+    cy.get('[data-cy="panel-bad-config-prompt"]');
+    cy.get('[data-cy="config_games_config-reset-btn"]').click();
+
+    cy.get('[data-cy="config_games_src-username-input"]').should(
+      "have.value",
+      "",
+    );
+
+    cy.get('[data-cy="config_games_refresh-btn"]').should(
+      "have.attr",
+      "disabled",
+      "disabled",
+    );
+    cy.get('[data-cy="config_games_revert-btn"]').should(
+      "have.attr",
+      "disabled",
+      "disabled",
+    );
+    cy.get('[data-cy="config_games_save-btn"]').should(
+      "have.attr",
+      "disabled",
+      "disabled",
+    );
+
+    cy.get('[data-cy="config_games_src-username-input"]')
+      .shadow()
+      .find("input")
+      .type("this-user-doesnt-exist");
+    cy.get('[data-cy="config_games_refresh-btn"]').should(
+      "not.have.attr",
+      "disabled",
+      "disabled",
+    );
+    cy.get('[data-cy="config_games_revert-btn"]').should(
+      "have.attr",
+      "disabled",
+      "disabled",
+    );
+    cy.get('[data-cy="config_games_save-btn"]').should(
+      "have.attr",
+      "disabled",
+      "disabled",
+    );
+    cy.get('[data-cy="config_games_refresh-btn"]').click();
+    cy.get('[data-cy="config_games_game-checkbox"]').should(
+      "have.length",
+      3,
+    );
+    cy.get('[data-cy="config_games_revert-btn"]').should(
+      "have.attr",
+      "disabled",
+      "disabled",
+    );
+    cy.get('[data-cy="config_games_save-btn"]')
+      .click()
+      .then(() => {
+        const config = getConfiguration();
+        expect(config.gameData.disabledGames).to.have.length(0);
+        expect(config.gameData.gameSorting).to.eq("recent");
+        expect(config.gameData.entrySorting).to.eq("recent");
+        expect(config.gameData.groupLevelsSeparately).to.eq(true);
+        expect(config.gameData.userSrcId).to.eq("e8envo80");
+        expect(config.gameData.userSrcName).to.eq("this-user-doesnt-exist");
+      });
+    cy.root().get("sl-alert").contains("Settings Saved Successfully!");
+    cy.get('[data-cy="config_games_revert-btn"]').should(
+      "have.attr",
+      "disabled",
+      "disabled",
+    );
+    cy.get('[data-cy="config_games_save-btn"]').should(
+      "have.attr",
+      "disabled",
+      "disabled",
+    );
+    cy.get('[data-cy="config_games_refresh-btn"]').click();
+    cy.get('[data-cy="config_games_game-sorting-alpha"]').shadow().find("[part=label]").click();
+    cy.get('[data-cy="config_games_entry-sorting-place"]').shadow().find("[part=label]").click();
+    cy.get('[data-cy="config_games_save-btn"]')
+      .click()
+      .then(() => {
+        const config = getConfiguration();
+        expect(config.gameData.disabledGames).to.have.length(0);
+        expect(config.gameData.gameSorting).to.eq("alpha");
+        expect(config.gameData.entrySorting).to.eq("place");
+        expect(config.gameData.groupLevelsSeparately).to.eq(true);
+        expect(config.gameData.userSrcId).to.eq("e8envo80");
+        expect(config.gameData.userSrcName).to.eq("this-user-doesnt-exist");
+      });
+    cy.root().get("sl-alert").contains("Settings Saved Successfully!");
+    cy.get('[data-cy="config_games_revert-btn"]').should(
+      "have.attr",
+      "disabled",
+      "disabled",
+    );
+    cy.get('[data-cy="config_games_save-btn"]').should(
+      "have.attr",
+      "disabled",
+      "disabled",
+    );
+  });
+});
 
 describe("existing config", () => {
   beforeEach(() => {
@@ -276,12 +426,10 @@ describe("existing config", () => {
         fixture: "config/games/src-basic-personal-bests.json",
       },
     );
-    cy.fixture("config-with-games.json").then((value) => {
-      localStorage.setItem("src-twitch-ext", JSON.stringify(value));
-    });
+    generateConfiguration({});
   });
 
-  describe("disable a game", () => {
+  describe("loads as expected", () => {
     beforeEach(() => {
       cy.visit("https://localhost:5173/config/#/games");
     });
@@ -311,16 +459,82 @@ describe("existing config", () => {
       );
     });
 
-    // it("disable first game", () => {
-    //   cy.get('[data-cy="config_games-game-options"]').eq(0).click();
-    //   cy.wait(2000);
-    //   cy.get('[data-cy="config_games-game-options"]').eq(0).find('[data-cy="config_games-game-status-switch"]').dblclick();
-    //   cy.get('[data-cy="config_games_revert-btn"]').should("not.have.attr", "disabled", "disabled");
-    //   cy.get('[data-cy="config_games_save-btn"]').should("not.have.attr", "disabled", "disabled");
-    // });
+    it("games load", () => {
+      cy.get('[data-cy="config_games_game-checkbox"]').should(
+        "have.length", 3
+      );
+    });
+  });
 
-    // TODO - can't get a click to fire properly on the switches, is it because they are inside the details?
+  describe("can change username", () => {
+    beforeEach(() => {
+      cy.intercept("GET", "https://www.speedrun.com/api/v1/users*", {
+        fixture: "config/games/another-user-lookup.json",
+      });
+      cy.intercept(
+        "GET",
+        "https://www.speedrun.com/api/v1/users/f8envo80/personal-bests*",
+        {
+          fixture: "config/games/src-basic-personal-bests-different.json",
+        },
+      );
+      cy.visit("https://localhost:5173/config/#/games");
+    });
+
+    it("change username successfully", () => {
+      cy.get('[data-cy="config_games_src-username-input"]').should(
+        "have.value",
+        "xtvaser",
+      );
+      cy.get('[data-cy="config_games_refresh-btn"]').should(
+        "not.have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_revert-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_save-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_game-checkbox"]').should(
+        "have.length", 3
+      );
+      cy.get('[data-cy="config_games_src-username-input"]')
+        .shadow()
+        .find("input")
+        .clear()
+        .type("different-user");
+      cy.get('[data-cy="config_games_refresh-btn"]').click();
+      cy.get('[data-cy="config_games_game-checkbox"]').should(
+        "have.length", 2
+      );
+      cy.get('[data-cy="config_games_save-btn"]')
+        .click()
+        .then(() => {
+          const config = getConfiguration();
+          expect(config.gameData.disabledGames).to.have.length(0);
+          expect(config.gameData.gameSorting).to.eq("recent");
+          expect(config.gameData.entrySorting).to.eq("recent");
+          expect(config.gameData.groupLevelsSeparately).to.eq(true);
+          expect(config.gameData.userSrcId).to.eq("f8envo80");
+          expect(config.gameData.userSrcName).to.eq("different-user");
+        });
+      cy.root().get("sl-alert").contains("Settings Saved Successfully!");
+      cy.get('[data-cy="config_games_revert-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+      cy.get('[data-cy="config_games_save-btn"]').should(
+        "have.attr",
+        "disabled",
+        "disabled",
+      );
+    });
   });
 });
-
-// TODO - would be nice to eventually get drag/drop working but its tedious - https://github.com/cypress-io/cypress/issues/845
