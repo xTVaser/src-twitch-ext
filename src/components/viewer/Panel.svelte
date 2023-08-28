@@ -371,6 +371,7 @@
     display: flex;
     flex-direction: column;
     margin-left: 10px;
+    max-width: 220px;
   }
 
   .game-name {

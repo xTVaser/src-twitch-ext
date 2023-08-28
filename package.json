@@ -10,11 +10,13 @@
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "cypress:open": "yarn run cypress open",
     "lint": "npx prettier --plugin prettier-plugin-svelte --check .",
-    "format": "npx prettier --plugin prettier-plugin-svelte --write ."
+    "format": "npx prettier --plugin prettier-plugin-svelte --write .",
+    "twitch": "yarn run build && node ./scripts/twitch-package.mjs"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.2",
     "@tsconfig/svelte": "^3.0.0",
+    "archiver": "^6.0.0",
     "cypress": "^12.17.4",
     "prettier": "^3.0.1",
     "prettier-plugin-svelte": "^3.0.3",
