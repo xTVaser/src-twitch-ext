@@ -34,7 +34,6 @@
     configStore.subscribe(async () => {
       if (cfg.loaded) {
         if (cfg.service.broadcasterConfigExists()) {
-          console.log(cfg);
           originalConfigData = structuredClone(cfg.config);
           if (cfg.config.gameData.userSrcName === null) {
             srcName = "";

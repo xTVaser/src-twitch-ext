@@ -61,6 +61,8 @@
       cfg.config.customThemes[themeName].defaultTheme = false;
       cfg.config.currentThemeName = themeName;
       cfg.service.setBroadcasterConfig(cfg.config);
+      // update originalThemeDate so we don't imply there is anything to save
+      originalThemeData = structuredClone(getThemeData(cfg.config));
       notify(`New Theme Created!`, "success", "check2-circle", 1500);
     }
     newCustomThemeName = "";

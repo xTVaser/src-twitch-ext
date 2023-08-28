@@ -1,6 +1,8 @@
 <script lang="ts">
   import { link, location } from "svelte-spa-router";
   import logo from "./img/logo.png";
+  import joystickSvg from "./img/joystick.svg";
+  import paletteSvg from "./img/palette.svg";
 </script>
 
 <nav class="col navbar is-marginless is-gutterless">
@@ -21,7 +23,7 @@
       >
         <div>
           <sl-icon-button
-            name="joystick"
+            src={joystickSvg}
             label="Edit"
             style="font-size: 2.5rem;"
           />
@@ -41,7 +43,7 @@
       >
         <div>
           <sl-icon-button
-            name="palette"
+            src={paletteSvg}
             label="Edit"
             style="font-size: 2.5rem;"
           />

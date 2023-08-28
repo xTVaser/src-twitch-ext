@@ -153,7 +153,7 @@ export function updateCSSVars(themeData: ThemeData) {
   );
   document.documentElement.style.setProperty(
     `--src-twitch-ext-color-gameEntryLeaderboardPlace`,
-    themeData.gameEntryTimeFontColor,
+    themeData.gameEntryLeaderboardPlaceColor,
   );
 }
 
@@ -478,6 +478,7 @@ export class TwitchConfigService extends ConfigService {
     }
   }
   setBroadcasterConfig(data: ConfigData) {
+    // TODO - might be a good idea to try-catch this
     const compressedData = gzipSync(Buffer.from(JSON.stringify(data.minify())));
     this.windowInstance.Twitch.ext.configuration.set(
       "broadcaster",

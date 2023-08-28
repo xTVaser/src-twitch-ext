@@ -170,7 +170,7 @@
             src={gameData.gameCoverUrl === undefined
               ? null
               : gameData.gameCoverUrl.replace("gameasset/", "static/game/")}
-            alt="Cover art for {gameData.gameName}"
+            aria-label="Cover art for {gameData.gameName}"
             class="game-cover"
             data-cy="panel-game-cover"
           />
@@ -343,7 +343,7 @@
 
   main {
     font-family: var(--font-family-sans), sans-serif;
-    height: 500px; /* TODO - Twitch says 496px */
+    height: 500px; /* TODO - Twitch says 496px, the extension dashboard says otherwise */
     width: 318px;
     background-color: var(--src-twitch-ext-color-mainBackground);
     overflow-y: auto;

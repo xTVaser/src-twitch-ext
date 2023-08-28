@@ -158,7 +158,8 @@ function createConfigStore() {
           log("persisting local host config");
           val.service.setBroadcasterConfig(val.config);
         } else if (window.Twitch && window.Twitch.ext) {
-          log("TODO");
+          log("persisting twitch config");
+          val.service.setBroadcasterConfig(val.config);
         } else {
           log("unable to determine the config source");
         }
