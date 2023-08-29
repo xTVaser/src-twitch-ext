@@ -346,7 +346,7 @@ export interface ConfigResponse {
 export abstract class ConfigService {
   abstract broadcasterConfigExists(): boolean | undefined;
   abstract getBroadcasterConfig(): ConfigResponse;
-  abstract setBroadcasterConfig(data: ConfigData);
+  abstract setBroadcasterConfig(data: ConfigData): string | undefined;
   abstract developerConfigExists(): boolean;
   abstract getDeveloperConfig(): any;
   abstract setDeveloperConfig(data: any);
@@ -411,7 +411,7 @@ export class LocalConfigService extends ConfigService {
   getDeveloperConfig() {
     throw new Error("Method not implemented.");
   }
-  setBroadcasterConfig(data: ConfigData) {
+  setBroadcasterConfig(data: ConfigData): string | undefined {
     let config: TwitchConfigObject;
     const compressedData = gzipSync(Buffer.from(JSON.stringify(data.minify())));
     if (localStorage.getItem("src-twitch-ext") === null) {
@@ -429,6 +429,7 @@ export class LocalConfigService extends ConfigService {
       };
     }
     localStorage.setItem("src-twitch-ext", JSON.stringify(config));
+    return undefined;
   }
   setDeveloperConfig(data: any) {
     throw new Error("Method not implemented.");
@@ -477,14 +478,19 @@ export class TwitchConfigService extends ConfigService {
       };
     }
   }
-  setBroadcasterConfig(data: ConfigData) {
-    // TODO - might be a good idea to try-catch this
-    const compressedData = gzipSync(Buffer.from(JSON.stringify(data.minify())));
-    this.windowInstance.Twitch.ext.configuration.set(
-      "broadcaster",
-      "1.0",
-      Buffer.from(compressedData.buffer).toString("base64"),
-    );
+  setBroadcasterConfig(data: ConfigData): string | undefined {
+    try {
+      const compressedData = gzipSync(
+        Buffer.from(JSON.stringify(data.minify())),
+      );
+      this.windowInstance.Twitch.ext.configuration.set(
+        "broadcaster",
+        "1.0",
+        Buffer.from(compressedData.buffer).toString("base64"),
+      );
+    } catch (e) {
+      return `Unable to set broadcaster configuration: ${e}`;
+    }
   }
   developerConfigExists(): boolean {
     throw new Error("Method not implemented.");

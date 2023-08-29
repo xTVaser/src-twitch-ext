@@ -142,11 +142,15 @@
   }
 
   async function saveSettings() {
-    cfg.service.setBroadcasterConfig(cfg.config);
-    notify(`Settings Saved Successfully!`, "success", "check2-circle", 3000);
-    log(cfg.config);
-    originalConfigData = structuredClone(cfg.config);
-    resetMalformedConfig = false;
+    const error = cfg.service.setBroadcasterConfig(cfg.config);
+    if (error !== undefined) {
+      notify(error, "danger", "exclamation-octagon", 3000);
+    } else {
+      notify(`Settings Saved Successfully!`, "success", "check2-circle", 3000);
+      log(cfg.config);
+      originalConfigData = structuredClone(cfg.config);
+      resetMalformedConfig = false;
+    }
   }
 
   async function revertChanges() {
@@ -244,7 +248,7 @@
   </div>
 {/if}
 {#if loadingGameData}
-  <div class="spinner-container" data-cy="panel-loading-spinner">
+  <div class="spinner-container mt-1" data-cy="panel-loading-spinner">
     <sl-spinner class="loading-spinner"></sl-spinner>
     <h3>Loading Game Data...</h3>
   </div>
