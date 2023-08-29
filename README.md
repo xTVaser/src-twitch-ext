@@ -17,7 +17,22 @@ yarn twitch
 ### Typical Review Instructions
 
 ```md
+# Walkthrough
 
+This extension only provides static information (text and some images) fetched from Speedrun.com's API.  It also uses Twitch's configuration service, there is no custom EBS involved.
+
+The review channel is pre-configured with a few games, notable features are:
+- You can click on the game name's to be taken to their respective page on speedrun.com
+- You can expand/collapse each game's details by clicking on the summary section
+- You can click on each entry's name to be taken to the respective page on speedrun.com
+
+## Capability Changes
+
+<ANYTHING TO HIGHLIGHT>
+
+## Change Log
+
+<COPY FROM CHANGELOG.md>
 ```
 
 ## Development
