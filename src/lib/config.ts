@@ -163,17 +163,17 @@ export const DefaultDarkTheme: ThemeData = {
   showRainbowWorldRecord: true,
   showPlace: false,
   mainBackgroundColor: "#212026",
-  gameHeaderBackgroundColor: "#322F37",
+  gameHeaderBackgroundColor: "#322f37",
   gameEntriesBackgroundColor: "#212026",
   gameEntriesAlternateRowColor: "#111113",
   gameNameLinkHoverColor: "#a06bff",
   gameEntryLinkHoverColor: "#a06bff",
-  gameExpandIconColor: "#DFDDE2",
+  gameExpandIconColor: "#dfdde2",
   gameEntryLeaderboardPlaceColor: "#808080",
-  gameNameFontColor: "#DFDDE2",
-  gameNameSubheaderFontColor: "#A299B0",
-  gameEntryFontColor: "#FFFFFF",
-  gameEntryTimeFontColor: "#FFFFFF",
+  gameNameFontColor: "#dfdde2",
+  gameNameSubheaderFontColor: "#a299b0",
+  gameEntryFontColor: "#ffffff",
+  gameEntryTimeFontColor: "#ffffff",
 };
 
 export function getDefaultTheme(themeName: string | undefined): ThemeData {

@@ -114,7 +114,9 @@
         data-cy="theme-selector"
         on:sl-change={(event) => {
           cfg.config.currentThemeName = event.target.value;
-          log(cfg.config.currentThemeName);
+          configStore.commit();
+          notify(`Theme change saved!`, "success", "check2-circle", 1500);
+          configStore.updateThemeCSS();
         }}
       >
         <small>Default Themes</small>
@@ -255,7 +257,6 @@
           data-cy="expand-icon-color"
           value={getThemeData(cfg.config).gameExpandIconColor}
           on:blur={(event) => {
-            log("blurred");
             configStore.setValueOnCurrentTheme(
               "gameExpandIconColor",
               event.target.value,
@@ -273,7 +274,6 @@
           data-cy="leaderboard-place-color"
           value={getThemeData(cfg.config).gameEntryLeaderboardPlaceColor}
           on:blur={(event) => {
-            log("blurred");
             configStore.setValueOnCurrentTheme(
               "gameEntryLeaderboardPlaceColor",
               event.target.value,

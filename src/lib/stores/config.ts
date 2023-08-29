@@ -174,10 +174,7 @@ function createConfigStore() {
       }),
     updateThemeCSS: () => {
       update((val) => {
-        console.log("hello world");
-        console.log(val.config);
         const themeData = getThemeData(val.config);
-        console.log(themeData);
         updateCSSVars(themeData);
         return val;
       });
