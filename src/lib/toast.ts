@@ -24,7 +24,6 @@ export function notify(
   alert.duration = duration;
 
   const iconElement = document.createElement("sl-icon");
-  iconElement.name = icon;
   iconElement.slot = "icon";
   if (icon === "exclamation-octagon") {
     iconElement.src = exclamationOctagon;

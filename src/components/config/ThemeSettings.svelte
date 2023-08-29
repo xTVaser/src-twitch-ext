@@ -88,6 +88,10 @@
     configStore.updateThemeCSS();
   }
 
+  function revertThemeChanges() {
+    cfg.config.customThemes[cfg.config.currentThemeName] = structuredClone(originalThemeData);
+  }
+
   function saveThemeChanges() {
     configStore.commit();
     originalThemeData = structuredClone(getThemeData(cfg.config));
@@ -139,7 +143,8 @@
             <sl-button
               variant="warning"
               disabled={changesToSave ? undefined : true}
-              data-cy="revert-changes-btn">Revert Changes</sl-button
+              data-cy="revert-changes-btn"
+              on:click={revertThemeChanges}>Revert Changes</sl-button
             >
             <sl-button
               variant="success"
