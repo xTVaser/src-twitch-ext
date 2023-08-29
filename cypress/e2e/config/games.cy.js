@@ -228,10 +228,7 @@ describe("no existing config", () => {
         "disabled",
       );
       cy.get('[data-cy="config_games_refresh-btn"]').click();
-      cy.get('[data-cy="config_games_game-checkbox"]').should(
-        "have.length",
-        3,
-      );
+      cy.get('[data-cy="config_games_game-checkbox"]').should("have.length", 3);
       cy.get('[data-cy="config_games_revert-btn"]').should(
         "have.attr",
         "disabled",
@@ -267,8 +264,14 @@ describe("no existing config", () => {
         .find("input")
         .type("this-user-doesnt-exist");
       cy.get('[data-cy="config_games_refresh-btn"]').click();
-      cy.get('[data-cy="config_games_game-sorting-alpha"]').shadow().find("[part=label]").click();
-      cy.get('[data-cy="config_games_entry-sorting-place"]').shadow().find("[part=label]").click();
+      cy.get('[data-cy="config_games_game-sorting-alpha"]')
+        .shadow()
+        .find("[part=label]")
+        .click();
+      cy.get('[data-cy="config_games_entry-sorting-place"]')
+        .shadow()
+        .find("[part=label]")
+        .click();
       cy.get('[data-cy="config_games_save-btn"]')
         .click()
         .then(() => {
@@ -308,7 +311,10 @@ describe("malformed config", () => {
         fixture: "config/games/src-basic-personal-bests.json",
       },
     );
-    localStorage.setItem("src-twitch-ext", JSON.stringify({ "broadcaster": "wow this config is malformed" }));
+    localStorage.setItem(
+      "src-twitch-ext",
+      JSON.stringify({ broadcaster: "wow this config is malformed" }),
+    );
     cy.visit("https://localhost:5173/config/#/games");
     console.log(localStorage.getItem("src-twitch-ext"));
   });
@@ -358,10 +364,7 @@ describe("malformed config", () => {
       "disabled",
     );
     cy.get('[data-cy="config_games_refresh-btn"]').click();
-    cy.get('[data-cy="config_games_game-checkbox"]').should(
-      "have.length",
-      3,
-    );
+    cy.get('[data-cy="config_games_game-checkbox"]').should("have.length", 3);
     cy.get('[data-cy="config_games_revert-btn"]').should(
       "have.attr",
       "disabled",
@@ -390,8 +393,14 @@ describe("malformed config", () => {
       "disabled",
     );
     cy.get('[data-cy="config_games_refresh-btn"]').click();
-    cy.get('[data-cy="config_games_game-sorting-alpha"]').shadow().find("[part=label]").click();
-    cy.get('[data-cy="config_games_entry-sorting-place"]').shadow().find("[part=label]").click();
+    cy.get('[data-cy="config_games_game-sorting-alpha"]')
+      .shadow()
+      .find("[part=label]")
+      .click();
+    cy.get('[data-cy="config_games_entry-sorting-place"]')
+      .shadow()
+      .find("[part=label]")
+      .click();
     cy.get('[data-cy="config_games_save-btn"]')
       .click()
       .then(() => {
@@ -460,9 +469,7 @@ describe("existing config", () => {
     });
 
     it("games load", () => {
-      cy.get('[data-cy="config_games_game-checkbox"]').should(
-        "have.length", 3
-      );
+      cy.get('[data-cy="config_games_game-checkbox"]').should("have.length", 3);
     });
   });
 
@@ -501,18 +508,14 @@ describe("existing config", () => {
         "disabled",
         "disabled",
       );
-      cy.get('[data-cy="config_games_game-checkbox"]').should(
-        "have.length", 3
-      );
+      cy.get('[data-cy="config_games_game-checkbox"]').should("have.length", 3);
       cy.get('[data-cy="config_games_src-username-input"]')
         .shadow()
         .find("input")
         .clear()
         .type("different-user");
       cy.get('[data-cy="config_games_refresh-btn"]').click();
-      cy.get('[data-cy="config_games_game-checkbox"]').should(
-        "have.length", 2
-      );
+      cy.get('[data-cy="config_games_game-checkbox"]').should("have.length", 2);
       cy.get('[data-cy="config_games_save-btn"]')
         .click()
         .then(() => {

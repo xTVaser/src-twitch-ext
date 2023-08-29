@@ -219,7 +219,10 @@
           </div>
         {/each}
         {#if gameData.entriesGroupTwo.length > 0}
-          <div data-cy="panel-game-entry-divider" class="row game-entry divider">
+          <div
+            data-cy="panel-game-entry-divider"
+            class="row game-entry divider"
+          >
             <div class="col entry-divider-name">Levels</div>
           </div>
           {#each gameData.entriesGroupTwo as entry}

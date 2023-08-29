@@ -7,7 +7,9 @@ import { ConfigData, DefaultDarkTheme } from "../../src/lib/config";
  * @return {ConfigData} The parsed configuration data.
  */
 export function getConfiguration() {
-  const compressedConfigData = JSON.parse(localStorage.getItem("src-twitch-ext")).broadcaster.content;
+  const compressedConfigData = JSON.parse(
+    localStorage.getItem("src-twitch-ext"),
+  ).broadcaster.content;
   const decompressedConfigMinified = Buffer.from(
     gunzipSync(Buffer.from(compressedConfigData, "base64")).buffer,
   ).toString();
@@ -15,7 +17,16 @@ export function getConfiguration() {
   return ConfigData.parse(JSON.parse(decompressedConfigMinified));
 }
 
-export function generateConfiguration({userSrcName = "xtvaser", userSrcId = "e8envo80", disabledGames = [], currentThemeName = "_custom-test", showLeaderboardPlace = false, groupLevelsSeparately = true, gameSorting = "recent", entrySorting = "recent"}) {
+export function generateConfiguration({
+  userSrcName = "xtvaser",
+  userSrcId = "e8envo80",
+  disabledGames = [],
+  currentThemeName = "_custom-test",
+  showLeaderboardPlace = false,
+  groupLevelsSeparately = true,
+  gameSorting = "recent",
+  entrySorting = "recent",
+}) {
   let data = new ConfigData();
   data.gameData.userSrcName = userSrcName;
   data.gameData.userSrcId = userSrcId;

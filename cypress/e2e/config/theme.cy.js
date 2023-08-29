@@ -96,7 +96,9 @@ describe("no existing config", () => {
       cy.get('[data-cy="create-theme-btn"]')
         .should("not.have.attr", "disabled", "disabled")
         .click();
-      cy.get('[data-cy="theme-selector"]').contains("thisisaverylongthemenametruncate");
+      cy.get('[data-cy="theme-selector"]').contains(
+        "thisisaverylongthemenametruncate",
+      );
       cy.get('[data-cy="new-theme-input"]').should("have.value", "");
       cy.get('[data-cy="create-theme-btn"]').should(
         "have.attr",

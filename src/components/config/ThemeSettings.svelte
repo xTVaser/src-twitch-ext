@@ -89,7 +89,8 @@
   }
 
   function revertThemeChanges() {
-    cfg.config.customThemes[cfg.config.currentThemeName] = structuredClone(originalThemeData);
+    cfg.config.customThemes[cfg.config.currentThemeName] =
+      structuredClone(originalThemeData);
   }
 
   function saveThemeChanges() {
