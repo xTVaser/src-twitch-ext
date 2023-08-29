@@ -7,6 +7,7 @@
   - This should greatly improve reliability of the extension, as downtime of the custom backend was the primary reason for the extension being down
   - However, removes a lot of per-game customization in order to stay under the 5kb per segment twitch configuration limit
 - Displays game cover images (reason for extending `img-src` directive addition)
+- Games and runs are automatically pulled, no need to update configuration if you start running a new game or category.
 - Source code is greatly cleaned up, fixing bugs or adding features should be more feasible going forward.
 
 ## Features
