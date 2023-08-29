@@ -57,13 +57,17 @@
         3000,
       );
     } else {
-      cfg.config.customThemes[themeName] = DefaultDarkTheme;
+      cfg.config.customThemes[themeName] = structuredClone(DefaultDarkTheme);
       cfg.config.customThemes[themeName].defaultTheme = false;
       cfg.config.currentThemeName = themeName;
-      cfg.service.setBroadcasterConfig(cfg.config);
-      // update originalThemeDate so we don't imply there is anything to save
-      originalThemeData = structuredClone(getThemeData(cfg.config));
-      notify(`New Theme Created!`, "success", "check2-circle", 1500);
+      const error = cfg.service.setBroadcasterConfig(cfg.config);
+      if (error !== undefined) {
+        notify(error, "danger", "exclamation-octagon", 3000);
+      } else {
+        // update originalThemeDate so we don't imply there is anything to save
+        originalThemeData = structuredClone(getThemeData(cfg.config));
+        notify(`New Theme Created!`, "success", "check2-circle", 1500);
+      }
     }
     newCustomThemeName = "";
   }
@@ -77,12 +81,17 @@
   function deleteCurrentCustomTheme() {
     delete cfg.config.customThemes[cfg.config.currentThemeName];
     cfg.config.currentThemeName = "_default-dark";
-    cfg.service.setBroadcasterConfig(cfg.config);
+    const error = cfg.service.setBroadcasterConfig(cfg.config);
+    if (error !== undefined) {
+      notify(error, "danger", "exclamation-octagon", 3000);
+    }
+    configStore.updateThemeCSS();
   }
 
   function saveThemeChanges() {
     configStore.commit();
     originalThemeData = structuredClone(getThemeData(cfg.config));
+    notify(`Changes saved!`, "success", "check2-circle", 1500);
   }
 </script>
 
