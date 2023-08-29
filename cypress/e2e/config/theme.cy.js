@@ -59,11 +59,8 @@ describe("no existing config", () => {
         "disabled",
         "disabled",
       );
-      // Save it
-      cy.get('[data-cy="save-changes-btn"]')
-        .should("exist")
-        .should("not.have.attr", "disabled", "disabled")
-        .click();
+      // Automatically saved
+      cy.get('[data-cy="save-changes-btn"]').should("not.exist");
       cy.contains("sl-alert", "New Theme Created!");
       // can only make 1 custom theme
       cy.get('[data-cy="new-theme-input"]')
@@ -105,11 +102,8 @@ describe("no existing config", () => {
         "disabled",
         "disabled",
       );
-      // Save it
-      cy.get('[data-cy="save-changes-btn"]')
-        .should("exist")
-        .should("not.have.attr", "disabled", "disabled")
-        .click();
+      // Automatically saved
+      cy.get('[data-cy="save-changes-btn"]').should("not.exist");
       cy.contains("sl-alert", "New Theme Created!");
     });
 

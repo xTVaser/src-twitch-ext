@@ -41,7 +41,8 @@
   });
 
   function createNewTheme() {
-    const themeName = `_custom-${newCustomThemeName}`;
+    const newCustomThemeValue = newCustomThemeName.replace(" ", "_");
+    const themeName = `_custom-${newCustomThemeValue}`;
     if (themeName in cfg.config.customThemes) {
       notify(
         "Theme with that name already exists",
@@ -73,6 +74,7 @@
   }
 
   function customThemeNames(names: String[]): String[] {
+    console.log(names);
     return names
       .filter((name) => name.startsWith("_custom-"))
       .map((name) => name.replace(/_custom-/, ""));
@@ -127,7 +129,7 @@
           <small>Custom Themes</small>
           {#each customThemeNames(Object.keys(cfg.config.customThemes)) as themeName}
             <sl-option value={`_custom-${themeName.replace(" ", "_")}`}
-              >{themeName}</sl-option
+              >{themeName.replace("_", " ")}</sl-option
             >
           {/each}
         {/if}
