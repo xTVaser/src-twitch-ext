@@ -216,7 +216,12 @@ async function retrievePersonalBests(
         hasSubcategories(pb),
         getSubcategories(pb),
       );
-      personalBests.set(newEntry.getId(), newEntry);
+
+      // Add only the first PB entry for a given category
+      const entryId = newEntry.getId();
+      if (!personalBests.has(entryId)) {
+        personalBests.set(entryId, newEntry);
+      }
     }
 
     if (
